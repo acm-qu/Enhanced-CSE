@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
+import { MoonIcon, SunIcon } from 'lucide-react';
 
-import { Switch } from '@/components/ui/switch';
+import { Toggle } from '@/components/ui/toggle';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
@@ -16,13 +18,27 @@ export function ThemeToggle() {
   const isDark = resolvedTheme === 'dark';
 
   return (
-    <label className="inline-flex items-center gap-2 rounded-md border border-foreground/15 bg-foreground/5 px-2 py-1 text-[10px] uppercase tracking-[0.12em]">
-      <span>{mounted && isDark ? 'Dark' : 'Light'}</span>
-      <Switch
-        aria-label="Toggle dark mode"
-        checked={mounted ? isDark : false}
-        onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
-      />
-    </label>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Toggle
+            aria-label="Toggle dark mode"
+            pressed={mounted ? isDark : false}
+            onPressedChange={(pressed) => setTheme(pressed ? 'dark' : 'light')}
+            variant="outline"
+            size="sm"
+          >
+            {mounted && isDark ? (
+              <MoonIcon className="h-4 w-4" />
+            ) : (
+              <SunIcon className="h-4 w-4" />
+            )}
+          </Toggle>
+        </TooltipTrigger>
+        <TooltipContent>
+          {mounted && isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }

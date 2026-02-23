@@ -2,9 +2,12 @@ import Link from 'next/link';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select } from '@/components/ui/select';
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { PostsFilterSidebar } from '@/components/posts-filter-sidebar';
 import { toPostListResponse } from '@/lib/content/transform';
 import { listPostArchives, listPostCategories, listPosts, type PostSort } from '@/lib/db/posts-queries';
 import { getSyncMeta } from '@/lib/db/queries';
@@ -159,9 +162,20 @@ export default async function PostsPage({ searchParams }: SearchParamProps) {
       <section className="panel px-5 py-6 sm:px-6">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
+            <Breadcrumb className="mb-3">
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink href="/">Home</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>Blog</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
             <Badge variant="outline" className="mb-2">Blog</Badge>
             <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Articles</h1>
-            <p className="mt-2 text-sm text-foreground/70">
+            <p className="mt-2 text-sm text-muted-foreground">
               Main-site posts with category and archive navigation. Last sync:{' '}
               {formatDate(syncMeta.lastSuccessAt?.toISOString() ?? null)}.
             </p>
@@ -181,75 +195,49 @@ export default async function PostsPage({ searchParams }: SearchParamProps) {
             <CardTitle className="text-sm uppercase tracking-[0.14em]">Filters</CardTitle>
           </CardHeader>
           <CardContent>
-            <form action="/posts" method="get" className="grid gap-3">
-              <label className="grid gap-1 text-[11px] font-medium uppercase tracking-[0.12em] text-foreground/70">
-                Sort
-                <Select name="sort" defaultValue={sort}>
-                  {SORT_OPTIONS.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </Select>
-              </label>
-
-              <label className="grid gap-1 text-[11px] font-medium uppercase tracking-[0.12em] text-foreground/70">
-                Category
-                <Select name="category" defaultValue={category ?? ''}>
-                  <option value="">All categories</option>
-                  {categories.map((item) => (
-                    <option key={item.slug} value={item.slug}>
-                      {item.name}
-                    </option>
-                  ))}
-                </Select>
-              </label>
-
-              {month ? <input type="hidden" name="month" value={month} /> : null}
-
-              <div className="mt-1 flex gap-2">
-                <Button type="submit" size="sm" className="flex-1">
-                  Apply
-                </Button>
-                <Button asChild variant="outline" size="sm" className="flex-1">
-                  <Link href="/posts">Reset</Link>
-                </Button>
-              </div>
-            </form>
+            <PostsFilterSidebar
+              categories={categories}
+              sortOptions={SORT_OPTIONS}
+              currentSort={sort}
+              currentCategory={category}
+              currentMonth={month}
+            />
 
             <Separator className="my-4" />
 
             <div>
-              <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-foreground/70">Archives</p>
-              <div className="mt-2 flex max-h-64 flex-col gap-1 overflow-y-auto pr-1">
-                {archives.length === 0 ? (
-                  <p className="text-sm text-foreground/70">No archive buckets yet.</p>
-                ) : (
-                  archives.map((bucket) => {
-                    const active = month === bucket.month;
-                    return (
-                      <Button
-                        key={bucket.month}
-                        asChild
-                        variant={active ? 'default' : 'ghost'}
-                        size="sm"
-                        className="h-8 justify-between px-2 text-[10px]"
-                      >
-                        <Link href={buildPostsHref({ page: 1, sort, category, month: active ? undefined : bucket.month })}>
-                          <span>{bucket.label}</span>
-                          <span>{bucket.postCount}</span>
-                        </Link>
-                      </Button>
-                    );
-                  })
-                )}
-              </div>
+              <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">Archives</p>
+              <ScrollArea className="h-64">
+                <div className="mt-2 flex flex-col gap-1 pr-3">
+                  {archives.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">No archive buckets yet.</p>
+                  ) : (
+                    archives.map((bucket) => {
+                      const active = month === bucket.month;
+                      return (
+                        <Button
+                          key={bucket.month}
+                          asChild
+                          variant={active ? 'default' : 'ghost'}
+                          size="sm"
+                          className="h-8 justify-between px-2 text-[10px]"
+                        >
+                          <Link href={buildPostsHref({ page: 1, sort, category, month: active ? undefined : bucket.month })}>
+                            <span>{bucket.label}</span>
+                            <span>{bucket.postCount}</span>
+                          </Link>
+                        </Button>
+                      );
+                    })
+                  )}
+                </div>
+              </ScrollArea>
             </div>
           </CardContent>
         </Card>
 
         <section>
-          <div className="flex flex-wrap items-center gap-2 text-sm text-foreground/70">
+          <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
             <span>
               Showing {transformedItems.length} of {postData.total} post{postData.total === 1 ? '' : 's'}
             </span>
@@ -259,7 +247,7 @@ export default async function PostsPage({ searchParams }: SearchParamProps) {
 
           {transformedItems.length === 0 ? (
             <Card className="panel-muted mt-3">
-              <CardContent className="pt-5 text-sm text-foreground/70">No posts match your filters.</CardContent>
+              <CardContent className="pt-5 text-sm text-muted-foreground">No posts match your filters.</CardContent>
             </Card>
           ) : (
             <div className="mt-3 grid gap-3">
@@ -293,21 +281,23 @@ export default async function PostsPage({ searchParams }: SearchParamProps) {
             </div>
           )}
 
-          <nav aria-label="Pagination" className="mt-5 flex flex-wrap items-center gap-2">
-            {page > 1 ? (
-              <Button asChild variant="outline" size="sm">
-                <Link href={buildPostsHref({ sort, category, month, page: page - 1 })}>Previous</Link>
-              </Button>
-            ) : null}
-
-            <Badge variant="outline" className="h-8 px-3">Page {Math.min(page, totalPages)} of {totalPages}</Badge>
-
-            {page < totalPages ? (
-              <Button asChild variant="outline" size="sm">
-                <Link href={buildPostsHref({ sort, category, month, page: page + 1 })}>Next</Link>
-              </Button>
-            ) : null}
-          </nav>
+          <Pagination className="mt-5">
+            <PaginationContent>
+              {page > 1 && (
+                <PaginationItem>
+                  <PaginationPrevious href={buildPostsHref({ sort, category, month, page: page - 1 })} />
+                </PaginationItem>
+              )}
+              <PaginationItem>
+                <PaginationLink isActive>{Math.min(page, totalPages)}</PaginationLink>
+              </PaginationItem>
+              {page < totalPages && (
+                <PaginationItem>
+                  <PaginationNext href={buildPostsHref({ sort, category, month, page: page + 1 })} />
+                </PaginationItem>
+              )}
+            </PaginationContent>
+          </Pagination>
         </section>
       </section>
     </main>

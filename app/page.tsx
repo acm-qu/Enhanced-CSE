@@ -4,7 +4,10 @@ import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { SearchIcon } from 'lucide-react';
 import { toArticleListResponse, toPostListResponse } from '@/lib/content/transform';
 import { listPosts } from '@/lib/db/posts-queries';
 import { getSyncMeta, listArticles, listCategories, type TermWithCount } from '@/lib/db/queries';
@@ -170,7 +173,7 @@ export default async function HomePage() {
         <h1 className="mx-auto max-w-4xl text-3xl font-semibold tracking-tight sm:text-5xl">
           Computer Science and Engineering Wiki
         </h1>
-        <p className="mx-auto mt-4 max-w-2xl text-sm text-foreground/70 sm:text-base">
+        <p className="mx-auto mt-4 max-w-2xl text-sm text-muted-foreground sm:text-base">
           Access departmental services, guidelines, advisement resources, and senior project archives in one unified
           experience.
         </p>
@@ -201,18 +204,25 @@ export default async function HomePage() {
             <CardHeader className="space-y-3 pb-3">
               <div className="flex items-center justify-between gap-3">
                 <CardTitle className="text-xl">{section.displayName}</CardTitle>
-                <Button asChild variant="ghost" size="icon" className="h-8 w-8">
-                  <Link href={`/wiki?category=${encodeURIComponent(section.slug)}`} aria-label={`Open ${section.displayName}`}>
-                    ⌕
-                  </Link>
-                </Button>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button asChild variant="ghost" size="icon" className="h-8 w-8">
+                        <Link href={`/wiki?category=${encodeURIComponent(section.slug)}`} aria-label={`Open ${section.displayName}`}>
+                          <SearchIcon className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>{section.displayName}</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
               <Separator />
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
                 {section.items.length === 0 ? (
-                  <p className="text-sm text-foreground/70">No links synced for this section yet.</p>
+                  <p className="text-sm text-muted-foreground">No links synced for this section yet.</p>
                 ) : (
                   section.items.map((article) => (
                     <p key={article.id} className="text-sm text-foreground/80">
@@ -250,26 +260,30 @@ export default async function HomePage() {
             <Separator />
           </CardHeader>
           <CardContent className="space-y-2">
-            {recentWiki.map((article) => (
-              <p key={article.id} className="text-sm text-foreground/80">
-                <Link href={`/wiki/${article.slug}`} className="underline-offset-2 hover:underline">
-                  {article.title}
-                </Link>
-              </p>
-            ))}
+            <ScrollArea className="h-64 pr-3">
+              <div className="space-y-2">
+                {recentWiki.map((article) => (
+                  <p key={article.id} className="text-sm text-foreground/80">
+                    <Link href={`/wiki/${article.slug}`} className="underline-offset-2 hover:underline">
+                      {article.title}
+                    </Link>
+                  </p>
+                ))}
+              </div>
+            </ScrollArea>
           </CardContent>
         </Card>
 
         <Card className="panel-muted">
           <CardHeader className="pb-3">
-            <Badge variant="outline" className="w-fit">Sync Status</Badge>
+            <Badge variant={meta.lastRunStatus !== 'success' ? 'destructive' : 'default'} className="w-fit">Sync Status</Badge>
             <CardTitle className="text-xl capitalize">{meta.lastRunStatus ?? 'unknown'}</CardTitle>
             <CardDescription>Last successful sync: {formatDate(meta.lastSuccessAt?.toISOString() ?? null)}</CardDescription>
             <Separator />
           </CardHeader>
           <CardContent className="space-y-2">
             {recentPosts.length === 0 ? (
-              <p className="text-sm text-foreground/70">No posts available yet.</p>
+              <p className="text-sm text-muted-foreground">No posts available yet.</p>
             ) : (
               recentPosts.map((post) => (
                 <p key={post.id} className="text-sm text-foreground/80">

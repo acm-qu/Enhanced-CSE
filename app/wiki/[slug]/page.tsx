@@ -4,8 +4,13 @@ import { notFound } from 'next/navigation';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { ChevronDownIcon } from 'lucide-react';
 import { toArticleDetailResponse } from '@/lib/content/transform';
 import { getArticleBySlug, listCategories, listTags } from '@/lib/db/queries';
 
@@ -125,9 +130,16 @@ export default async function WikiDetailPage({ params }: DetailPageProps) {
             <CardContent className="space-y-3 text-sm text-foreground/72">
               <p>Published: {formatDate(transformed.publishedAtGmt)}</p>
               <p>Updated: {formatDate(transformed.modifiedAtGmt)}</p>
-              <a className="underline underline-offset-2" href={transformed.sourceLink} rel="noopener noreferrer" target="_blank">
-                Original source
-              </a>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <a className="underline underline-offset-2" href={transformed.sourceLink} rel="noopener noreferrer" target="_blank">
+                      Original source
+                    </a>
+                  </TooltipTrigger>
+                  <TooltipContent>{transformed.sourceLink}</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
               <Separator />
               <Button asChild variant="outline" size="sm">
                 <Link href="/wiki">Back to index</Link>
@@ -139,9 +151,21 @@ export default async function WikiDetailPage({ params }: DetailPageProps) {
         <article>
           <Card className="panel">
             <CardHeader className="space-y-4 pb-5">
-              <CardDescription className="font-mono text-[10px] uppercase tracking-[0.14em] text-foreground/60">
-                <Link href="/">Home</Link> / <Link href="/wiki">Wiki</Link> / {transformed.slug}
-              </CardDescription>
+              <Breadcrumb>
+                <BreadcrumbList>
+                  <BreadcrumbItem>
+                    <BreadcrumbLink href="/">Home</BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbLink href="/wiki">Wiki</BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbPage>{transformed.slug}</BreadcrumbPage>
+                  </BreadcrumbItem>
+                </BreadcrumbList>
+              </Breadcrumb>
 
               <CardTitle className="text-3xl sm:text-5xl">{transformed.title}</CardTitle>
 
@@ -179,27 +203,42 @@ export default async function WikiDetailPage({ params }: DetailPageProps) {
               {toc.length === 0 ? (
                 <p className="text-sm text-foreground/60">No headings available.</p>
               ) : (
-                <nav className="space-y-1">
-                  {toc.map((item) => (
-                    <a
-                      key={item.id}
-                      href={`#${item.id}`}
-                      className={`block text-sm text-foreground/70 hover:text-foreground ${item.level >= 3 ? 'pl-4' : item.level === 2 ? 'pl-2' : ''}`}
-                    >
-                      {item.text}
-                    </a>
-                  ))}
-                </nav>
+                <ScrollArea className="h-96">
+                  <nav className="space-y-1 pr-3">
+                    {toc.map((item) => (
+                      <a
+                        key={item.id}
+                        href={`#${item.id}`}
+                        className={`block text-sm text-foreground/70 hover:text-foreground ${item.level >= 3 ? 'pl-4' : item.level === 2 ? 'pl-2' : ''}`}
+                      >
+                        {item.text}
+                      </a>
+                    ))}
+                  </nav>
+                </ScrollArea>
               )}
             </CardContent>
           </Card>
         </aside>
       </div>
 
-      <div className="mt-4 xl:hidden">
-        <Button asChild variant="outline" size="sm">
-          <Link href="/wiki">Back to index</Link>
-        </Button>
+      <div className="mt-4 space-y-3 xl:hidden">
+        <Collapsible>
+          <CollapsibleTrigger asChild>
+            <Button variant="outline" size="sm" className="w-full justify-between">
+              On This Page <ChevronDownIcon className="h-4 w-4" />
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <nav className="mt-2 space-y-1 pl-2">
+              {toc.map((item) => (
+                <a key={item.id} href={`#${item.id}`} className="block text-sm hover:underline">
+                  {item.text}
+                </a>
+              ))}
+            </nav>
+          </CollapsibleContent>
+        </Collapsible>
       </div>
     </main>
   );
