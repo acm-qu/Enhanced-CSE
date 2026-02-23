@@ -157,17 +157,26 @@
   }
 
   .article-html table {
-    @apply my-6 w-full border-collapse;
+    @apply my-6 w-full border-collapse overflow-hidden rounded-lg border border-border;
   }
 
-  .article-html table,
-  .article-html th,
-  .article-html td {
-    @apply border border-foreground/20;
+  .article-html th {
+    @apply bg-primary px-4 py-3 text-left font-semibold text-primary-foreground;
   }
 
-  .article-html th,
   .article-html td {
-    @apply px-3 py-2;
+    @apply border-t border-border px-4 py-3;
+  }
+
+  .article-html tbody tr {
+    @apply transition-colors hover:bg-muted/50;
+  }
+
+  .article-html tbody tr:nth-child(even) {
+    @apply bg-muted/20;
+  }
+
+  .article-html tbody tr:hover {
+    @apply bg-muted/80;
   }
 }
