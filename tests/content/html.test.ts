@@ -65,4 +65,14 @@ describe('content html utilities', () => {
     expect(sanitized).toContain('<iframe');
     expect(sanitized).not.toContain('https://evil.example/embed/abc123');
   });
+
+  it('materializes elementor youtube widgets into iframes', () => {
+    const html =
+      '<div class="elementor-widget-video" data-settings="{&quot;youtube_url&quot;:&quot;https:\\/\\/youtu.be\\/legtfYhy-iI?si=test&quot;,&quot;video_type&quot;:&quot;youtube&quot;}"><div class="elementor-widget-container"><div class="elementor-video"></div></div></div>';
+    const sanitized = sanitizeWikiHtml(html);
+
+    expect(sanitized).toContain('https://www.youtube.com/embed/legtfYhy-iI?rel=0');
+    expect(sanitized).toContain('<iframe');
+    expect(sanitized).not.toContain('elementor-video');
+  });
 });
