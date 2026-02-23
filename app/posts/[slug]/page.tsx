@@ -1,0 +1,200 @@
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { toPostDetailResponse } from '@/lib/content/transform';
+import { getPostBySlug, listPostCategories } from '@/lib/db/posts-queries';
+
+export const dynamic = 'force-dynamic';
+
+interface DetailPageProps {
+  params: {
+    slug: string;
+  };
+}
+
+interface TocItem {
+  id: string;
+  text: string;
+  level: number;
+}
+
+function stripTags(value: string): string {
+  return value.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function slugify(value: string): string {
+  return stripTags(value)
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-');
+}
+
+function addHeadingIdsAndBuildToc(html: string): { html: string; toc: TocItem[] } {
+  const used = new Map<string, number>();
+  const toc: TocItem[] = [];
+
+  const htmlWithAnchors = html.replace(/<h([1-3])([^>]*)>([\s\S]*?)<\/h\1>/gi, (_match, levelRaw, attrsRaw, innerHtml) => {
+    const level = Number(levelRaw);
+    const text = stripTags(innerHtml);
+    if (!text) {
+      return _match;
+    }
+
+    const existingIdMatch = String(attrsRaw).match(/\sid=(['"])(.*?)\1/i);
+    let headingId = existingIdMatch?.[2] ?? '';
+
+    if (!headingId) {
+      const base = slugify(text) || 'section';
+      const seen = used.get(base) ?? 0;
+      headingId = seen === 0 ? base : `${base}-${seen + 1}`;
+      used.set(base, seen + 1);
+    }
+
+    toc.push({ id: headingId, text, level });
+
+    if (existingIdMatch) {
+      return `<h${level}${attrsRaw}>${innerHtml}</h${level}>`;
+    }
+
+    return `<h${level}${attrsRaw} id="${headingId}">${innerHtml}</h${level}>`;
+  });
+
+  return { html: htmlWithAnchors, toc };
+}
+
+function formatDate(value: string | null): string {
+  if (!value) {
+    return 'Unknown';
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return 'Unknown';
+  }
+
+  return new Intl.DateTimeFormat('en-US', {
+    dateStyle: 'long',
+    timeStyle: 'short'
+  }).format(date);
+}
+
+export async function generateMetadata({ params }: DetailPageProps): Promise<Metadata> {
+  const post = await getPostBySlug(params.slug);
+
+  if (!post) {
+    return {
+      title: 'Post Not Found'
+    };
+  }
+
+  const transformed = toPostDetailResponse(post);
+
+  return {
+    title: transformed.title,
+    description: `Synced post: ${transformed.title}`
+  };
+}
+
+export default async function PostDetailPage({ params }: DetailPageProps) {
+  const [post, categories] = await Promise.all([getPostBySlug(params.slug), listPostCategories()]);
+
+  if (!post) {
+    notFound();
+  }
+
+  const transformed = toPostDetailResponse(post);
+  const { html, toc } = addHeadingIdsAndBuildToc(transformed.contentHtml);
+
+  const categoryNameBySlug = new Map(categories.map((item) => [item.slug, item.name]));
+
+  return (
+    <main className="content-shell">
+      <div className="grid gap-4 xl:grid-cols-[220px_minmax(0,1fr)_220px]">
+        <aside className="hidden xl:block">
+          <Card className="panel-muted sticky top-20">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm uppercase tracking-[0.14em]">Article Meta</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm text-foreground/72">
+              <p>Published: {formatDate(transformed.publishedAtGmt)}</p>
+              <p>Updated: {formatDate(transformed.modifiedAtGmt)}</p>
+              <a className="underline underline-offset-2" href={transformed.sourceLink} rel="noopener noreferrer" target="_blank">
+                Original source
+              </a>
+              <Separator />
+              <Button asChild variant="outline" size="sm">
+                <Link href="/posts">Back to posts</Link>
+              </Button>
+            </CardContent>
+          </Card>
+        </aside>
+
+        <article>
+          <Card className="panel">
+            <CardHeader className="space-y-4 pb-5">
+              <CardDescription className="font-mono text-[10px] uppercase tracking-[0.14em] text-foreground/60">
+                <Link href="/">Home</Link> / <Link href="/posts">Posts</Link> / {transformed.slug}
+              </CardDescription>
+
+              <CardTitle className="text-3xl sm:text-5xl">{transformed.title}</CardTitle>
+
+              <CardDescription className="flex flex-wrap gap-4 text-xs uppercase tracking-[0.11em] text-foreground/60">
+                <span>Published {formatDate(transformed.publishedAtGmt)}</span>
+                <span>Updated {formatDate(transformed.modifiedAtGmt)}</span>
+              </CardDescription>
+
+              <div className="flex flex-wrap gap-2">
+                {transformed.categories.map((slug) => (
+                  <Badge key={`c:${slug}`} variant="outline">
+                    <Link href={`/posts?category=${encodeURIComponent(slug)}`}>{categoryNameBySlug.get(slug) ?? slug}</Link>
+                  </Badge>
+                ))}
+              </div>
+            </CardHeader>
+
+            <CardContent>
+              <div className="article-html" dangerouslySetInnerHTML={{ __html: html }} />
+            </CardContent>
+          </Card>
+        </article>
+
+        <aside className="hidden xl:block">
+          <Card className="panel-muted sticky top-20">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm uppercase tracking-[0.14em]">On This Page</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {toc.length === 0 ? (
+                <p className="text-sm text-foreground/60">No headings available.</p>
+              ) : (
+                <nav className="space-y-1">
+                  {toc.map((item) => (
+                    <a
+                      key={item.id}
+                      href={`#${item.id}`}
+                      className={`block text-sm text-foreground/70 hover:text-foreground ${item.level >= 3 ? 'pl-4' : item.level === 2 ? 'pl-2' : ''}`}
+                    >
+                      {item.text}
+                    </a>
+                  ))}
+                </nav>
+              )}
+            </CardContent>
+          </Card>
+        </aside>
+      </div>
+
+      <div className="mt-4 xl:hidden">
+        <Button asChild variant="outline" size="sm">
+          <Link href="/posts">Back to posts</Link>
+        </Button>
+      </div>
+    </main>
+  );
+}

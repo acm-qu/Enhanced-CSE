@@ -1,0 +1,128 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 6% 10%;
+  }
+
+  .dark {
+    --background: 240 10% 4%;
+    --foreground: 0 0% 100%;
+  }
+
+  * {
+    @apply border-foreground/10;
+  }
+
+  html,
+  body {
+    @apply m-0 min-h-full bg-background text-foreground;
+  }
+
+  body {
+    @apply font-sans antialiased;
+  }
+
+  a {
+    @apply text-inherit no-underline;
+  }
+}
+
+@layer components {
+  .top-nav-link {
+    @apply inline-flex h-8 items-center rounded-md border border-transparent px-3 text-xs text-foreground/70 transition-colors hover:border-foreground/20 hover:bg-foreground/10 hover:text-foreground;
+  }
+
+  .content-shell {
+    @apply mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:py-10;
+  }
+
+  .panel {
+    @apply rounded-xl border border-foreground/20 bg-background;
+  }
+
+  .panel-muted {
+    @apply rounded-xl border border-foreground/10 bg-foreground/5;
+  }
+
+  .article-html {
+    @apply text-[15px] leading-7 text-foreground/90;
+  }
+
+  .article-html > *:first-child {
+    margin-top: 0;
+  }
+
+  .article-html > *:last-child {
+    margin-bottom: 0;
+  }
+
+  .article-html h1,
+  .article-html h2,
+  .article-html h3,
+  .article-html h4,
+  .article-html h5,
+  .article-html h6 {
+    @apply mt-8 scroll-mt-24 font-semibold leading-tight text-foreground;
+  }
+
+  .article-html h2 {
+    @apply text-2xl;
+  }
+
+  .article-html h3 {
+    @apply text-xl;
+  }
+
+  .article-html p,
+  .article-html li,
+  .article-html span,
+  .article-html td,
+  .article-html th,
+  .article-html blockquote {
+    @apply text-foreground/80;
+  }
+
+  .article-html a {
+    @apply underline underline-offset-4 hover:text-foreground;
+  }
+
+  .article-html img {
+    @apply h-auto max-w-full rounded-md border border-foreground/10;
+  }
+
+  .article-html iframe {
+    @apply my-6 aspect-video w-full max-w-full rounded-md border border-foreground/20;
+  }
+
+  .article-html pre,
+  .article-html code {
+    @apply rounded-md border border-foreground/20 bg-foreground/10;
+  }
+
+  .article-html pre {
+    @apply overflow-x-auto p-3;
+  }
+
+  .article-html code {
+    @apply px-1.5 py-0.5 text-[13px];
+  }
+
+  .article-html table {
+    @apply my-6 w-full border-collapse;
+  }
+
+  .article-html table,
+  .article-html th,
+  .article-html td {
+    @apply border border-foreground/20;
+  }
+
+  .article-html th,
+  .article-html td {
+    @apply px-3 py-2;
+  }
+}
