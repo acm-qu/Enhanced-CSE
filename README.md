@@ -6,7 +6,7 @@ A Next.js web portal for Qatar University's Computer Science and Engineering (CS
 
 ## What It Does
 
-- Pulls **wiki articles** (knowledge base) and **blog posts** from the QU CSE WordPress site every 8 hours via a cron job
+- Pulls **wiki articles** (knowledge base) and **blog posts** from the QU CSE WordPress site every 8 hours via a scheduled job
 - Stores content in PostgreSQL for fast, reliable reads
 - Serves a **browsable web UI** at `/wiki` and `/posts`
 - Exposes a **public REST API** at `/api/v1/` for programmatic access
@@ -46,7 +46,7 @@ Browser ──► Next.js App (port 3000)
 Content sync flow:
 
 ```text
-Vercel Cron (every 8h) ──► POST /api/internal/sync/cron
+Scheduler (GitHub Actions / Vercel Cron) ──► POST /api/internal/sync/cron
                                 │
                                 └── Fetches from WordPress REST API
                                         │
@@ -230,7 +230,7 @@ curl http://localhost:3000/api/internal/sync/status \
   -H "x-sync-secret: local-sync-secret"
 ```
 
-In production on Vercel, a cron job calls `/api/internal/sync/cron` every 8 hours automatically (configured in `vercel.json`).
+In production, schedule calls to `/api/internal/sync/cron` every 8 hours. This repo includes a GitHub Actions workflow for that schedule.
 
 ---
 
@@ -352,7 +352,8 @@ Enhanced-CSE/
 ├── .env.example          # Environment variable template — copy to .env.local
 ├── drizzle.config.ts     # Drizzle ORM configuration
 ├── next.config.mjs       # Next.js configuration
-└── vercel.json           # Production cron job schedule
+├── vercel.json           # Vercel project config
+└── .github/workflows/    # GitHub Actions schedulers
 ```
 
 ---
@@ -372,6 +373,13 @@ The app is designed for deployment on **Vercel**.
    | `WP_API_BASE` | WordPress source URL (default is pre-set) |
    | `WP_POST_TYPE` | Custom post type slug (default is pre-set) |
 
-3. The cron job in `vercel.json` automatically syncs content every 8 hours UTC
+3. Add GitHub Actions repository secrets:
+
+   | Secret | Value |
+   | --- | --- |
+   | `VERCEL_SYNC_CRON_URL` | `https://<your-app-domain>/api/internal/sync/cron` |
+   | `CRON_SECRET` | Same value as the Vercel `CRON_SECRET` environment variable |
+
+4. The workflow at `.github/workflows/sync-cron.yml` triggers sync every 8 hours UTC.
 
 For the production database, run `npm run db:migrate` once pointed at the production `DATABASE_URL` to set up the schema before the first deploy.
