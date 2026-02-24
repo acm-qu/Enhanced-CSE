@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Separator } from '@/components/ui/separator';
 import { ChevronDownIcon } from 'lucide-react';
+import { TocNav } from '@/components/toc-nav';
 import { toArticleDetailResponse } from '@/lib/content/transform';
 import { getArticleBySlug, listCategories, listTags } from '@/lib/db/queries';
 
@@ -183,24 +184,14 @@ export default async function WikiDetailPage({ params }: DetailPageProps) {
         </article>
 
         <aside className="hidden xl:block">
-          <div className="sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto">
+          <div className="no-scrollbar sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto">
             <p className="mb-3 text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground/60">
               On This Page
             </p>
             {toc.length === 0 ? (
               <p className="text-[13px] text-muted-foreground/40">No headings available.</p>
             ) : (
-              <nav className="space-y-0.5 border-l border-border/50 pl-3">
-                {toc.map((item) => (
-                  <a
-                    key={item.id}
-                    href={`#${item.id}`}
-                    className={`block py-0.5 text-[12px] leading-snug text-muted-foreground transition-colors hover:text-foreground ${item.level >= 3 ? 'pl-4' : item.level === 2 ? 'pl-2' : ''}`}
-                  >
-                    {item.text}
-                  </a>
-                ))}
-              </nav>
+              <TocNav items={toc} />
             )}
           </div>
         </aside>

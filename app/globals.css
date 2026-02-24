@@ -101,6 +101,14 @@
     @apply rounded-xl border border-border bg-card;
   }
 
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
   .panel-muted {
     @apply rounded-xl border border-border bg-muted/30;
   }
