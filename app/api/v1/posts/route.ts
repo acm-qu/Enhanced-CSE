@@ -3,11 +3,20 @@ import { NextRequest } from 'next/server';
 import { toPostListResponse } from '@/lib/content/transform';
 import { listPosts, type PostSort } from '@/lib/db/posts-queries';
 import { parsePositiveInt } from '@/lib/api/params';
+import {
+  getCachedApiJsonResponse,
+  markApiCacheMiss,
+  setCachedApiJsonResponse
+} from '@/lib/internal/api-cache';
 import { badRequest, internalError, jsonCached } from '@/lib/internal/http';
+import { applyRateLimitHeaders, enforcePublicApiRateLimit } from '@/lib/internal/rate-limit';
 
 const CACHE_CONTROL = 'public, s-maxage=60, stale-while-revalidate=300';
 const ALLOWED_SORTS: PostSort[] = ['published_desc', 'published_asc', 'modified_desc', 'modified_asc'];
 const MONTH_FORMAT_RE = /^\d{4}-\d{2}$/;
+const CACHE_TTL_SECONDS = 60;
+const CACHE_SCOPE = 'posts-list';
+const RATE_LIMIT_SCOPE = 'posts-list';
 
 function parseIsoDate(raw: string | null, fieldName: 'after' | 'before'): Date | undefined {
   if (!raw) {
@@ -55,6 +64,11 @@ function resolveMonthBounds(month: string): { after: Date; before: Date } {
 
 export async function GET(request: NextRequest): Promise<Response> {
   try {
+    const rateLimit = await enforcePublicApiRateLimit(request, RATE_LIMIT_SCOPE);
+    if (rateLimit.blockedResponse) {
+      return rateLimit.blockedResponse;
+    }
+
     const page = parsePositiveInt(request.nextUrl.searchParams.get('page'), 1);
     const pageSizeRaw = parsePositiveInt(request.nextUrl.searchParams.get('pageSize'), 20);
     const pageSize = Math.min(pageSizeRaw, 100);
@@ -87,6 +101,12 @@ export async function GET(request: NextRequest): Promise<Response> {
       return badRequest('after must be less than or equal to before');
     }
 
+    const cachedResponse = await getCachedApiJsonResponse(request, CACHE_SCOPE, CACHE_CONTROL);
+    if (cachedResponse) {
+      applyRateLimitHeaders(cachedResponse, rateLimit.headers);
+      return cachedResponse;
+    }
+
     const data = await listPosts({
       page,
       pageSize,
@@ -96,7 +116,7 @@ export async function GET(request: NextRequest): Promise<Response> {
       sort: sortRaw
     });
 
-    return jsonCached({
+    const payload = {
       page: data.page,
       pageSize: data.pageSize,
       total: data.total,
@@ -109,7 +129,13 @@ export async function GET(request: NextRequest): Promise<Response> {
         before: before?.toISOString() ?? null
       },
       items: data.items.map(toPostListResponse)
-    }, CACHE_CONTROL);
+    };
+
+    const response = jsonCached(payload, CACHE_CONTROL);
+    markApiCacheMiss(response);
+    applyRateLimitHeaders(response, rateLimit.headers);
+    await setCachedApiJsonResponse(request, CACHE_SCOPE, payload, CACHE_TTL_SECONDS);
+    return response;
   } catch (error) {
     if (error instanceof Error) {
       return badRequest(error.message);

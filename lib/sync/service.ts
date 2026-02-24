@@ -24,6 +24,7 @@ import {
   type WpBlogPostResponse,
   type WpTermResponse
 } from '@/lib/wp/client';
+import { invalidateApiCache } from '@/lib/internal/api-cache';
 
 const ADVISORY_LOCK_KEY = 773_081;
 
@@ -603,6 +604,8 @@ export async function runFullSync(trigger: SyncTrigger): Promise<SyncRunResult> 
         deleted_posts: postsPhase.deletedPosts,
         has_tags_taxonomy: wikiPhase.hasTagsTaxonomy
       });
+
+      await invalidateApiCache();
 
       return {
         status: 'success',

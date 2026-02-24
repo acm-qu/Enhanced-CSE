@@ -1,6 +1,15 @@
 const DEFAULT_WP_API_BASE = 'http://blogs.qu.edu.qa/cse/wp-json/wp/v2';
 const DEFAULT_WP_POST_TYPE = 'epkb_post_type_1';
 
+export function getOptionalEnv(name: string): string | undefined {
+  const value = process.env[name]?.trim();
+  if (!value) {
+    return undefined;
+  }
+
+  return value;
+}
+
 export function getWpApiBase(): string {
   return (process.env.WP_API_BASE ?? DEFAULT_WP_API_BASE).replace(/\/$/, '');
 }
@@ -23,4 +32,12 @@ export function getSyncSecret(): string {
 
 export function getCronSecret(): string {
   return getRequiredEnv('CRON_SECRET');
+}
+
+export function getUpstashRedisRestUrl(): string | undefined {
+  return getOptionalEnv('UPSTASH_REDIS_REST_URL');
+}
+
+export function getUpstashRedisRestToken(): string | undefined {
+  return getOptionalEnv('UPSTASH_REDIS_REST_TOKEN');
 }

@@ -18,13 +18,14 @@ import { formatDate } from '@/lib/utils/date';
 export const dynamic = 'force-dynamic';
 
 interface DetailPageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export async function generateMetadata({ params }: DetailPageProps): Promise<Metadata> {
-  const article = await getArticleBySlug(params.slug);
+  const { slug } = await params;
+  const article = await getArticleBySlug(slug);
 
   if (!article) {
     return {
@@ -41,7 +42,8 @@ export async function generateMetadata({ params }: DetailPageProps): Promise<Met
 }
 
 export default async function WikiDetailPage({ params }: DetailPageProps) {
-  const [article, categories, tags] = await Promise.all([getArticleBySlug(params.slug), listCategories(), listTags()]);
+  const { slug } = await params;
+  const [article, categories, tags] = await Promise.all([getArticleBySlug(slug), listCategories(), listTags()]);
 
   if (!article) {
     notFound();

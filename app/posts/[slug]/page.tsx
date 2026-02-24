@@ -18,13 +18,14 @@ import { formatDate } from '@/lib/utils/date';
 export const dynamic = 'force-dynamic';
 
 interface DetailPageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export async function generateMetadata({ params }: DetailPageProps): Promise<Metadata> {
-  const post = await getPostBySlug(params.slug);
+  const { slug } = await params;
+  const post = await getPostBySlug(slug);
 
   if (!post) {
     return {
@@ -41,7 +42,8 @@ export async function generateMetadata({ params }: DetailPageProps): Promise<Met
 }
 
 export default async function PostDetailPage({ params }: DetailPageProps) {
-  const [post, categories] = await Promise.all([getPostBySlug(params.slug), listPostCategories()]);
+  const { slug } = await params;
+  const [post, categories] = await Promise.all([getPostBySlug(slug), listPostCategories()]);
 
   if (!post) {
     notFound();

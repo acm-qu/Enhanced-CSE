@@ -146,6 +146,21 @@ docker compose up --build -d
 docker compose logs -f app   # stream logs
 ```
 
+### Docker Compose Watch Mode
+
+For iterative development while staying in Docker, run:
+
+```bash
+docker compose up --build --watch
+```
+
+Watch behavior is path-aware:
+
+- Frontend/backend app code (`app/`, `components/`, `lib/`) -> rebuild app image
+- Static files (`public/`) -> live sync into the running container
+- Migration files (`drizzle/`, `drizzle.config.ts`) -> sync + container restart
+- Dependency/build config changes (`package*.json`, `next.config.mjs`, etc.) -> rebuild app image
+
 To stop everything:
 
 ```bash
@@ -174,6 +189,10 @@ cp .env.example .env.local
 | `SYNC_BASE_URL` | No | `http://localhost:3000` | Base URL the `sync:now` script uses to reach the API |
 | `SYNC_TIMEOUT_MS` | No | `180000` | How long (ms) `sync:now` waits before timing out (default: 3 min) |
 | `SYNC_POLL_MS` | No | `2000` | How often (ms) `sync:now` polls for completion |
+| `UPSTASH_REDIS_REST_URL` | No | - | Upstash Redis REST URL (enables distributed API cache + rate limiting) |
+| `UPSTASH_REDIS_REST_TOKEN` | No | - | Upstash Redis REST token |
+| `PUBLIC_API_RATE_LIMIT_REQUESTS` | No | `120` | Max requests per window per client IP for `/api/v1/*` |
+| `PUBLIC_API_RATE_LIMIT_WINDOW_SECONDS` | No | `60` | Rate-limit window size in seconds |
 
 ---
 
@@ -229,6 +248,20 @@ In production on Vercel, a cron job calls `/api/internal/sync/cron` every 8 hour
 ## API Endpoints
 
 All public endpoints are read-only and require no authentication.
+
+### API Cache and Rate Limiting
+
+When Upstash Redis credentials are configured, all `/api/v1/*` routes use:
+
+- Response caching in Redis (TTL aligned with each route's `s-maxage`)
+- IP-based rate limiting via Upstash Ratelimit (default: `120` requests per `60` seconds)
+
+Responses include:
+
+- `X-Cache: HIT|MISS`
+- `X-RateLimit-Limit`
+- `X-RateLimit-Remaining`
+- `X-RateLimit-Reset`
 
 ### Wiki
 

@@ -8,9 +8,7 @@ import { MenuIcon } from 'lucide-react';
 import { NavigationProgress } from '@/components/navigation-progress';
 import { ThemeProvider } from '@/components/theme-provider';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Toaster } from '@/components/ui/sonner';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -34,16 +32,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <div className="min-h-screen bg-background text-foreground">
               <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
                 <div className="mx-auto flex h-14 w-full max-w-7xl items-center gap-3 px-4 sm:px-6">
-                  <Link href="/" className="flex items-center gap-2">
-                    <Badge className="bg-blue-600 text-[9px] text-white hover:bg-blue-500">CSE</Badge>
-                    <span className="text-xs font-semibold uppercase tracking-[0.14em] text-foreground/80">
-                      CSE Wiki
-                    </span>
-                  </Link>
-
-                  <Separator orientation="vertical" className="ml-2 h-5" />
-
-                  <nav className="ml-2 hidden items-center gap-1 sm:flex">
+                  <nav className="hidden items-center gap-2 sm:flex">
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Link href="/" className="top-nav-link">
