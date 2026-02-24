@@ -6,6 +6,20 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import type { LucideIcon } from 'lucide-react';
+import {
+  BookOpenText,
+  BriefcaseBusiness,
+  CalendarDays,
+  FileText,
+  FolderGit2,
+  GraduationCap,
+  Newspaper,
+  ShieldCheck,
+  Sparkles,
+  Users,
+  Wrench
+} from 'lucide-react';
 import { toArticleListResponse, toPostListResponse } from '@/lib/content/transform';
 import { listPosts } from '@/lib/db/posts-queries';
 import { getSyncMeta, listArticles, listCategories, type TermWithCount } from '@/lib/db/queries';
@@ -14,7 +28,7 @@ export const dynamic = 'force-dynamic';
 
 const FEATURED_CATEGORY_RULES = [
   {
-    label: 'Student Services & Policies',
+    label: 'Student Services',
     keywords: ['offering', 'service']
   },
   {
@@ -45,6 +59,32 @@ function formatDate(iso: string | null): string {
 
 function normalizeText(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+const FALLBACK_WIKI_ICONS = [BookOpenText, FileText, Sparkles] as const;
+const FALLBACK_POST_ICONS = [Newspaper, CalendarDays, Sparkles] as const;
+
+function pickWikiItemIcon(title: string, index: number): LucideIcon {
+  const text = normalizeText(title);
+
+  if (text.includes('intern')) return BriefcaseBusiness;
+  if (text.includes('elective')) return GraduationCap;
+  if (text.includes('cyber')) return ShieldCheck;
+  if (text.includes('advisor') || text.includes('coordinator') || text.includes('focal')) return Users;
+  if (text.includes('support') || text.includes('technical')) return Wrench;
+  if (text.includes('project')) return FolderGit2;
+
+  return FALLBACK_WIKI_ICONS[index % FALLBACK_WIKI_ICONS.length];
+}
+
+function pickPostItemIcon(title: string, index: number): LucideIcon {
+  const text = normalizeText(title);
+
+  if (text.includes('contest') || text.includes('hackathon') || text.includes('award') || text.includes('demo')) {
+    return Sparkles;
+  }
+
+  return FALLBACK_POST_ICONS[index % FALLBACK_POST_ICONS.length];
 }
 
 function pickFeaturedCategories(categories: TermWithCount[]): Array<{
@@ -142,8 +182,26 @@ export default async function HomePage() {
   const SECTION_ACCENTS = [
     { gradient: 'from-blue-500 to-cyan-400', glow: 'bg-blue-500/20' },
     { gradient: 'from-violet-500 to-pink-500', glow: 'bg-violet-500/20' },
-    { gradient: 'from-orange-500 to-amber-400', glow: 'bg-orange-500/20' },
+    { gradient: 'from-orange-500 to-amber-400', glow: 'bg-orange-500/20' }
   ] as const;
+
+  const studentServicesSection =
+    featuredSections.find((section) => normalizeText(section.displayName).includes('student service')) ?? null;
+  const seniorProjectsSection =
+    featuredSections.find((section) => normalizeText(section.displayName).includes('senior project')) ?? null;
+  const focalPointSection =
+    featuredSections.find((section) => normalizeText(section.displayName).includes('focal point')) ?? null;
+
+  const remainingSections = featuredSections.filter(
+    (section) => section !== studentServicesSection && section !== seniorProjectsSection && section !== focalPointSection
+  );
+
+  const firstRowSections = [studentServicesSection, seniorProjectsSection].filter(Boolean) as typeof featuredSections;
+  while (firstRowSections.length < 2 && remainingSections.length > 0) {
+    firstRowSections.push(remainingSections.shift()!);
+  }
+
+  const trailingSection = focalPointSection ?? remainingSections.shift() ?? null;
 
   return (
     <main className="w-full">
@@ -217,8 +275,8 @@ export default async function HomePage() {
           <CardHeader className="px-0 pb-6 pt-0">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <CardTitle className="text-xl font-semibold">Explore CSE Content</CardTitle>
-                <CardDescription className="text-sm">
+                <CardTitle className="text-2xl font-semibold tracking-tight">Explore CSE Content</CardTitle>
+                <CardDescription className="text-base">
                   One surface for key topics, recent wiki edits, and latest blog posts.
                 </CardDescription>
               </div>
@@ -230,118 +288,180 @@ export default async function HomePage() {
           <Separator />
 
           <CardContent className="p-0">
-            <div className="grid lg:grid-cols-3">
-              {featuredSections.map((section, index) => {
-                const accent = SECTION_ACCENTS[index % SECTION_ACCENTS.length];
-                const showRightDivider = index < featuredSections.length - 1;
+            <div className="grid">
+              <div className="grid lg:grid-cols-2">
+                {firstRowSections.map((section, index) => {
+                  const accent = SECTION_ACCENTS[index % SECTION_ACCENTS.length];
+                  const showRightDivider = index === 0;
 
-                return (
-                  <div
-                    key={section.slug}
-                    className={[
-                      'p-8',
-                      showRightDivider ? 'border-b border-border/60 lg:border-r lg:border-b-0' : ''
-                    ]
-                      .filter(Boolean)
-                      .join(' ')}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className={`relative h-4 w-4 shrink-0 rounded-full bg-gradient-to-br ${accent.gradient}`}>
-                        <div aria-hidden="true" className={`absolute inset-0 rounded-full ${accent.glow} blur-md`} />
+                  return (
+                    <div
+                      key={section.slug}
+                      className={[
+                        'p-10',
+                        showRightDivider ? 'border-b border-border/60 lg:border-r lg:border-b-0' : 'border-b border-border/60'
+                      ]
+                        .filter(Boolean)
+                        .join(' ')}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`relative h-5 w-5 shrink-0 rounded-full bg-gradient-to-br ${accent.gradient}`}>
+                          <div aria-hidden="true" className={`absolute inset-0 rounded-full ${accent.glow} blur-md`} />
+                        </div>
+                        <h3 className="text-2xl font-semibold tracking-tight">{section.displayName}</h3>
                       </div>
-                      <h3 className="text-lg font-semibold">{section.displayName}</h3>
-                    </div>
 
-                    <div className="mt-5 space-y-2.5">
-                      {section.items.length === 0 ? (
-                        <p className="text-sm text-muted-foreground">No links synced for this section yet.</p>
-                      ) : (
-                        section.items.map((article) => (
-                          <p key={article.id} className="text-[15px] leading-relaxed">
+                      <div className="mt-6 space-y-3">
+                        {section.items.length === 0 ? (
+                          <p className="text-base text-muted-foreground">No links synced for this section yet.</p>
+                        ) : (
+                          section.items.map((article, articleIndex) => {
+                            const ItemIcon = pickWikiItemIcon(article.title, articleIndex);
+
+                            return (
+                              <p key={article.id} className="text-base leading-relaxed sm:text-lg">
+                                <Link
+                                  href={`/wiki/${article.slug}`}
+                                  className="inline-flex items-start gap-2.5 text-blue-500 underline-offset-2 transition-colors hover:text-blue-400 hover:underline"
+                                >
+                                  <ItemIcon className="mt-1 h-4 w-4 shrink-0 text-blue-400/80" />
+                                  <span>{article.title}</span>
+                                </Link>
+                              </p>
+                            );
+                          })
+                        )}
+                      </div>
+
+                      <div className="mt-6">
+                        <Button asChild variant="outline" className="h-11 px-5 text-base">
+                          <Link href={`/wiki?category=${encodeURIComponent(section.slug)}`}>
+                            Show all {section.articleCount} in {section.displayName}
+                          </Link>
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="grid lg:grid-cols-2">
+                <div className="border-b border-border/60 p-10 lg:border-r lg:border-b-0">
+                  <div className="mb-6 flex items-center justify-between gap-3">
+                    <div>
+                      <h3 className="text-2xl font-semibold tracking-tight">Recent Updates</h3>
+                      <p className="text-base text-muted-foreground">Most recently modified wiki pages.</p>
+                    </div>
+                    <Button asChild variant="outline" className="h-11 px-5 text-base">
+                      <Link href="/wiki">All Wiki Pages</Link>
+                    </Button>
+                  </div>
+                  <ScrollArea className="h-96 pr-3">
+                    <div className="space-y-3">
+                      {recentWiki.map((article, articleIndex) => {
+                        const ItemIcon = pickWikiItemIcon(article.title, articleIndex);
+
+                        return (
+                          <p key={article.id} className="text-base leading-relaxed sm:text-lg">
                             <Link
                               href={`/wiki/${article.slug}`}
-                              className="text-blue-500 underline-offset-2 transition-colors hover:text-blue-400 hover:underline"
+                              className="inline-flex items-start gap-2.5 text-blue-500 underline-offset-2 transition-colors hover:text-blue-400 hover:underline"
                             >
-                              {article.title}
+                              <ItemIcon className="mt-1 h-4 w-4 shrink-0 text-blue-400/80" />
+                              <span>{article.title}</span>
                             </Link>
                           </p>
-                        ))
+                        );
+                      })}
+                    </div>
+                  </ScrollArea>
+                </div>
+
+                <div className="border-b border-border/60 p-10">
+                  <div className="mb-6">
+                    <h3 className="text-2xl font-semibold tracking-tight">Blog Posts</h3>
+                    <p className="text-base text-muted-foreground">Latest announcements and departmental news.</p>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      Last sync: {formatDate(meta.lastSuccessAt?.toISOString() ?? null)}
+                    </p>
+                  </div>
+
+                  <div className="space-y-3">
+                    {recentPosts.length === 0 ? (
+                      <p className="text-base text-muted-foreground">No posts available yet.</p>
+                    ) : (
+                      recentPosts.map((post, postIndex) => {
+                        const ItemIcon = pickPostItemIcon(post.title, postIndex);
+
+                        return (
+                          <p key={post.id} className="text-base leading-relaxed sm:text-lg">
+                            <Link
+                              href={`/posts/${post.slug}`}
+                              className="inline-flex items-start gap-2.5 text-blue-500 underline-offset-2 transition-colors hover:text-blue-400 hover:underline"
+                            >
+                              <ItemIcon className="mt-1 h-4 w-4 shrink-0 text-blue-400/80" />
+                              <span>{post.title}</span>
+                            </Link>
+                          </p>
+                        );
+                      })
+                    )}
+                  </div>
+
+                  <div className="pt-6">
+                    <Button asChild variant="outline" className="h-11 px-5 text-base">
+                      <Link href="/posts">Open Posts Archive</Link>
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              {trailingSection ? (
+                <>
+                  <Separator />
+                  <div className="p-10">
+                    <div className="flex items-center gap-3">
+                      <div className={`relative h-5 w-5 shrink-0 rounded-full bg-gradient-to-br ${SECTION_ACCENTS[1].gradient}`}>
+                        <div
+                          aria-hidden="true"
+                          className={`absolute inset-0 rounded-full ${SECTION_ACCENTS[1].glow} blur-md`}
+                        />
+                      </div>
+                      <h3 className="text-2xl font-semibold tracking-tight">{trailingSection.displayName}</h3>
+                    </div>
+
+                    <div className="mt-6 grid gap-3 md:grid-cols-2">
+                      {trailingSection.items.length === 0 ? (
+                        <p className="text-base text-muted-foreground">No links synced for this section yet.</p>
+                      ) : (
+                        trailingSection.items.map((article, articleIndex) => {
+                          const ItemIcon = pickWikiItemIcon(article.title, articleIndex);
+
+                          return (
+                            <p key={article.id} className="text-base leading-relaxed sm:text-lg">
+                              <Link
+                                href={`/wiki/${article.slug}`}
+                                className="inline-flex items-start gap-2.5 text-blue-500 underline-offset-2 transition-colors hover:text-blue-400 hover:underline"
+                              >
+                                <ItemIcon className="mt-1 h-4 w-4 shrink-0 text-blue-400/80" />
+                                <span>{article.title}</span>
+                              </Link>
+                            </p>
+                          );
+                        })
                       )}
                     </div>
 
-                    <div className="mt-4">
-                      <Button asChild variant="outline" className="h-10 px-4 text-sm">
-                        <Link href={`/wiki?category=${encodeURIComponent(section.slug)}`}>
-                          Show all {section.articleCount} in {section.displayName}
+                    <div className="mt-6">
+                      <Button asChild variant="outline" className="h-11 px-5 text-base">
+                        <Link href={`/wiki?category=${encodeURIComponent(trailingSection.slug)}`}>
+                          Show all {trailingSection.articleCount} in {trailingSection.displayName}
                         </Link>
                       </Button>
                     </div>
                   </div>
-                );
-              })}
-            </div>
-
-            <Separator />
-
-            <div className="grid lg:grid-cols-[1.3fr,1fr]">
-              <div className="border-b border-border/60 p-8 lg:border-r lg:border-b-0">
-                <div className="mb-5 flex items-center justify-between gap-3">
-                  <div>
-                    <h3 className="text-lg font-semibold">Recent Wiki Updates</h3>
-                    <p className="text-sm text-muted-foreground">Most recently modified pages.</p>
-                  </div>
-                  <Button asChild variant="outline">
-                    <Link href="/wiki">All Wiki Pages</Link>
-                  </Button>
-                </div>
-                <ScrollArea className="h-80 pr-3">
-                  <div className="space-y-2.5">
-                    {recentWiki.map((article) => (
-                      <p key={article.id} className="text-[15px] leading-relaxed">
-                        <Link
-                          href={`/wiki/${article.slug}`}
-                          className="text-blue-500 underline-offset-2 transition-colors hover:text-blue-400 hover:underline"
-                        >
-                          {article.title}
-                        </Link>
-                      </p>
-                    ))}
-                  </div>
-                </ScrollArea>
-              </div>
-
-              <div className="p-8">
-                <div className="mb-5">
-                  <h3 className="text-lg font-semibold">Blog Posts</h3>
-                  <p className="text-sm text-muted-foreground">Latest announcements and departmental news.</p>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    Last sync: {formatDate(meta.lastSuccessAt?.toISOString() ?? null)}
-                  </p>
-                </div>
-
-                <div className="space-y-2.5">
-                  {recentPosts.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">No posts available yet.</p>
-                  ) : (
-                    recentPosts.map((post) => (
-                      <p key={post.id} className="text-[15px] leading-relaxed">
-                        <Link
-                          href={`/posts/${post.slug}`}
-                          className="text-blue-500 underline-offset-2 transition-colors hover:text-blue-400 hover:underline"
-                        >
-                          {post.title}
-                        </Link>
-                      </p>
-                    ))
-                  )}
-                </div>
-
-                <div className="pt-5">
-                  <Button asChild variant="outline">
-                    <Link href="/posts">Open Posts Archive</Link>
-                  </Button>
-                </div>
-              </div>
+                </>
+              ) : null}
             </div>
           </CardContent>
         </Card>
