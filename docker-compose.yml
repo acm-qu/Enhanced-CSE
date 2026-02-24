@@ -1,6 +1,8 @@
 services:
   postgres:
     image: postgres:16-alpine
+    profiles:
+      - local-db
     container_name: enhanced-cse-postgres
     restart: unless-stopped
     environment:
@@ -23,13 +25,9 @@ services:
     restart: unless-stopped
     ports:
       - "3000:3000"
-    depends_on:
-      postgres:
-        condition: service_healthy
     env_file:
       - .env.local
     environment:
-      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/enhanced_cse
       WP_API_BASE: http://blogs.qu.edu.qa/cse/wp-json/wp/v2
       WP_POST_TYPE: epkb_post_type_1
       SYNC_SECRET: local-sync-secret

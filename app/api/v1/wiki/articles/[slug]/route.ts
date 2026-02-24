@@ -17,7 +17,7 @@ const RATE_LIMIT_SCOPE = 'wiki-article-detail';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ): Promise<Response> {
   try {
     const rateLimit = await enforcePublicApiRateLimit(request, RATE_LIMIT_SCOPE);
@@ -25,7 +25,7 @@ export async function GET(
       return rateLimit.blockedResponse;
     }
 
-    const slug = params.slug?.trim();
+    const slug = (await params).slug?.trim();
     if (!slug) {
       const response = badRequest('slug is required');
       applyRateLimitHeaders(response, rateLimit.headers);
