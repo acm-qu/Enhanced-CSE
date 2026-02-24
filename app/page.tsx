@@ -146,9 +146,9 @@ export default async function HomePage() {
   const recentWiki = latestWiki.items.map(toArticleListResponse);
 
   const SECTION_ACCENTS = [
-    { gradient: 'from-blue-500 to-cyan-400', glow: 'bg-blue-500/20', border: 'border-t-blue-500/50' },
-    { gradient: 'from-violet-500 to-pink-500', glow: 'bg-violet-500/20', border: 'border-t-violet-500/50' },
-    { gradient: 'from-orange-500 to-amber-400', glow: 'bg-orange-500/20', border: 'border-t-orange-500/50' },
+    { gradient: 'from-blue-500 to-cyan-400', glow: 'bg-blue-500/20' },
+    { gradient: 'from-violet-500 to-pink-500', glow: 'bg-violet-500/20' },
+    { gradient: 'from-orange-500 to-amber-400', glow: 'bg-orange-500/20' },
   ] as const;
 
   return (
@@ -180,9 +180,6 @@ export default async function HomePage() {
             />
           </div>
 
-          <Badge variant="outline" className="mb-3 border-blue-500/30 bg-blue-500/10 text-blue-500">
-            CSE Portal
-          </Badge>
           <h1 className="mx-auto max-w-3xl text-2xl font-semibold tracking-tight sm:text-4xl">
             Computer Science and Engineering Wiki
           </h1>
@@ -208,12 +205,12 @@ export default async function HomePage() {
         {featuredSections.map((section, index) => {
           const accent = SECTION_ACCENTS[index % SECTION_ACCENTS.length];
           return (
-          <Card key={section.slug} className={`panel-muted border-t-2 ${accent.border}`}>
+          <Card key={section.slug} className="panel-muted">
             <CardHeader className="space-y-3 pb-3">
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                   {/* Gradient circle accent */}
-                  <div className={`relative h-8 w-8 shrink-0 rounded-full bg-gradient-to-br ${accent.gradient}`}>
+                  <div className={`relative h-5 w-5 shrink-0 rounded-full bg-gradient-to-br ${accent.gradient}`}>
                     <div aria-hidden="true" className={`absolute inset-0 rounded-full ${accent.glow} blur-md`} />
                   </div>
                   <CardTitle className="text-base font-semibold">{section.displayName}</CardTitle>
@@ -261,11 +258,11 @@ export default async function HomePage() {
       </section>
 
       <section className="mt-5 grid gap-4 lg:grid-cols-[1.3fr,1fr]">
-        <Card className="panel-muted border-t-2 border-t-sky-500/50">
+        <Card className="panel-muted">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <div className="relative h-8 w-8 shrink-0 rounded-full bg-gradient-to-br from-sky-500 to-blue-600">
+                <div className="relative h-5 w-5 shrink-0 rounded-full bg-gradient-to-br from-sky-500 to-blue-600">
                   <div aria-hidden="true" className="absolute inset-0 rounded-full bg-sky-500/20 blur-md" />
                 </div>
                 <div>
@@ -294,10 +291,10 @@ export default async function HomePage() {
           </CardContent>
         </Card>
 
-        <Card className="panel-muted border-t-2 border-t-emerald-500/50">
+        <Card className="panel-muted">
           <CardHeader className="pb-3">
             <div className="flex items-center gap-3">
-              <div className="relative h-8 w-8 shrink-0 rounded-full bg-gradient-to-br from-emerald-500 to-teal-400">
+              <div className="relative h-5 w-5 shrink-0 rounded-full bg-gradient-to-br from-emerald-500 to-teal-400">
                 <div aria-hidden="true" className="absolute inset-0 rounded-full bg-emerald-500/20 blur-md" />
               </div>
               <div>
