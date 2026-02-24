@@ -5,11 +5,11 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { MenuIcon } from 'lucide-react';
 
+import { NavigationProgress } from '@/components/navigation-progress';
 import { ThemeProvider } from '@/components/theme-provider';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Toaster } from '@/components/ui/sonner';
@@ -117,6 +117,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             </div>
           </TooltipProvider>
           <Toaster richColors position="bottom-right" />
+          <NavigationProgress />
         </ThemeProvider>
       </body>
     </html>

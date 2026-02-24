@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { ChevronDownIcon } from 'lucide-react';
 import { toPostDetailResponse } from '@/lib/content/transform';
@@ -178,30 +177,26 @@ export default async function PostDetailPage({ params }: DetailPageProps) {
         </article>
 
         <aside className="hidden xl:block">
-          <Card className="panel-muted sticky top-20">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm uppercase tracking-[0.14em]">On This Page</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {toc.length === 0 ? (
-                <p className="text-sm text-foreground/60">No headings available.</p>
-              ) : (
-                <ScrollArea className="h-96">
-                  <nav className="space-y-1 pr-3">
-                    {toc.map((item) => (
-                      <a
-                        key={item.id}
-                        href={`#${item.id}`}
-                        className={`block text-sm text-foreground/70 hover:text-foreground ${item.level >= 3 ? 'pl-4' : item.level === 2 ? 'pl-2' : ''}`}
-                      >
-                        {item.text}
-                      </a>
-                    ))}
-                  </nav>
-                </ScrollArea>
-              )}
-            </CardContent>
-          </Card>
+          <div className="sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto">
+            <p className="mb-3 text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground/60">
+              On This Page
+            </p>
+            {toc.length === 0 ? (
+              <p className="text-[13px] text-muted-foreground/40">No headings available.</p>
+            ) : (
+              <nav className="space-y-0.5 border-l border-border/50 pl-3">
+                {toc.map((item) => (
+                  <a
+                    key={item.id}
+                    href={`#${item.id}`}
+                    className={`block py-0.5 text-[12px] leading-snug text-muted-foreground transition-colors hover:text-foreground ${item.level >= 3 ? 'pl-4' : item.level === 2 ? 'pl-2' : ''}`}
+                  >
+                    {item.text}
+                  </a>
+                ))}
+              </nav>
+            )}
+          </div>
         </aside>
       </div>
 
