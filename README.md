@@ -112,9 +112,9 @@ The database will be empty until you trigger a sync — see [Syncing Content](#s
 
 ---
 
-### Option B — Full Docker Mode
+### Option B — Docker App Mode (Neon-ready)
 
-Runs everything (database + app) in Docker with a single command. Useful for quickly spinning up the project or testing the production build.
+Runs the Next.js app in Docker and connects it to the `DATABASE_URL` in `.env.local` (for Neon or any external PostgreSQL).
 
 #### 1. Clone the repo
 
@@ -123,7 +123,11 @@ git clone <repo-url>
 cd Enhanced-CSE
 ```
 
-#### 2. Build and start all services
+#### 2. Set `DATABASE_URL`
+
+For Neon, set your Neon connection string in `.env.local`.
+
+#### 3. Build and start the app
 
 ```bash
 docker compose up --build
@@ -132,10 +136,8 @@ docker compose up --build
 This will:
 
 1. Build the Next.js app into a Docker image
-2. Start the PostgreSQL database
-3. Wait for the database to pass its health check
-4. Run all database migrations automatically
-5. Start the production Next.js server
+2. Run all database migrations automatically against `DATABASE_URL`
+3. Start the production Next.js server
 
 The app is available at <http://localhost:3000>.
 
@@ -144,6 +146,12 @@ To run in the background:
 ```bash
 docker compose up --build -d
 docker compose logs -f app   # stream logs
+```
+
+To also run the bundled local PostgreSQL service, enable the `local-db` profile:
+
+```bash
+docker compose --profile local-db up --build
 ```
 
 ### Docker Compose Watch Mode
