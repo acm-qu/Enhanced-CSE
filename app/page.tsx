@@ -153,12 +153,12 @@ export default async function HomePage() {
 
   return (
     <main className="w-full">
-      {/* ── FULLSCREEN HERO ── */}
-      <section className="relative min-h-[calc(100vh-3.5rem)] border-b border-foreground/10">
+      {/* ── HERO ── */}
+      <section className="relative min-h-[50vh] border-b border-foreground/10">
         <div className="absolute inset-0 [background:radial-gradient(circle_at_top,rgba(255,255,255,0.06),transparent_45%)] dark:[background:radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_45%)]" />
         <div className="absolute inset-0 [background-image:linear-gradient(to_right,rgba(127,127,127,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(127,127,127,0.08)_1px,transparent_1px)] [background-size:48px_48px]" />
 
-        <div className="relative mx-auto flex min-h-[calc(100vh-3.5rem)] w-full max-w-7xl flex-col px-4 sm:px-6">
+        <div className="relative mx-auto flex min-h-[50vh] w-full max-w-7xl flex-col px-4 sm:px-6">
           <div className="grid flex-1 items-center gap-10 py-10 lg:grid-cols-[1.1fr,0.9fr]">
             <div>
               <Badge variant="outline" className="mb-4">
@@ -171,10 +171,21 @@ export default async function HomePage() {
                 Access departmental services, policies, advisement resources, and senior project archives in one
                 unified platform.
               </p>
+              <div className="mt-6 flex flex-wrap items-center gap-3">
+                <Button asChild variant="outline" size="lg" className="min-w-[170px] justify-center">
+                  <Link href="/wiki">Browse Wiki</Link>
+                </Button>
+                <Button asChild variant="outline" size="lg" className="min-w-[170px] justify-center">
+                  <Link href="/posts">Browse Articles</Link>
+                </Button>
+                <Button asChild variant="outline" size="lg" className="min-w-[170px] justify-center">
+                  <Link href="/wiki?sort=modified_desc">Latest Updates</Link>
+                </Button>
+              </div>
             </div>
 
-            <div className="mx-auto w-full max-w-md panel-muted p-6">
-              <div className="mx-auto flex max-w-[260px] justify-center">
+            <div className="mx-auto w-full max-w-xl p-6">
+              <div className="mx-auto flex max-w-[380px] justify-center">
                 <Image
                   src="/QU Logo - Stacked Black.png"
                   alt="Qatar University College of Engineering logo"
@@ -192,24 +203,6 @@ export default async function HomePage() {
                   priority
                 />
               </div>
-              <Separator className="my-5" />
-              <p className="text-center text-sm text-muted-foreground">
-                Synced wiki and blog content with fast navigation and continuous updates.
-              </p>
-            </div>
-          </div>
-
-          <div className="pb-8">
-            <div className="flex flex-wrap items-center gap-3">
-              <Button asChild size="lg">
-                <Link href="/wiki">Browse Wiki</Link>
-              </Button>
-              <Button asChild variant="outline" size="lg">
-                <Link href="/posts">Browse Articles</Link>
-              </Button>
-              <Button asChild variant="ghost">
-                <Link href="/wiki?sort=modified_desc">Latest Updates</Link>
-              </Button>
             </div>
           </div>
         </div>
@@ -218,9 +211,6 @@ export default async function HomePage() {
           <div className="pointer-events-auto flex flex-col gap-2">
             <Button asChild variant="outline" size="sm">
               <Link href="/api/v1/wiki/categories">All Categories</Link>
-            </Button>
-            <Button asChild variant="outline" size="sm">
-              <Link href="/api/health">Health</Link>
             </Button>
           </div>
         </div>
