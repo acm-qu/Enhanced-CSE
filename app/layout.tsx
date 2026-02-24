@@ -4,6 +4,7 @@ import { GeistSans } from 'geist/font/sans';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { MenuIcon } from 'lucide-react';
+import { Analytics } from '@vercel/analytics/next';
 
 import { NavigationProgress } from '@/components/navigation-progress';
 import { ThemeProvider } from '@/components/theme-provider';
@@ -119,6 +120,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <Toaster richColors position="bottom-right" />
           <NavigationProgress />
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
