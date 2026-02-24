@@ -152,54 +152,81 @@ export default async function HomePage() {
   ] as const;
 
   return (
-    <main className="content-shell">
-      {/* ── HERO ── */}
-      <section className="panel relative overflow-hidden px-5 py-8 text-center sm:px-10 sm:py-10">
-        {/* Decorative gradient blobs */}
-        <div aria-hidden="true" className="pointer-events-none absolute -top-20 left-1/2 h-[400px] w-[600px] -translate-x-1/2 rounded-full bg-blue-500/20 blur-3xl" />
-        <div aria-hidden="true" className="pointer-events-none absolute -bottom-12 right-0 h-[260px] w-[260px] rounded-full bg-violet-500/15 blur-3xl" />
-        <div aria-hidden="true" className="pointer-events-none absolute top-0 left-0 h-[220px] w-[220px] rounded-full bg-cyan-400/10 blur-3xl" />
+    <main className="w-full">
+      {/* ── FULLSCREEN HERO ── */}
+      <section className="relative min-h-[calc(100vh-3.5rem)] border-b border-foreground/10">
+        <div className="absolute inset-0 [background:radial-gradient(circle_at_top,rgba(255,255,255,0.06),transparent_45%)] dark:[background:radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_45%)]" />
+        <div className="absolute inset-0 [background-image:linear-gradient(to_right,rgba(127,127,127,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(127,127,127,0.08)_1px,transparent_1px)] [background-size:48px_48px]" />
 
-        <div className="relative z-10">
-          <div className="mx-auto mb-4 flex max-w-[200px] justify-center">
-            <Image
-              src="/QU Logo - Stacked Black.png"
-              alt="Qatar University College of Engineering logo"
-              width={480}
-              height={150}
-              className="h-auto w-full dark:hidden"
-              priority
-            />
-            <Image
-              src="/QU Logo - Stacked White.png"
-              alt="Qatar University College of Engineering logo"
-              width={480}
-              height={150}
-              className="hidden h-auto w-full dark:block"
-              priority
-            />
+        <div className="relative mx-auto flex min-h-[calc(100vh-3.5rem)] w-full max-w-7xl flex-col px-4 sm:px-6">
+          <div className="grid flex-1 items-center gap-10 py-10 lg:grid-cols-[1.1fr,0.9fr]">
+            <div>
+              <Badge variant="outline" className="mb-4">
+                Qatar University - College of Engineering
+              </Badge>
+              <h1 className="max-w-2xl text-4xl font-semibold tracking-tight sm:text-6xl">
+                Computer Science and Engineering Portal
+              </h1>
+              <p className="mt-5 max-w-xl text-base text-muted-foreground sm:text-lg">
+                Access departmental services, policies, advisement resources, and senior project archives in one
+                unified platform.
+              </p>
+            </div>
+
+            <div className="mx-auto w-full max-w-md panel-muted p-6">
+              <div className="mx-auto flex max-w-[260px] justify-center">
+                <Image
+                  src="/QU Logo - Stacked Black.png"
+                  alt="Qatar University College of Engineering logo"
+                  width={520}
+                  height={180}
+                  className="h-auto w-full dark:hidden"
+                  priority
+                />
+                <Image
+                  src="/QU Logo - Stacked White.png"
+                  alt="Qatar University College of Engineering logo"
+                  width={520}
+                  height={180}
+                  className="hidden h-auto w-full dark:block"
+                  priority
+                />
+              </div>
+              <Separator className="my-5" />
+              <p className="text-center text-sm text-muted-foreground">
+                Synced wiki and blog content with fast navigation and continuous updates.
+              </p>
+            </div>
           </div>
 
-          <h1 className="mx-auto max-w-3xl text-2xl font-semibold tracking-tight sm:text-4xl">
-            Computer Science and Engineering Wiki
-          </h1>
-          <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground">
-            Access departmental services, guidelines, advisement resources, and senior project archives in one place.
-          </p>
-          <div className="mt-6 flex flex-wrap justify-center gap-3">
-            <Button asChild className="bg-blue-600 text-white hover:bg-blue-500">
-              <Link href="/wiki">Browse Wiki</Link>
+          <div className="pb-8">
+            <div className="flex flex-wrap items-center gap-3">
+              <Button asChild size="lg">
+                <Link href="/wiki">Browse Wiki</Link>
+              </Button>
+              <Button asChild variant="outline" size="lg">
+                <Link href="/posts">Browse Articles</Link>
+              </Button>
+              <Button asChild variant="ghost">
+                <Link href="/wiki?sort=modified_desc">Latest Updates</Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        <div className="pointer-events-none absolute right-6 bottom-8 hidden lg:block">
+          <div className="pointer-events-auto flex flex-col gap-2">
+            <Button asChild variant="outline" size="sm">
+              <Link href="/api/v1/wiki/categories">All Categories</Link>
             </Button>
-            <Button asChild variant="outline">
-              <Link href="/posts">Browse Articles</Link>
-            </Button>
-            <Button asChild variant="ghost" size="sm">
-              <Link href="/wiki?sort=modified_desc">Latest Updates</Link>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/api/health">Health</Link>
             </Button>
           </div>
         </div>
       </section>
 
+      <div className="content-shell">
       {/* ── FEATURED SECTIONS ── */}
       <section className="mt-5 grid gap-4 lg:grid-cols-3">
         {featuredSections.map((section, index) => {
@@ -327,6 +354,7 @@ export default async function HomePage() {
           </CardContent>
         </Card>
       </section>
+      </div>
     </main>
   );
 }

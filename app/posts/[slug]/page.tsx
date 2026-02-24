@@ -178,7 +178,7 @@ export default async function PostDetailPage({ params }: DetailPageProps) {
         </article>
 
         <aside className="hidden xl:block">
-          <div className="no-scrollbar sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto">
+          <div className="no-scrollbar sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto pt-4 pb-10">
             <p className="mb-3 text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground/60">
               On This Page
             </p>

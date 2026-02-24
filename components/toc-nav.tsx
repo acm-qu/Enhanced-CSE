@@ -56,7 +56,7 @@ export function TocNav({ items }: { items: TocItem[] }) {
           key={item.id}
           href={`#${item.id}`}
           data-id={item.id}
-          className={`block py-0.5 text-[13px] leading-snug transition-colors ${
+          className={`block py-1 text-sm leading-snug transition-colors ${
             item.level >= 3 ? 'pl-4' : item.level === 2 ? 'pl-2' : ''
           } ${
             activeId === item.id
