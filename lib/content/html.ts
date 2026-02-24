@@ -119,6 +119,52 @@ function materializeElementorYoutubeEmbeds(html: string): string {
   });
 }
 
+function extractLegacyKbBody(html: string): string {
+  const wrappedBody = html.match(
+    /<div[^>]*id="eckb-article-content-body"[^>]*>([\s\S]*?)<div[^>]*id="eckb-article-content-footer"[^>]*>/i
+  );
+
+  if (wrappedBody?.[1]) {
+    return wrappedBody[1];
+  }
+
+  const bodyOnly = html.match(/<div[^>]*id="eckb-article-content-body"[^>]*>([\s\S]*?)<\/div>/i);
+  if (bodyOnly?.[1]) {
+    return bodyOnly[1];
+  }
+
+  return html;
+}
+
+function stripLegacyFeedbackAndMeta(html: string): string {
+  let current = html;
+
+  const blockPatterns: RegExp[] = [
+    /<section[^>]*(?:id|class)="[^"]*eprf-[^"]*"[^>]*>[\s\S]*?<\/section>/gi,
+    /<div[^>]*(?:id|class)="[^"]*eprf-[^"]*"[^>]*>[\s\S]*?<\/div>/gi,
+    /<form[^>]*(?:id|class)="[^"]*eprf-[^"]*"[^>]*>[\s\S]*?<\/form>/gi,
+    /<div[^>]*id="eckb-article-content-footer"[\s\S]*$/i
+  ];
+
+  for (const pattern of blockPatterns) {
+    current = current.replace(pattern, '');
+  }
+
+  const textPatterns: RegExp[] = [
+    /Was this article helpful\?/gi,
+    /How can we improve this article\??/gi,
+    /\bTable of Contents\b/gi,
+    /&lt;\s*All Topics/gi,
+    /<\s*All Topics/gi
+  ];
+
+  for (const pattern of textPatterns) {
+    current = current.replace(pattern, '');
+  }
+
+  return current;
+}
+
 export function extractWikiSlugFromUrl(href: string): string | null {
   try {
     const placeholderHost = 'placeholder.local';
@@ -213,7 +259,8 @@ export function rewriteInternalContentHref(href: string): string {
 }
 
 export function sanitizeWikiHtml(html: string): string {
-  const htmlWithEmbeds = materializeElementorYoutubeEmbeds(html);
+  const legacyTrimmed = stripLegacyFeedbackAndMeta(extractLegacyKbBody(html));
+  const htmlWithEmbeds = materializeElementorYoutubeEmbeds(legacyTrimmed);
 
   return sanitizeHtml(htmlWithEmbeds, {
     allowedTags: sanitizeHtml.defaults.allowedTags.concat([
@@ -242,7 +289,9 @@ export function sanitizeWikiHtml(html: string): string {
         'allowfullscreen',
         'loading',
         'referrerpolicy'
-      ]
+      ],
+      td: ['rowspan', 'colspan'],
+      th: ['rowspan', 'colspan']
     },
     allowedSchemes: ['http', 'https', 'mailto', 'tel'],
     allowedIframeHostnames: ['www.youtube.com', 'youtube.com', 'www.youtube-nocookie.com', 'youtu.be'],

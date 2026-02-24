@@ -9,7 +9,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { ChevronDownIcon } from 'lucide-react';
 import { toArticleDetailResponse } from '@/lib/content/transform';
 import { getArticleBySlug, listCategories, listTags } from '@/lib/db/queries';
@@ -130,16 +129,6 @@ export default async function WikiDetailPage({ params }: DetailPageProps) {
             <CardContent className="space-y-3 text-sm text-foreground/72">
               <p>Published: {formatDate(transformed.publishedAtGmt)}</p>
               <p>Updated: {formatDate(transformed.modifiedAtGmt)}</p>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <a className="underline underline-offset-2" href={transformed.sourceLink} rel="noopener noreferrer" target="_blank">
-                      Original source
-                    </a>
-                  </TooltipTrigger>
-                  <TooltipContent>{transformed.sourceLink}</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
               <Separator />
               <Button asChild variant="outline" size="sm">
                 <Link href="/wiki">Back to index</Link>

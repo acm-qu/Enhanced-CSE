@@ -35,7 +35,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
                 <div className="mx-auto flex h-14 w-full max-w-7xl items-center gap-3 px-4 sm:px-6">
                   <Link href="/" className="flex items-center gap-2">
-                    <Badge variant="default" className="text-[9px]">CSE</Badge>
+                    <Badge className="bg-blue-600 text-[9px] text-white hover:bg-blue-500">CSE</Badge>
                     <span className="text-xs font-semibold uppercase tracking-[0.14em] text-foreground/80">
                       CSE Wiki
                     </span>

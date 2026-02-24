@@ -75,4 +75,17 @@ describe('content html utilities', () => {
     expect(sanitized).toContain('<iframe');
     expect(sanitized).not.toContain('elementor-video');
   });
+
+  it('strips legacy knowledge-base chrome and feedback blocks', () => {
+    const html =
+      '<div id="eckb-article-content-header-v2"><div>&lt; All Topics</div><div>Print</div><div>PostedJanuary 26, 2021</div><div>ByAbdulahi Hassen</div></div><div id="eckb-article-content-body"><p>Internship details body</p></div><div id="eckb-article-content-footer"><section id="eprf-article-buttons-container">Was this article helpful?</section><form class="eprf-article-feedback__form">How can we improve this article?</form></div>';
+    const sanitized = sanitizeWikiHtml(html);
+
+    expect(sanitized).toContain('Internship details body');
+    expect(sanitized).not.toContain('All Topics');
+    expect(sanitized).not.toContain('Was this article helpful?');
+    expect(sanitized).not.toContain('How can we improve this article?');
+    expect(sanitized).not.toContain('PostedJanuary 26, 2021');
+    expect(sanitized).not.toContain('ByAbdulahi Hassen');
+  });
 });

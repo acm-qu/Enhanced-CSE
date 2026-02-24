@@ -71,6 +71,18 @@
     @apply font-sans antialiased;
   }
 
+  /* Subtle ambient glow at the top of every page */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 35% at 50% -5%, hsl(220 90% 56% / 0.10), transparent),
+      radial-gradient(ellipse 40% 25% at 85% 10%, hsl(270 80% 60% / 0.07), transparent);
+    pointer-events: none;
+    z-index: 0;
+  }
+
   a {
     @apply text-inherit no-underline;
   }
@@ -132,7 +144,8 @@
   }
 
   .article-html a {
-    @apply underline underline-offset-4 hover:text-foreground;
+    @apply text-blue-500 underline-offset-4 transition-colors hover:text-blue-400;
+    text-decoration: underline;
   }
 
   .article-html img {
@@ -156,27 +169,112 @@
     @apply px-1.5 py-0.5 text-[13px];
   }
 
+  /* overflow:hidden + rounded-xl clips all table corners — no cell-level radius needed */
   .article-html table {
-    @apply my-6 w-full border-collapse overflow-hidden rounded-lg border border-border;
+    @apply my-6 w-full overflow-hidden rounded-xl shadow-lg;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 2px solid hsl(var(--foreground) / 0.15);
   }
 
-  .article-html th {
-    @apply bg-primary px-4 py-3 text-left font-semibold text-primary-foreground;
-  }
-
+  /* Base padding for every cell */
+  .article-html th,
   .article-html td {
-    @apply border-t border-border px-4 py-3;
+    @apply px-4 py-3 text-left;
   }
 
-  .article-html tbody tr {
-    @apply transition-colors hover:bg-muted/50;
+  /* Base border + colour for body cells */
+  .article-html tbody td {
+    border-top: 1px solid hsl(var(--foreground) / 0.07);
+    color: hsl(var(--foreground) / 0.82);
+  }
+  .article-html tbody td + td {
+    border-left: 1px solid hsl(var(--foreground) / 0.07);
   }
 
+  /* ── HEADER ROWS (dark band) ── */
+  /* Use fixed dark colours — hsl(var(--foreground)/0.9) inverts to near-white in dark mode,
+     and colour set on <td> is overridden by the .article-html p rule on child <p> elements.
+     Fixed colours + `color: inherit` on children solve both problems. */
+
+  /* Case 1: proper <th> cells (Table 1 — "Current Electives") */
+  .article-html th {
+    background: hsl(222 22% 14%);
+    color: hsl(0 0% 94%);
+    @apply font-semibold text-xs uppercase tracking-wider;
+    border-bottom: 2px solid hsl(0 0% 0% / 0.25);
+  }
+  .article-html th + th {
+    border-left: 1px solid hsl(0 0% 100% / 0.12);
+  }
+
+  /* Case 2: no <thead> — first tbody row is the CS/CE label row (Past Electives tables)
+     Guard: only when that first row contains NO <a> links (i.e. it's purely a label row,
+     not a data row like in the old rowspan-based Table 5 format) */
+  .article-html table:not(:has(thead)) tbody tr:first-child:not(:has(td a)) td {
+    background: hsl(222 22% 14%);
+    color: hsl(0 0% 94%);
+    @apply font-semibold text-xs uppercase tracking-wider;
+    border-bottom: 2px solid hsl(0 0% 0% / 0.25);
+    border-top: none;
+  }
+  .article-html table:not(:has(thead)) tbody tr:first-child:not(:has(td a)) td + td {
+    border-left: 1px solid hsl(0 0% 100% / 0.12);
+  }
+
+  /* Dark mode: slightly elevated surface instead of the same charcoal */
+  .dark .article-html th,
+  .dark .article-html table:not(:has(thead)) tbody tr:first-child:not(:has(td a)) td {
+    background: hsl(222 22% 24%);
+  }
+
+  /* Force all child elements (p, strong, span, etc.) to inherit the cell's text colour
+     — the .article-html p/span rules would otherwise override it */
+  .article-html th *,
+  .article-html table:not(:has(thead)) tbody tr:first-child:not(:has(td a)) td * {
+    color: inherit;
+  }
+
+  /* ── TERM / SEMESTER ROWS (accent band) ── */
+  /* sanitize-html strips class="term", so we detect by content shape:
+     — Table 1 (has <thead>): tbody rows that contain NO <a> link = term rows
+     — Tables 2-4, 6 (no <thead>, pure-label first row): rows after first with <strong> but no <a>
+     Note: Table 5 (rowspan format) is excluded by requiring the first row to be link-free */
+  .article-html table:has(thead) tbody tr:not(:has(td a)) td,
+  .article-html table:not(:has(thead)):has(tbody tr:first-child:not(:has(td a))) tbody tr:not(:first-child):has(td strong):not(:has(td a)) td {
+    background: hsl(var(--foreground) / 0.10);
+    color: hsl(var(--foreground));
+    font-weight: 600;
+    font-size: 0.875rem;
+    border-top: 2px solid hsl(var(--foreground) / 0.12);
+    border-bottom: 1px solid hsl(var(--foreground) / 0.08);
+  }
+  .article-html table:has(thead) tbody tr:not(:has(td a)) td + td,
+  .article-html table:not(:has(thead)):has(tbody tr:first-child:not(:has(td a))) tbody tr:not(:first-child):has(td strong):not(:has(td a)) td + td {
+    border-left: 1px solid hsl(var(--foreground) / 0.08);
+  }
+  /* Same color-inheritance fix for term row children */
+  .article-html table:has(thead) tbody tr:not(:has(td a)) td *,
+  .article-html table:not(:has(thead)):has(tbody tr:first-child:not(:has(td a))) tbody tr:not(:first-child):has(td strong):not(:has(td a)) td * {
+    color: inherit;
+  }
+
+  /* ── ALTERNATING ROWS + HOVER ── */
   .article-html tbody tr:nth-child(even) {
-    @apply bg-muted/20;
+    background: hsl(var(--foreground) / 0.02);
+  }
+  .article-html tbody tr {
+    transition: background 150ms ease;
+  }
+  .article-html tbody tr:hover {
+    background: hsl(var(--foreground) / 0.05);
   }
 
-  .article-html tbody tr:hover {
-    @apply bg-muted/80;
+  /* ── BOTTOM CORNERS ── */
+  .article-html tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 0.625rem;
+  }
+  .article-html tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 0.625rem;
   }
 }
