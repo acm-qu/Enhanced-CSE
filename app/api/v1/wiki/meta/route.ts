@@ -1,21 +1,16 @@
-import { NextResponse } from 'next/server';
-
 import { getSyncMeta } from '@/lib/db/queries';
-import { internalError } from '@/lib/internal/http';
+import { internalError, jsonCached } from '@/lib/internal/http';
 
 const CACHE_CONTROL = 'public, s-maxage=30, stale-while-revalidate=120';
 
-export async function GET(): Promise<NextResponse> {
+export async function GET(): Promise<Response> {
   try {
     const meta = await getSyncMeta();
-    const response = NextResponse.json({
+    return jsonCached({
       hasTags: meta.hasTags,
       lastSuccessAt: meta.lastSuccessAt?.toISOString() ?? null,
       lastRunStatus: meta.lastRunStatus
-    });
-
-    response.headers.set('Cache-Control', CACHE_CONTROL);
-    return response;
+    }, CACHE_CONTROL);
   } catch {
     return internalError();
   }

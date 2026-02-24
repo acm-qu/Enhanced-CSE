@@ -17,5 +17,24 @@ services:
       timeout: 5s
       retries: 5
 
+  app:
+    build: .
+    container_name: enhanced-cse-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/enhanced_cse
+      WP_API_BASE: http://blogs.qu.edu.qa/cse/wp-json/wp/v2
+      WP_POST_TYPE: epkb_post_type_1
+      SYNC_SECRET: local-sync-secret
+      CRON_SECRET: local-cron-secret
+      SYNC_BASE_URL: http://localhost:3000
+    # Run database migrations, then start the production server
+    command: sh -c "npm run db:migrate && npm start"
+
 volumes:
   postgres_data:

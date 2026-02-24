@@ -1,16 +1,12 @@
-import { NextResponse } from 'next/server';
-
 import { listPostCategories } from '@/lib/db/posts-queries';
-import { internalError } from '@/lib/internal/http';
+import { internalError, jsonCached } from '@/lib/internal/http';
 
 const CACHE_CONTROL = 'public, s-maxage=300, stale-while-revalidate=600';
 
-export async function GET(): Promise<NextResponse> {
+export async function GET(): Promise<Response> {
   try {
     const categories = await listPostCategories();
-    const response = NextResponse.json({ categories });
-    response.headers.set('Cache-Control', CACHE_CONTROL);
-    return response;
+    return jsonCached({ categories }, CACHE_CONTROL);
   } catch {
     return internalError();
   }

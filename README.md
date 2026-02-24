@@ -1,106 +1,336 @@
-# Enhanced CSE Content Platform
+# Enhanced CSE Portal
 
-Next.js app that syncs both the WordPress CSE wiki CPT (`epkb_post_type_1`) and main site posts (`posts`) into Postgres, then serves public read APIs and frontend routes.
+A Next.js web portal for Qatar University's Computer Science and Engineering (CSE) department. It syncs content from the department's WordPress site into a local PostgreSQL database and serves it through a modern web UI and a public REST API.
 
-## Stack
+---
 
-- Next.js App Router (API routes)
-- Neon Postgres
-- Drizzle ORM + SQL migrations
-- Vercel Cron (every 8 hours)
-- HTML sanitization with internal-link rewriting
+## What It Does
+
+- Pulls **wiki articles** (knowledge base) and **blog posts** from the QU CSE WordPress site every 8 hours via a cron job
+- Stores content in PostgreSQL for fast, reliable reads
+- Serves a **browsable web UI** at `/wiki` and `/posts`
+- Exposes a **public REST API** at `/api/v1/` for programmatic access
+- Supports manual sync triggering via a protected internal API
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+| --- | --- |
+| Framework | Next.js 14 (App Router, React 18) |
+| Language | TypeScript |
+| Database | PostgreSQL 16 |
+| ORM | Drizzle ORM |
+| Styling | Tailwind CSS + shadcn/ui |
+| Containerization | Docker + Docker Compose |
+| Deployment | Vercel (production) |
+
+---
+
+## Architecture
+
+This is a **monolithic Next.js application** — there is no separate backend service. Everything lives in one codebase:
+
+```text
+Browser ──► Next.js App (port 3000)
+                │
+                ├── /app/              React pages (SSR, force-dynamic)
+                ├── /app/api/v1/       Public REST API
+                ├── /app/api/internal/ Protected sync endpoints
+                └── /lib/              Business logic, DB queries, sync service
+                        │
+                        └── PostgreSQL (port 54329 on host / 5432 in Docker)
+```
+
+Content sync flow:
+
+```text
+Vercel Cron (every 8h) ──► POST /api/internal/sync/cron
+                                │
+                                └── Fetches from WordPress REST API
+                                        │
+                                        └── Upserts into PostgreSQL
+```
+
+---
+
+## Prerequisites
+
+- [Node.js 20+](https://nodejs.org/) and npm — for dev mode
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) — for running PostgreSQL or the full stack
+
+---
+
+## Setup
+
+### Option A — Dev Mode (recommended for development)
+
+Runs the database in Docker and the Next.js app locally on your machine. Gives you hot-reload and a fast feedback loop.
+
+#### 1. Clone and install dependencies
+
+```bash
+git clone <repo-url>
+cd Enhanced-CSE
+npm install
+```
+
+#### 2. Configure environment variables
+
+```bash
+cp .env.example .env.local
+```
+
+The defaults in `.env.example` work out of the box for local development. You only need to set real values for `SYNC_SECRET` and `CRON_SECRET` (any non-empty string works locally).
+
+#### 3. Start the database
+
+```bash
+npm run db:up
+```
+
+This starts a PostgreSQL container on port `54329`.
+
+#### 4. Run database migrations
+
+```bash
+npm run db:migrate
+```
+
+This creates all the required tables. Run this once on first setup, and again whenever new migrations are added (i.e., after pulling changes that include new files in `drizzle/`).
+
+#### 5. Start the dev server
+
+```bash
+npm run dev
+```
+
+The app is now running at <http://localhost:3000>.
+
+The database will be empty until you trigger a sync — see [Syncing Content](#syncing-content) below.
+
+---
+
+### Option B — Full Docker Mode
+
+Runs everything (database + app) in Docker with a single command. Useful for quickly spinning up the project or testing the production build.
+
+#### 1. Clone the repo
+
+```bash
+git clone <repo-url>
+cd Enhanced-CSE
+```
+
+#### 2. Build and start all services
+
+```bash
+docker compose up --build
+```
+
+This will:
+
+1. Build the Next.js app into a Docker image
+2. Start the PostgreSQL database
+3. Wait for the database to pass its health check
+4. Run all database migrations automatically
+5. Start the production Next.js server
+
+The app is available at <http://localhost:3000>.
+
+To run in the background:
+
+```bash
+docker compose up --build -d
+docker compose logs -f app   # stream logs
+```
+
+To stop everything:
+
+```bash
+docker compose down
+```
+
+> **Note on secrets:** `docker-compose.yml` includes default values for `SYNC_SECRET` and `CRON_SECRET` that are fine for local use. For a shared or internet-facing environment, override them with strong random secrets.
+
+---
 
 ## Environment Variables
 
-Copy `.env.example` to `.env.local`.
+Create `.env.local` by copying `.env.example`:
 
-- `DATABASE_URL`: Neon PostgreSQL connection string
-- `WP_API_BASE`: WordPress API base (default: `http://blogs.qu.edu.qa/cse/wp-json/wp/v2`)
-- `WP_POST_TYPE`: CPT slug (default: `epkb_post_type_1`)
-- `SYNC_SECRET`: shared secret for manual sync/status routes (`x-sync-secret`)
-- `CRON_SECRET`: secret for cron route (`Authorization: Bearer <secret>`)
+```bash
+cp .env.example .env.local
+```
 
-## Database
+| Variable | Required | Default | Description |
+| --- | --- | --- | --- |
+| `DATABASE_URL` | Yes | `postgresql://postgres:postgres@127.0.0.1:54329/enhanced_cse` | PostgreSQL connection string |
+| `WP_API_BASE` | No | `http://blogs.qu.edu.qa/cse/wp-json/wp/v2` | WordPress REST API base URL |
+| `WP_POST_TYPE` | No | `epkb_post_type_1` | WordPress custom post type slug for wiki articles |
+| `SYNC_SECRET` | Yes | — | Value expected in the `x-sync-secret` header when triggering a manual sync |
+| `CRON_SECRET` | Yes | — | Bearer token for the automated cron endpoint |
+| `SYNC_BASE_URL` | No | `http://localhost:3000` | Base URL the `sync:now` script uses to reach the API |
+| `SYNC_TIMEOUT_MS` | No | `180000` | How long (ms) `sync:now` waits before timing out (default: 3 min) |
+| `SYNC_POLL_MS` | No | `2000` | How often (ms) `sync:now` polls for completion |
 
-Schema files:
+---
 
-- `lib/db/schema.ts`
-- `drizzle/0000_initial.sql`
-- `drizzle/0001_posts_pipeline.sql`
+## Syncing Content
 
-Start local Postgres with Docker Compose:
+The database starts empty. Content is populated by syncing from WordPress.
 
-- `npm run db:up`
-- `npm run db:ps`
-- `npm run db:down`
+### Trigger a one-shot sync (with the app running)
 
-Scripts:
+```bash
+npm run sync:now
+```
 
-- `npm run db:generate`
-- `npm run db:migrate`
+This calls the sync API, polls until it finishes, and prints a summary. Requires the app to be running and `.env.local` to have `SYNC_SECRET` and `SYNC_BASE_URL` set.
 
-## Run
+### Trigger via API directly
 
-1. Install dependencies: `npm install`
-2. Run migrations: `npm run db:migrate`
-3. Start dev server: `npm run dev`
+```bash
+curl -X POST http://localhost:3000/api/internal/sync/run \
+  -H "x-sync-secret: local-sync-secret"
+```
 
-## Public API
+### Check sync status
 
-- `GET /api/v1/wiki/articles?page=1&pageSize=20&category=<slug>&tag=<slug>&sort=modified_desc`
-- `GET /api/v1/wiki/articles/[slug]`
-- `GET /api/v1/wiki/categories`
-- `GET /api/v1/wiki/tags`
-- `GET /api/v1/wiki/meta`
-- `GET /api/v1/posts?page=1&pageSize=20&category=<slug>&month=YYYY-MM&sort=published_desc`
-- `GET /api/v1/posts/[slug]`
-- `GET /api/v1/posts/categories`
-- `GET /api/v1/posts/archives?category=<slug>`
-- `GET /api/health`
+```bash
+curl http://localhost:3000/api/internal/sync/status \
+  -H "x-sync-secret: local-sync-secret"
+```
 
-## Internal Sync API
+In production on Vercel, a cron job calls `/api/internal/sync/cron` every 8 hours automatically (configured in `vercel.json`).
 
-- `POST /api/internal/sync/run` with header `x-sync-secret: <SYNC_SECRET>`
-- `GET /api/internal/sync/status` with header `x-sync-secret: <SYNC_SECRET>`
-- `GET /api/internal/sync/cron` with header `Authorization: Bearer <CRON_SECRET>`
+---
 
-## Manual Sync Script
+## npm Scripts Reference
 
-Run full local sync flow (trigger, wait, verify):
+| Script | Description |
+| --- | --- |
+| `npm run dev` | Start Next.js dev server with hot-reload |
+| `npm run build` | Build the app for production |
+| `npm run start` | Start the production server (requires a build first) |
+| `npm run lint` | Run ESLint |
+| `npm run db:up` | Start the PostgreSQL Docker container |
+| `npm run db:down` | Stop the PostgreSQL Docker container |
+| `npm run db:ps` | Show PostgreSQL container status |
+| `npm run db:migrate` | Apply pending database migrations |
+| `npm run db:generate` | Regenerate migration files from schema changes |
+| `npm run sync:now` | Trigger a full content sync and wait for completion |
+| `npm test` | Run unit tests (Vitest) |
+| `npm run test:watch` | Run tests in watch mode |
 
-- `npm run sync:now`
+---
 
-The script:
+## API Endpoints
 
-- Calls `POST /api/internal/sync/run`.
-- Polls `GET /api/internal/sync/status` until the run is terminal.
-- Prints `GET /api/v1/wiki/meta`, `GET /api/health`, plus wiki/post totals.
+All public endpoints are read-only and require no authentication.
 
-Optional overrides:
+### Wiki
 
-- `SYNC_BASE_URL` (default: `http://localhost:3000`)
-- `SYNC_TIMEOUT_MS` (default: `180000`)
-- `SYNC_POLL_MS` (default: `2000`)
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| GET | `/api/v1/wiki/articles` | List wiki articles (paginated, filterable) |
+| GET | `/api/v1/wiki/articles/:slug` | Get a single wiki article by slug |
+| GET | `/api/v1/wiki/categories` | List wiki categories |
+| GET | `/api/v1/wiki/tags` | List wiki tags |
+| GET | `/api/v1/wiki/meta` | Sync metadata (last sync time, counts) |
 
-## Sync Behavior
+### Blog Posts
 
-- Acquires PostgreSQL advisory lock to prevent concurrent syncs.
-- Discovers taxonomy support from WordPress type endpoint.
-- Full snapshot sync each run (`per_page=100`, paginated).
-- Runs two phases in one run: wiki phase then posts phase.
-- Upserts terms and content records for both datasets.
-- Rebuilds wiki/article-term and post/category joins.
-- Hard-deletes local rows missing in upstream only after each phase completes successfully.
-- Stores raw source HTML; sanitizes and rewrites internal links when serving API responses.
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| GET | `/api/v1/posts` | List blog posts (paginated, filterable) |
+| GET | `/api/v1/posts/:slug` | Get a single blog post by slug |
+| GET | `/api/v1/posts/categories` | List blog post categories |
+| GET | `/api/v1/posts/archives` | List archive months |
 
-## Tests
+### System
 
-- `tests/content/html.test.ts`
-- `tests/api/auth.test.ts`
-- `tests/sync/wp-client.test.ts`
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| GET | `/api/health` | Health check — DB connectivity and sync freshness |
 
-Run: `npm test`
+### Common query parameters for list endpoints
 
-## Vercel Cron
+| Parameter | Description | Example |
+| --- | --- | --- |
+| `page` | Page number | `?page=2` |
+| `pageSize` | Items per page (max 100) | `?pageSize=50` |
+| `sort` | Sort order | `?sort=modified_desc` |
+| `category` | Filter by category slug | `?category=senior-projects` |
+| `tag` | Filter by tag slug (wiki only) | `?tag=advising` |
+| `month` | Filter by month (posts only) | `?month=2024-09` |
 
-`vercel.json` schedules `/api/internal/sync/cron` every 8 hours (`0 */8 * * *`, UTC).
+---
+
+## Running Tests
+
+```bash
+npm test
+```
+
+Tests live in `tests/` and cover:
+
+- `tests/content/html.test.ts` — HTML sanitization and link rewriting
+- `tests/api/auth.test.ts` — sync endpoint authentication
+- `tests/sync/wp-client.test.ts` — WordPress API client
+
+---
+
+## Project Structure
+
+```text
+Enhanced-CSE/
+├── app/                    # Next.js pages and API routes
+│   ├── api/
+│   │   ├── v1/            # Public REST API
+│   │   ├── internal/      # Protected sync trigger & status endpoints
+│   │   └── health/        # Health check
+│   ├── wiki/              # Wiki browser pages
+│   ├── posts/             # Blog posts pages
+│   ├── layout.tsx         # Root layout
+│   └── page.tsx           # Homepage
+├── components/            # React components (shadcn/ui + custom)
+├── lib/
+│   ├── db/               # Drizzle schema, queries, migration runner
+│   ├── sync/             # Sync orchestration logic
+│   ├── wp/               # WordPress REST API client
+│   ├── content/          # HTML sanitization and API response transforms
+│   └── internal/         # Auth helpers, env loader, HTTP utilities
+├── drizzle/              # SQL migration files (auto-applied at startup)
+├── scripts/              # sync-now.mjs utility
+├── tests/                # Vitest unit tests
+├── public/               # Static assets (logos, images)
+├── Dockerfile            # Multi-stage Docker build for the app
+├── docker-compose.yml    # Starts PostgreSQL + app together
+├── .env.example          # Environment variable template — copy to .env.local
+├── drizzle.config.ts     # Drizzle ORM configuration
+├── next.config.mjs       # Next.js configuration
+└── vercel.json           # Production cron job schedule
+```
+
+---
+
+## Deployment
+
+The app is designed for deployment on **Vercel**.
+
+1. Push to GitHub and import the repo in [Vercel](https://vercel.com)
+2. Set the following environment variables in the Vercel project settings:
+
+   | Variable | Notes |
+   | --- | --- |
+   | `DATABASE_URL` | Connection string for a production PostgreSQL instance (Neon, Supabase, Railway, etc.) |
+   | `SYNC_SECRET` | A strong random string |
+   | `CRON_SECRET` | A strong random string |
+   | `WP_API_BASE` | WordPress source URL (default is pre-set) |
+   | `WP_POST_TYPE` | Custom post type slug (default is pre-set) |
+
+3. The cron job in `vercel.json` automatically syncs content every 8 hours UTC
+
+For the production database, run `npm run db:migrate` once pointed at the production `DATABASE_URL` to set up the schema before the first deploy.

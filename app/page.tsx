@@ -23,6 +23,7 @@ import {
 import { toArticleListResponse, toPostListResponse } from '@/lib/content/transform';
 import { listPosts } from '@/lib/db/posts-queries';
 import { getSyncMeta, listArticles, listCategories, type TermWithCount } from '@/lib/db/queries';
+import { formatDate } from '@/lib/utils/date';
 
 export const dynamic = 'force-dynamic';
 
@@ -41,21 +42,6 @@ const FEATURED_CATEGORY_RULES = [
   }
 ] as const;
 
-function formatDate(iso: string | null): string {
-  if (!iso) {
-    return 'Never';
-  }
-
-  const date = new Date(iso);
-  if (Number.isNaN(date.getTime())) {
-    return 'Unknown';
-  }
-
-  return new Intl.DateTimeFormat('en-US', {
-    dateStyle: 'medium',
-    timeStyle: 'short'
-  }).format(date);
-}
 
 function normalizeText(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
@@ -382,7 +368,7 @@ export default async function HomePage() {
                     <h3 className="text-2xl font-semibold tracking-tight">Blog Posts</h3>
                     <p className="text-base text-muted-foreground">Latest announcements and departmental news.</p>
                     <p className="mt-2 text-sm text-muted-foreground">
-                      Last sync: {formatDate(meta.lastSuccessAt?.toISOString() ?? null)}
+                      Last sync: {meta.lastSuccessAt ? formatDate(meta.lastSuccessAt.toISOString(), { timeStyle: 'short' }) : 'Never'}
                     </p>
                   </div>
 

@@ -2,11 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-interface TocItem {
-  id: string;
-  text: string;
-  level: number;
-}
+import type { TocItem } from '@/lib/utils/content';
 
 export function TocNav({ items }: { items: TocItem[] }) {
   const [activeId, setActiveId] = useState<string>(items[0]?.id ?? '');

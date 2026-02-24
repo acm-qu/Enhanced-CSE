@@ -12,6 +12,8 @@ import { ChevronDownIcon } from 'lucide-react';
 import { TocNav } from '@/components/toc-nav';
 import { toArticleDetailResponse } from '@/lib/content/transform';
 import { getArticleBySlug, listCategories, listTags } from '@/lib/db/queries';
+import { addHeadingIdsAndBuildToc, type TocItem } from '@/lib/utils/content';
+import { formatDate } from '@/lib/utils/date';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,73 +21,6 @@ interface DetailPageProps {
   params: {
     slug: string;
   };
-}
-
-interface TocItem {
-  id: string;
-  text: string;
-  level: number;
-}
-
-function stripTags(value: string): string {
-  return value.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-}
-
-function slugify(value: string): string {
-  return stripTags(value)
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, '')
-    .trim()
-    .replace(/\s+/g, '-');
-}
-
-function addHeadingIdsAndBuildToc(html: string): { html: string; toc: TocItem[] } {
-  const used = new Map<string, number>();
-  const toc: TocItem[] = [];
-
-  const htmlWithAnchors = html.replace(/<h([1-3])([^>]*)>([\s\S]*?)<\/h\1>/gi, (_match, levelRaw, attrsRaw, innerHtml) => {
-    const level = Number(levelRaw);
-    const text = stripTags(innerHtml);
-    if (!text) {
-      return _match;
-    }
-
-    const existingIdMatch = String(attrsRaw).match(/\sid=(['"])(.*?)\1/i);
-    let headingId = existingIdMatch?.[2] ?? '';
-
-    if (!headingId) {
-      const base = slugify(text) || 'section';
-      const seen = used.get(base) ?? 0;
-      headingId = seen === 0 ? base : `${base}-${seen + 1}`;
-      used.set(base, seen + 1);
-    }
-
-    toc.push({ id: headingId, text, level });
-
-    if (existingIdMatch) {
-      return `<h${level}${attrsRaw}>${innerHtml}</h${level}>`;
-    }
-
-    return `<h${level}${attrsRaw} id="${headingId}">${innerHtml}</h${level}>`;
-  });
-
-  return { html: htmlWithAnchors, toc };
-}
-
-function formatDate(value: string | null): string {
-  if (!value) {
-    return 'Unknown';
-  }
-
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return 'Unknown';
-  }
-
-  return new Intl.DateTimeFormat('en-US', {
-    dateStyle: 'long',
-    timeStyle: 'short'
-  }).format(date);
 }
 
 export async function generateMetadata({ params }: DetailPageProps): Promise<Metadata> {
@@ -127,8 +62,8 @@ export default async function WikiDetailPage({ params }: DetailPageProps) {
               <CardTitle className="text-sm uppercase tracking-[0.14em]">Article Meta</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-sm text-foreground/72">
-              <p>Published: {formatDate(transformed.publishedAtGmt)}</p>
-              <p>Updated: {formatDate(transformed.modifiedAtGmt)}</p>
+              <p>Published: {formatDate(transformed.publishedAtGmt, { dateStyle: 'long', timeStyle: 'short' })}</p>
+              <p>Updated: {formatDate(transformed.modifiedAtGmt, { dateStyle: 'long', timeStyle: 'short' })}</p>
               <Separator />
               <Button asChild variant="outline" size="sm">
                 <Link href="/wiki">Back to index</Link>
@@ -159,8 +94,8 @@ export default async function WikiDetailPage({ params }: DetailPageProps) {
               <CardTitle className="text-3xl sm:text-5xl">{transformed.title}</CardTitle>
 
               <CardDescription className="flex flex-wrap gap-4 text-xs uppercase tracking-[0.11em] text-foreground/60">
-                <span>Published {formatDate(transformed.publishedAtGmt)}</span>
-                <span>Updated {formatDate(transformed.modifiedAtGmt)}</span>
+                <span>Published {formatDate(transformed.publishedAtGmt, { dateStyle: 'long', timeStyle: 'short' })}</span>
+                <span>Updated {formatDate(transformed.modifiedAtGmt, { dateStyle: 'long', timeStyle: 'short' })}</span>
               </CardDescription>
 
               <div className="flex flex-wrap gap-2">

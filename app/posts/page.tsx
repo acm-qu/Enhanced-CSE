@@ -11,6 +11,7 @@ import { PostsFilterSidebar } from '@/components/posts-filter-sidebar';
 import { toPostListResponse } from '@/lib/content/transform';
 import { listPostArchives, listPostCategories, listPosts, type PostSort } from '@/lib/db/posts-queries';
 import { getSyncMeta } from '@/lib/db/queries';
+import { formatDate } from '@/lib/utils/date';
 
 export const dynamic = 'force-dynamic';
 
@@ -114,20 +115,6 @@ function buildPostsHref(options: {
   return query ? `/posts?${query}` : '/posts';
 }
 
-function formatDate(value: string | null): string {
-  if (!value) {
-    return 'Unknown';
-  }
-
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return 'Unknown';
-  }
-
-  return new Intl.DateTimeFormat('en-US', {
-    dateStyle: 'medium'
-  }).format(date);
-}
 
 export default async function PostsPage({ searchParams }: SearchParamProps) {
   const page = parsePositiveInt(getFirstParam(searchParams?.page), 1);

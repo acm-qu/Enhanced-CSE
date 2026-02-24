@@ -1,24 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 
 import { toPostListResponse } from '@/lib/content/transform';
 import { listPosts, type PostSort } from '@/lib/db/posts-queries';
-import { badRequest, internalError } from '@/lib/internal/http';
+import { parsePositiveInt } from '@/lib/api/params';
+import { badRequest, internalError, jsonCached } from '@/lib/internal/http';
 
 const CACHE_CONTROL = 'public, s-maxage=60, stale-while-revalidate=300';
 const ALLOWED_SORTS: PostSort[] = ['published_desc', 'published_asc', 'modified_desc', 'modified_asc'];
-
-function parsePositiveInt(raw: string | null, fallback: number): number {
-  if (!raw) {
-    return fallback;
-  }
-
-  const value = Number(raw);
-  if (!Number.isInteger(value) || value <= 0) {
-    throw new Error('Expected a positive integer');
-  }
-
-  return value;
-}
+const MONTH_FORMAT_RE = /^\d{4}-\d{2}$/;
 
 function parseIsoDate(raw: string | null, fieldName: 'after' | 'before'): Date | undefined {
   if (!raw) {
@@ -38,7 +27,7 @@ function parseMonth(raw: string | null): string | undefined {
     return undefined;
   }
 
-  if (!/^\d{4}-\d{2}$/.test(raw)) {
+  if (!MONTH_FORMAT_RE.test(raw)) {
     throw new Error('month must be in YYYY-MM format');
   }
 
@@ -64,7 +53,7 @@ function resolveMonthBounds(month: string): { after: Date; before: Date } {
   };
 }
 
-export async function GET(request: NextRequest): Promise<NextResponse> {
+export async function GET(request: NextRequest): Promise<Response> {
   try {
     const page = parsePositiveInt(request.nextUrl.searchParams.get('page'), 1);
     const pageSizeRaw = parsePositiveInt(request.nextUrl.searchParams.get('pageSize'), 20);
@@ -107,7 +96,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       sort: sortRaw
     });
 
-    const response = NextResponse.json({
+    return jsonCached({
       page: data.page,
       pageSize: data.pageSize,
       total: data.total,
@@ -120,10 +109,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         before: before?.toISOString() ?? null
       },
       items: data.items.map(toPostListResponse)
-    });
-
-    response.headers.set('Cache-Control', CACHE_CONTROL);
-    return response;
+    }, CACHE_CONTROL);
   } catch (error) {
     if (error instanceof Error) {
       return badRequest(error.message);

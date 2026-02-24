@@ -10,6 +10,7 @@ import { Separator } from '@/components/ui/separator';
 import { WikiFilterSidebar } from '@/components/wiki-filter-sidebar';
 import { toArticleListResponse } from '@/lib/content/transform';
 import { getSyncMeta, listArticles, listCategories, listTags, type ArticleSort } from '@/lib/db/queries';
+import { formatDate } from '@/lib/utils/date';
 
 export const dynamic = 'force-dynamic';
 
@@ -83,20 +84,6 @@ function buildWikiHref(options: {
   return query ? `/wiki?${query}` : '/wiki';
 }
 
-function formatDate(value: string | null): string {
-  if (!value) {
-    return 'Unknown';
-  }
-
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return 'Unknown';
-  }
-
-  return new Intl.DateTimeFormat('en-US', {
-    dateStyle: 'medium'
-  }).format(date);
-}
 
 export default async function WikiPage({ searchParams }: SearchParamProps) {
   const page = parsePositiveInt(getFirstParam(searchParams?.page), 1);

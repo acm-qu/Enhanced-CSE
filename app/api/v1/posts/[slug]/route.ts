@@ -1,15 +1,13 @@
-import { NextResponse } from 'next/server';
-
 import { toPostDetailResponse } from '@/lib/content/transform';
 import { getPostBySlug } from '@/lib/db/posts-queries';
-import { badRequest, internalError } from '@/lib/internal/http';
+import { badRequest, internalError, jsonCached, notFound } from '@/lib/internal/http';
 
 const CACHE_CONTROL = 'public, s-maxage=60, stale-while-revalidate=300';
 
 export async function GET(
   _request: Request,
   { params }: { params: { slug: string } }
-): Promise<NextResponse> {
+): Promise<Response> {
   try {
     const slug = params.slug?.trim();
     if (!slug) {
@@ -18,12 +16,10 @@ export async function GET(
 
     const post = await getPostBySlug(slug);
     if (!post) {
-      return NextResponse.json({ error: 'Post not found' }, { status: 404 });
+      return notFound('Post not found');
     }
 
-    const response = NextResponse.json({ post: toPostDetailResponse(post) });
-    response.headers.set('Cache-Control', CACHE_CONTROL);
-    return response;
+    return jsonCached({ post: toPostDetailResponse(post) }, CACHE_CONTROL);
   } catch {
     return internalError();
   }
