@@ -5,6 +5,7 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { MenuIcon } from 'lucide-react';
 import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 import { NavigationProgress } from '@/components/navigation-progress';
 import { ThemeProvider } from '@/components/theme-provider';
@@ -121,6 +122,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <NavigationProgress />
         </ThemeProvider>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
