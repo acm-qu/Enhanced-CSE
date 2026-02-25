@@ -18,7 +18,7 @@ A Next.js web portal for Qatar University's Computer Science and Engineering (CS
 
 | Layer | Technology |
 | --- | --- |
-| Framework | Next.js 14 (App Router, React 18) |
+| Framework | Next.js 16 (App Router, React 19) |
 | Language | TypeScript |
 | Database | PostgreSQL 16 |
 | ORM | Drizzle ORM |
@@ -242,6 +242,8 @@ In production, schedule calls to `/api/internal/sync/cron` every 8 hours. This r
 | `npm run build` | Build the app for production |
 | `npm run start` | Start the production server (requires a build first) |
 | `npm run lint` | Run ESLint |
+| `npm run typecheck` | Run TypeScript type checking |
+| `npm run typecheck:watch` | Run TypeScript type checking in watch mode |
 | `npm run db:up` | Start the PostgreSQL Docker container |
 | `npm run db:down` | Stop the PostgreSQL Docker container |
 | `npm run db:ps` | Show PostgreSQL container status |
