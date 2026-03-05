@@ -36,50 +36,56 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className={`${GeistSans.variable} ${GeistMono.variable} font-sans`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <div className="min-h-screen bg-background text-foreground">
-            <header className="sticky top-0 z-50 px-4 pt-4 sm:px-6">
-              <div className="mx-auto max-w-7xl">
-                <div className="glass-panel flex min-h-20 items-center gap-3 px-3 py-2 sm:px-5">
-                  <Link href="/" className="inline-flex min-w-0 items-center rounded-full px-2 py-1">
-                    <span className="truncate text-lg font-bold tracking-tight sm:text-2xl">
-                      <span className="brand-accent">&lt;</span>
-                      CSE Portal
-                      <span className="brand-accent">/&gt;</span>
-                    </span>
-                  </Link>
+            <header className="sticky top-0 z-50 border-b border-white/10 bg-[#04060c]/92 backdrop-blur-xl">
+              <div className="mx-auto flex h-16 w-full max-w-7xl items-center gap-3 px-4 sm:px-6">
+                <Link href="/" className="inline-flex min-w-0 items-center rounded-md px-1 py-1">
+                  <span className="truncate text-xl font-bold tracking-tight text-white sm:text-3xl">
+                    <span className="brand-accent">&lt;</span>
+                    ACM.QU
+                    <span className="brand-accent">/&gt;</span>
+                  </span>
+                </Link>
 
-                  <nav className="ml-auto hidden items-center gap-1 lg:flex">
-                    {NAV_LINKS.map((link) => (
-                      <Link key={link.href} href={link.href} className="top-nav-link">
-                        {link.label}
-                      </Link>
-                    ))}
-                  </nav>
+                <nav className="ml-auto hidden items-center gap-1 md:flex">
+                  {NAV_LINKS.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="inline-flex h-9 items-center rounded-md px-4 text-sm font-semibold text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </nav>
 
-                  <div className="ml-auto flex items-center gap-2 lg:ml-3">
-                    <ThemeToggle />
+                <div className="ml-auto flex items-center gap-2 md:ml-2">
+                  <ThemeToggle className="border-white/20 text-white/80 hover:bg-white/10 hover:text-white data-[state=on]:bg-[#2CAD9E]/15 data-[state=on]:text-white" />
 
-                    <div className="lg:hidden">
-                      <Sheet>
-                        <SheetTrigger asChild>
-                          <Button variant="outline" size="icon" className="rounded-full">
-                            <MenuIcon className="h-4 w-4" />
-                            <span className="sr-only">Open navigation menu</span>
-                          </Button>
-                        </SheetTrigger>
-                        <SheetContent side="right" className="w-[280px]">
-                          <SheetHeader>
-                            <SheetTitle className="text-left text-lg">Navigation</SheetTitle>
-                          </SheetHeader>
-                          <nav className="mt-6 flex flex-col gap-2">
-                            {NAV_LINKS.map((link) => (
-                              <Link key={link.href} href={link.href} className="top-nav-link justify-start">
-                                {link.label}
-                              </Link>
-                            ))}
-                          </nav>
-                        </SheetContent>
-                      </Sheet>
-                    </div>
+                  <div className="md:hidden">
+                    <Sheet>
+                      <SheetTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="rounded-full border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white"
+                        >
+                          <MenuIcon className="h-4 w-4" />
+                          <span className="sr-only">Open navigation menu</span>
+                        </Button>
+                      </SheetTrigger>
+                      <SheetContent side="right" className="w-[280px]">
+                        <SheetHeader>
+                          <SheetTitle className="text-left text-lg">Navigation</SheetTitle>
+                        </SheetHeader>
+                        <nav className="mt-6 flex flex-col gap-2">
+                          {NAV_LINKS.map((link) => (
+                            <Link key={link.href} href={link.href} className="top-nav-link justify-start">
+                              {link.label}
+                            </Link>
+                          ))}
+                        </nav>
+                      </SheetContent>
+                    </Sheet>
                   </div>
                 </div>
               </div>
