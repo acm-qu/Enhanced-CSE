@@ -12,6 +12,8 @@ import { formatDate } from '@/lib/utils/date';
 
 export const dynamic = 'force-dynamic';
 
+const SECTION_DOT_CLASSES = ['bg-[#3AE4D1]', 'bg-[#2CAD9E]', 'bg-[#373637]'] as const;
+
 const FEATURED_CATEGORY_RULES = [
   {
     label: 'Student Services',
@@ -214,14 +216,18 @@ export default async function HomePage() {
       <section className="content-shell pb-4 pt-4">
         <p className="section-kicker">Highlights</p>
         <div className="grid gap-4 lg:grid-cols-3">
-          {featuredSections.map((section) => {
+          {featuredSections.map((section, index) => {
             const leadItem = section.items[0] ?? null;
             const summary = leadItem ? trimText(toPlainText(leadItem.excerptHtml), 155) : 'No article summary available yet.';
+            const dotClass = SECTION_DOT_CLASSES[index % SECTION_DOT_CLASSES.length];
 
             return (
-              <Card key={section.slug} className="panel-muted h-full">
+              <Card key={section.slug} className="home-panel h-full">
                 <CardHeader>
-                  <CardTitle className="text-2xl font-semibold tracking-tight brand-accent">{section.displayName}</CardTitle>
+                  <CardTitle className="flex items-center gap-3 text-2xl font-semibold tracking-tight brand-accent">
+                    <span className={`home-section-dot ${dotClass}`} />
+                    {section.displayName}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <p className="text-base leading-relaxed text-foreground/80">{summary}</p>
@@ -239,9 +245,12 @@ export default async function HomePage() {
 
       <section className="content-shell pt-2">
         <div className="grid gap-6 lg:grid-cols-2">
-          <Card className="panel">
+          <Card className="home-panel">
             <CardHeader className="pb-3">
-              <CardTitle className="text-2xl">Recent Blog Posts</CardTitle>
+              <CardTitle className="flex items-center gap-3 text-2xl">
+                <span className="home-section-dot bg-[#3AE4D1]" />
+                Recent Blog Posts
+              </CardTitle>
               <CardDescription>Latest announcements and departmental news.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -249,23 +258,24 @@ export default async function HomePage() {
                 <div key={post.id}>
                   <Link
                     href={`/posts/${post.slug}`}
-                    className="group block rounded-xl border border-black/10 bg-white px-4 py-3 transition-all hover:border-[#2CAD9E]/60 hover:shadow-[0_10px_20px_rgba(44,173,158,0.12)]"
+                    className="group home-list-item"
                   >
                     <div className="flex items-start justify-between gap-3">
-                      <h3 className="text-lg font-semibold text-[#373637] group-hover:text-[#2CAD9E]">{post.title}</h3>
+                      <h3 className="text-lg font-semibold text-foreground group-hover:text-[#2CAD9E]">{post.title}</h3>
                       <ArrowUpRight className="h-4 w-4 shrink-0 text-[#2CAD9E]" />
                     </div>
                     <p className="mt-2 text-sm text-foreground/75">Published {formatDate(post.publishedAtGmt)}</p>
                   </Link>
-                  {index < 3 ? <Separator className="mt-4" /> : null}
+                  {index < 3 ? <Separator className="mt-4 bg-foreground/12" /> : null}
                 </div>
               ))}
             </CardContent>
           </Card>
 
-          <Card className="panel">
+          <Card className="home-panel">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-2xl">
+                <span className="home-section-dot bg-[#2CAD9E]" />
                 <CalendarClock className="h-5 w-5 brand-accent" />
                 Recent Wiki Updates
               </CardTitle>
@@ -275,15 +285,15 @@ export default async function HomePage() {
                 <div key={article.id}>
                   <Link
                     href={`/wiki/${article.slug}`}
-                    className="group block rounded-xl border border-black/10 bg-white px-4 py-3 transition-all hover:border-[#2CAD9E]/60 hover:shadow-[0_10px_20px_rgba(44,173,158,0.12)]"
+                    className="group home-list-item"
                   >
                     <div className="flex items-start justify-between gap-3">
-                      <h3 className="text-lg font-semibold text-[#373637] group-hover:text-[#2CAD9E]">{article.title}</h3>
+                      <h3 className="text-lg font-semibold text-foreground group-hover:text-[#2CAD9E]">{article.title}</h3>
                       <ArrowUpRight className="h-4 w-4 shrink-0 text-[#2CAD9E]" />
                     </div>
                     <p className="mt-2 text-sm text-foreground/75">Updated {formatDate(article.modifiedAtGmt)}</p>
                   </Link>
-                  {index < 3 ? <Separator className="mt-4" /> : null}
+                  {index < 3 ? <Separator className="mt-4 bg-foreground/12" /> : null}
                 </div>
               ))}
             </CardContent>

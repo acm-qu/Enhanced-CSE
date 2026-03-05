@@ -144,6 +144,47 @@
     background-color: hsl(var(--card) / 0.72);
   }
 
+  .home-panel {
+    @apply rounded-2xl border backdrop-blur-sm;
+    border-color: hsl(var(--border) / 0.6);
+    background:
+      linear-gradient(145deg, hsl(var(--card) / 0.58), hsl(var(--card) / 0.46));
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.08);
+  }
+
+  .dark .home-panel {
+    border-color: hsl(var(--brand-cyan) / 0.25);
+    background:
+      linear-gradient(145deg, hsl(238 28% 8% / 0.72), hsl(236 24% 6% / 0.54));
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+  }
+
+  .home-list-item {
+    @apply block rounded-xl border px-4 py-3 transition-all;
+    border-color: hsl(var(--border) / 0.6);
+    background-color: hsl(var(--card) / 0.5);
+  }
+
+  .home-list-item:hover {
+    border-color: hsl(var(--brand-cyan) / 0.65);
+    box-shadow: 0 10px 22px rgba(44, 173, 158, 0.14);
+  }
+
+  .dark .home-list-item {
+    border-color: hsl(var(--brand-cyan) / 0.26);
+    background:
+      linear-gradient(135deg, hsl(237 25% 8% / 0.66), hsl(236 22% 6% / 0.5));
+  }
+
+  .home-section-dot {
+    @apply inline-block h-3.5 w-3.5 rounded-full;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.2), 0 0 18px rgba(58, 228, 209, 0.28);
+  }
+
+  .dark .home-section-dot {
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14), 0 0 16px rgba(58, 228, 209, 0.35);
+  }
+
   .article-html {
     @apply text-[15px] leading-7 text-foreground/90;
   }
