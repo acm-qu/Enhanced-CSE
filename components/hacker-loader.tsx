@@ -62,7 +62,7 @@ export function HackerLoader({ lines }: HackerLoaderProps) {
       <div className="w-full max-w-md font-mono">
         <div
           className="relative overflow-hidden rounded-xl border border-border bg-card px-6 py-5"
-          style={{ boxShadow: '0 0 48px rgba(59,130,246,0.07)' }}
+          style={{ boxShadow: '0 0 48px rgba(44,173,158,0.12)' }}
         >
           {/* CRT scanlines */}
           <div
@@ -97,7 +97,7 @@ export function HackerLoader({ lines }: HackerLoaderProps) {
                   key={i}
                   className={`text-[13px] leading-relaxed ${
                     isDone
-                      ? 'text-blue-400'
+                      ? 'text-[hsl(var(--brand-cyan))]'
                       : isActive
                         ? 'text-foreground'
                         : 'text-muted-foreground/20'
@@ -119,7 +119,7 @@ export function HackerLoader({ lines }: HackerLoaderProps) {
 
           <div className="mt-5 text-[11px]">
             <span className="text-muted-foreground">{'['}</span>
-            <span className="text-blue-500">{'█'.repeat(filled)}</span>
+            <span className="text-[hsl(var(--brand-cyan))]">{'█'.repeat(filled)}</span>
             <span className="text-muted-foreground/30">{'░'.repeat(20 - filled)}</span>
             <span className="text-muted-foreground">{'] '}</span>
             <span className="text-foreground/50">{progress}%</span>

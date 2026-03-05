@@ -76,6 +76,20 @@ describe('content html utilities', () => {
     expect(sanitized).not.toContain('elementor-video');
   });
 
+  it('rewrites source-host image URLs through the media proxy', () => {
+    const html =
+      '<img src="http://blogs.qu.edu.qa/cse/files/2021/01/image-1.png" srcset="/cse/files/2021/01/image-1-768x524.png 768w, https://example.com/hero.png 1024w" alt="Grade distribution">';
+    const sanitized = sanitizeWikiHtml(html);
+
+    expect(sanitized).toContain(
+      'src="/api/media?url=http%3A%2F%2Fblogs.qu.edu.qa%2Fcse%2Ffiles%2F2021%2F01%2Fimage-1.png"'
+    );
+    expect(sanitized).toContain(
+      'srcset="/api/media?url=https%3A%2F%2Fblogs.qu.edu.qa%2Fcse%2Ffiles%2F2021%2F01%2Fimage-1-768x524.png 768w, https://example.com/hero.png 1024w"'
+    );
+    expect(sanitized).toContain('loading="lazy"');
+  });
+
   it('strips legacy knowledge-base chrome and feedback blocks', () => {
     const html =
       '<div id="eckb-article-content-header-v2"><div>&lt; All Topics</div><div>Print</div><div>PostedJanuary 26, 2021</div><div>ByAbdulahi Hassen</div></div><div id="eckb-article-content-body"><p>Internship details body</p></div><div id="eckb-article-content-footer"><section id="eprf-article-buttons-container">Was this article helpful?</section><form class="eprf-article-feedback__form">How can we improve this article?</form></div>';
