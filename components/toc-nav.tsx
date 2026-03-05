@@ -56,7 +56,7 @@ export function TocNav({ items }: { items: TocItem[] }) {
             item.level >= 3 ? 'pl-4' : item.level === 2 ? 'pl-2' : ''
           } ${
             activeId === item.id
-              ? 'font-medium text-blue-400'
+              ? 'font-medium text-[hsl(var(--brand-cyan))]'
               : 'text-muted-foreground hover:text-foreground'
           }`}
         >

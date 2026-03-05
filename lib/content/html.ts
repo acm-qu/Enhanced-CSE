@@ -1,5 +1,7 @@
 import sanitizeHtml from 'sanitize-html';
 
+import { rewriteImageSource, rewriteImageSrcSet } from '@/lib/content/asset-proxy';
+
 const SOURCE_HOST = 'blogs.qu.edu.qa';
 const SOURCE_PATH_PREFIX = '/cse/wiki';
 const SOURCE_BLOG_PREFIX = '/cse/';
@@ -310,6 +312,28 @@ export function sanitizeWikiHtml(html: string): string {
 
         return {
           tagName: 'a',
+          attribs: nextAttribs
+        };
+      },
+      img: (_tagName, attribs) => {
+        const nextAttribs: Record<string, string> = {
+          ...attribs
+        };
+
+        if (attribs.src) {
+          nextAttribs.src = rewriteImageSource(attribs.src);
+        }
+
+        if (attribs.srcset) {
+          nextAttribs.srcset = rewriteImageSrcSet(attribs.srcset);
+        }
+
+        if (!nextAttribs.loading) {
+          nextAttribs.loading = 'lazy';
+        }
+
+        return {
+          tagName: 'img',
           attribs: nextAttribs
         };
       }

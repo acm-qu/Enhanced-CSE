@@ -4,58 +4,64 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 6% 10%;
+    --background: 0 0% 95%;
+    --foreground: 220 7% 8%;
     --card: 0 0% 100%;
-    --card-foreground: 240 6% 10%;
+    --card-foreground: 220 7% 8%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 6% 10%;
-    --primary: 240 6% 10%;
+    --popover-foreground: 220 7% 8%;
+    --primary: 173 59% 43%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
+    --secondary: 0 0% 92%;
+    --secondary-foreground: 220 7% 8%;
+    --muted: 0 0% 92%;
+    --muted-foreground: 240 3% 35%;
+    --accent: 173 76% 56%;
+    --accent-foreground: 220 7% 8%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
+    --border: 220 6% 82%;
+    --input: 220 6% 82%;
+    --ring: 173 59% 43%;
     --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
+    --chart-2: 173 59% 43%;
     --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
+    --chart-4: 173 76% 56%;
+    --chart-5: 220 7% 22%;
+    --radius: 0.75rem;
+    --brand-gray: 240 1% 22%;
+    --brand-cyan: 173 59% 43%;
+    --brand-cyan-light: 173 76% 56%;
   }
 
   .dark {
-    --background: 240 10% 4%;
-    --foreground: 0 0% 100%;
-    --card: 240 10% 4%;
-    --card-foreground: 0 0% 100%;
-    --popover: 240 10% 4%;
-    --popover-foreground: 0 0% 100%;
-    --primary: 0 0% 100%;
-    --primary-foreground: 240 6% 10%;
-    --secondary: 240 3.7% 15.9%;
+    --background: 240 7% 5%;
+    --foreground: 0 0% 98%;
+    --card: 240 7% 8%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 7% 8%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 173 59% 43%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 5% 15%;
     --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
+    --muted: 240 5% 15%;
+    --muted-foreground: 240 4% 70%;
+    --accent: 173 76% 56%;
+    --accent-foreground: 220 7% 8%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
+    --border: 240 4% 18%;
+    --input: 240 4% 18%;
+    --ring: 173 76% 56%;
+    --chart-1: 173 59% 43%;
+    --chart-2: 173 76% 56%;
     --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
+    --chart-4: 240 3% 78%;
     --chart-5: 340 75% 55%;
+    --brand-gray: 240 1% 22%;
+    --brand-cyan: 173 59% 43%;
+    --brand-cyan-light: 173 76% 56%;
   }
 
   * {
@@ -71,16 +77,23 @@
     @apply font-sans antialiased;
   }
 
-  /* Subtle ambient glow at the top of every page */
   body::before {
     content: '';
     position: fixed;
     inset: 0;
     background:
-      radial-gradient(ellipse 80% 35% at 50% -5%, hsl(220 90% 56% / 0.10), transparent),
-      radial-gradient(ellipse 40% 25% at 85% 10%, hsl(270 80% 60% / 0.07), transparent);
+      radial-gradient(ellipse 68% 28% at 50% -8%, hsl(var(--brand-cyan-light) / 0.22), transparent),
+      radial-gradient(ellipse 30% 18% at 85% 10%, hsl(var(--brand-cyan) / 0.14), transparent),
+      linear-gradient(180deg, hsl(0 0% 97%), hsl(0 0% 95%));
     pointer-events: none;
     z-index: 0;
+  }
+
+  .dark body::before {
+    background:
+      radial-gradient(ellipse 68% 30% at 50% -8%, hsl(var(--brand-cyan-light) / 0.1), transparent),
+      radial-gradient(ellipse 30% 20% at 85% 10%, hsl(var(--brand-cyan) / 0.08), transparent),
+      linear-gradient(180deg, hsl(240 8% 10%), hsl(240 7% 5%));
   }
 
   a {
@@ -90,15 +103,32 @@
 
 @layer components {
   .top-nav-link {
-    @apply inline-flex h-8 items-center rounded-md border border-transparent px-3 text-xs text-foreground/70 transition-colors hover:border-foreground/20 hover:bg-foreground/10 hover:text-foreground;
+    @apply inline-flex h-9 items-center rounded-full border border-transparent px-4 text-sm font-medium text-foreground/80 transition-all hover:border-foreground/15 hover:bg-foreground/5 hover:text-foreground;
+  }
+
+  .section-kicker {
+    @apply mb-4 inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.28em] text-foreground/60;
+  }
+
+  .brand-accent {
+    color: hsl(var(--brand-cyan));
+  }
+
+  .brand-accent-soft {
+    color: hsl(var(--brand-cyan-light));
+  }
+
+  .glass-panel {
+    @apply rounded-3xl border border-border/70 shadow-[0_20px_60px_rgba(0,0,0,0.08)] backdrop-blur;
+    background-color: hsl(var(--card) / 0.86);
   }
 
   .content-shell {
-    @apply mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:py-10;
+    @apply relative z-[1] mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:py-10;
   }
 
   .panel {
-    @apply rounded-xl border border-border bg-card;
+    @apply rounded-2xl border border-border/80 bg-card shadow-[0_14px_40px_rgba(0,0,0,0.06)];
   }
 
   .no-scrollbar {
@@ -110,7 +140,8 @@
   }
 
   .panel-muted {
-    @apply rounded-xl border border-border bg-muted/30;
+    @apply rounded-2xl border border-border/70 shadow-[0_10px_24px_rgba(0,0,0,0.04)];
+    background-color: hsl(var(--card) / 0.72);
   }
 
   .article-html {
@@ -152,7 +183,7 @@
   }
 
   .article-html a {
-    @apply text-blue-500 underline-offset-4 transition-colors hover:text-blue-400;
+    @apply text-primary underline-offset-4 transition-colors hover:text-[hsl(var(--brand-cyan-light))];
     text-decoration: underline;
   }
 
@@ -207,7 +238,7 @@
 
   /* Case 1: proper <th> cells (Table 1 — "Current Electives") */
   .article-html th {
-    background: hsl(222 22% 14%);
+    background: hsl(var(--brand-gray));
     color: hsl(0 0% 94%);
     @apply font-semibold text-xs uppercase tracking-wider;
     border-bottom: 2px solid hsl(0 0% 0% / 0.25);
@@ -220,7 +251,7 @@
      Guard: only when that first row contains NO <a> links (i.e. it's purely a label row,
      not a data row like in the old rowspan-based Table 5 format) */
   .article-html table:not(:has(thead)) tbody tr:first-child:not(:has(td a)) td {
-    background: hsl(222 22% 14%);
+    background: hsl(var(--brand-gray));
     color: hsl(0 0% 94%);
     @apply font-semibold text-xs uppercase tracking-wider;
     border-bottom: 2px solid hsl(0 0% 0% / 0.25);
@@ -233,7 +264,7 @@
   /* Dark mode: slightly elevated surface instead of the same charcoal */
   .dark .article-html th,
   .dark .article-html table:not(:has(thead)) tbody tr:first-child:not(:has(td a)) td {
-    background: hsl(222 22% 24%);
+    background: hsl(240 2% 28%);
   }
 
   /* Force all child elements (p, strong, span, etc.) to inherit the cell's text colour
@@ -250,16 +281,16 @@
      Note: Table 5 (rowspan format) is excluded by requiring the first row to be link-free */
   .article-html table:has(thead) tbody tr:not(:has(td a)) td,
   .article-html table:not(:has(thead)):has(tbody tr:first-child:not(:has(td a))) tbody tr:not(:first-child):has(td strong):not(:has(td a)) td {
-    background: hsl(var(--foreground) / 0.10);
+    background: hsl(var(--brand-cyan) / 0.12);
     color: hsl(var(--foreground));
     font-weight: 600;
     font-size: 0.875rem;
-    border-top: 2px solid hsl(var(--foreground) / 0.12);
-    border-bottom: 1px solid hsl(var(--foreground) / 0.08);
+    border-top: 2px solid hsl(var(--brand-cyan) / 0.24);
+    border-bottom: 1px solid hsl(var(--brand-cyan) / 0.18);
   }
   .article-html table:has(thead) tbody tr:not(:has(td a)) td + td,
   .article-html table:not(:has(thead)):has(tbody tr:first-child:not(:has(td a))) tbody tr:not(:first-child):has(td strong):not(:has(td a)) td + td {
-    border-left: 1px solid hsl(var(--foreground) / 0.08);
+    border-left: 1px solid hsl(var(--brand-cyan) / 0.18);
   }
   /* Same color-inheritance fix for term row children */
   .article-html table:has(thead) tbody tr:not(:has(td a)) td *,
