@@ -7,7 +7,7 @@ import { MoonIcon, SunIcon } from 'lucide-react';
 import { Toggle } from '@/components/ui/toggle';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
-export function ThemeToggle() {
+export function ThemeToggle({ className }: { className?: string }) {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -27,6 +27,7 @@ export function ThemeToggle() {
             onPressedChange={(pressed) => setTheme(pressed ? 'dark' : 'light')}
             variant="outline"
             size="sm"
+            className={className}
           >
             {mounted && isDark ? (
               <MoonIcon className="h-4 w-4" />
