@@ -37,15 +37,15 @@ export function HackerLoader({ lines }: HackerLoaderProps) {
 
     const t = setInterval(() => {
       setResolved((r) => {
-        const next = r + 2;
+        const next = r + 6;
         if (next >= lineLen) {
           clearInterval(t);
-          setTimeout(() => setStep((s) => s + 1), 350);
+          setTimeout(() => setStep((s) => s + 1), 80);
           return lineLen;
         }
         return next;
       });
-    }, 40);
+    }, 12);
 
     return () => clearInterval(t);
   }, [step, lines]);

@@ -199,7 +199,7 @@ export function StudyPlanBoard({ terms, courses, connections }: Props) {
       <div className="rounded-2xl bg-zinc-950 border border-white/[0.06] overflow-hidden">
       {/* Scrollable board */}
       <div className="w-full overflow-x-auto">
-        <div className="relative inline-flex flex-row gap-10 px-6 py-6 pb-4" ref={boardRef}>
+        <div className="relative flex flex-row gap-6 px-6 py-6 pb-4 w-full" ref={boardRef}>
 
           {/* SVG overlay — covers full content area */}
           {svgSize.w > 0 && (
@@ -246,7 +246,7 @@ export function StudyPlanBoard({ terms, courses, connections }: Props) {
 
           {/* Year groups */}
           {years.map(({ year, fall, spring }) => (
-            <div key={year} className="flex flex-col" style={{ position: 'relative', zIndex: 10 }}>
+            <div key={year} className="flex flex-col flex-1 min-w-0" style={{ position: 'relative', zIndex: 10 }}>
               {/* Year pill header */}
               <div className="flex justify-center mb-4">
                 <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-500 px-3 py-1 rounded-full border border-zinc-700/60">
@@ -255,9 +255,9 @@ export function StudyPlanBoard({ terms, courses, connections }: Props) {
               </div>
 
               {/* Fall + Spring columns */}
-              <div className="flex flex-row gap-4">
+              <div className="flex flex-row gap-3 flex-1">
                 {[fall, spring].map((term) => (
-                  <div key={term.term} className="flex flex-col w-[172px]">
+                  <div key={term.term} className="flex flex-col flex-1 min-w-0">
                     {/* Semester label */}
                     <div className="text-center mb-3 pb-2 border-b border-zinc-800">
                       <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-zinc-400">{term.term}</p>
@@ -282,7 +282,7 @@ export function StudyPlanBoard({ terms, courses, connections }: Props) {
                             onMouseMove={(e) => setTooltip((t) => t ? { ...t, x: e.clientX, y: e.clientY } : null)}
                             onMouseLeave={() => { setHovered(null); setTooltip(null); }}
                             className={[
-                              'rounded-lg border px-2.5 py-2 cursor-default select-none',
+                              'rounded-lg border px-3 py-2.5 cursor-default select-none',
                               'transition-all duration-150',
                               col.card,
                               isHov ? 'ring-2 ring-white/20 shadow-lg shadow-black/40 scale-[1.04]' : '',
@@ -292,13 +292,13 @@ export function StudyPlanBoard({ terms, courses, connections }: Props) {
                           >
                             <div className="flex items-start justify-between gap-1 mb-1">
                               {displayCourseId(cid) !== null && (
-                                <span className={`text-[10px] font-bold font-mono leading-none ${col.cid}`}>{displayCourseId(cid)}</span>
+                                <span className={`text-xs font-bold font-mono leading-none ${col.cid}`}>{displayCourseId(cid)}</span>
                               )}
-                              <span className={`text-[9px] rounded px-1 py-0.5 font-semibold shrink-0 leading-tight ${col.badge}`}>
+                              <span className={`text-[10px] rounded px-1.5 py-0.5 font-semibold shrink-0 leading-tight ${col.badge}`}>
                                 {course.credit_hours}CH
                               </span>
                             </div>
-                            <p className={`text-[10px] leading-snug ${col.title}`}>{course.title}</p>
+                            <p className={`text-[11px] leading-snug ${col.title}`}>{course.title}</p>
                           </div>
                         );
                       })}
