@@ -209,7 +209,7 @@ export function StudyPlanBoard({ terms, courses, connections }: Props) {
 
               {arrows.map((ar, i) => {
                 const isRel = hovered ? (ar.from === hovered || ar.to === hovered) : true;
-                const op = hovered ? (isRel ? 0.9 : 0.05) : 0.5;
+                const op = hovered ? (isRel ? 0.9 : 0.04) : 0.1;
                 const stroke = ar.type === 'prereq' ? '#ef4444' : '#60a5fa';
                 const marker = ar.type === 'prereq' ? 'url(#arh-pre)' : 'url(#arh-con)';
                 let d: string;
