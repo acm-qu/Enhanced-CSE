@@ -457,8 +457,8 @@
       "restrictions": { "level": ["Undergraduate"], "college": ["Engineering"], "major": ["Computer Engineering", "Computer Science"] },
       "requisites": {
         "prerequisites": { "text": "Undergraduate level CMPS 303 Minimum Grade of D and Undergraduate level CMPE 263 Minimum Grade of D", "parsed": { "all_of": ["CMPS 303", "CMPE 263"] } },
-        "corequisites": { "text": "", "parsed": null },
-        "concurrent_prerequisites_from_roadmap": []
+        "corequisites": { "text": "Undergraduate level GENG 200 Minimum Grade of D", "parsed": { "all_of": ["GENG 200"] } },
+        "concurrent_prerequisites_from_roadmap": ["GENG 200"]
       },
       "sources": {
         "catalog_term": "202110",
@@ -643,8 +643,8 @@
     {
       "year": 2,
       "term": "Fall",
-      "total_credit_hours": 15,
-      "courses": ["CMPS 200", "CMPS 205", "CMPS 303", "ARAB 100", "PHYS 193", "PHYS 194"]
+      "total_credit_hours": 18,
+      "courses": ["CMPS 310", "CMPS 205", "CMPS 303", "MAJOR_ELECTIVE_I", "PHYS 193", "PHYS 194"]
     },
     {
       "year": 2,
@@ -655,26 +655,26 @@
     {
       "year": 3,
       "term": "Fall",
-      "total_credit_hours": 17,
-      "courses": ["CMPS 310", "CMPE 355", "CMPS 380", "GENG 300", "MAJOR_ELECTIVE_I"]
+      "total_credit_hours": 15,
+      "courses": ["CMPS 200", "CMPE 355", "CMPS 380", "CMPS 405", "MAJOR_ELECTIVE_II"]
     },
     {
       "year": 3,
       "term": "Spring",
-      "total_credit_hours": 16,
-      "courses": ["CMPS 405", "CORE_KNOWLEDGE_SKILLS_PKG", "MAJOR_ELECTIVE_II", "NAT_SCI_MATH_PKG", "DAWA 111"]
+      "total_credit_hours": 15,
+      "courses": ["GENG 300", "CORE_KNOWLEDGE_SKILLS_PKG", "MAJOR_ELECTIVE_III", "NAT_SCI_MATH_PKG", "MAJOR_ELECTIVE_IV"]
     },
     {
       "year": 4,
       "term": "Fall",
       "total_credit_hours": 11,
-      "courses": ["CMPS 493", "MAJOR_ELECTIVE_III", "CMPS 307", "HUM_FINE_ARTS_PKG"]
+      "courses": ["CMPS 493", "ARAB 100", "CMPS 307", "HUM_FINE_ARTS_PKG"]
     },
     {
       "year": 4,
       "term": "Spring",
       "total_credit_hours": 12,
-      "courses": ["CMPS 499", "MAJOR_ELECTIVE_IV", "MAGT 101", "SOC_BEHAV_PKG"]
+      "courses": ["CMPS 499", "DAWA 111", "MAGT 101", "SOC_BEHAV_PKG"]
     }
   ]
 }

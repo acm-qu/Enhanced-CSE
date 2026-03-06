@@ -85,8 +85,8 @@ export default function CsStudyPlanPage() {
   }
 
   return (
-    <main className="relative z-[1] pb-12">
-      <div className="mx-auto max-w-7xl px-4 pt-8 pb-4 sm:px-6">
+    <main className="relative z-[1] pb-6">
+      <div className="px-4 pt-8 pb-4 sm:px-6">
         <h1 className="text-2xl font-bold tracking-tight">{program.name} Study Plan</h1>
         <p className="text-sm text-muted-foreground mt-1">
           {program.institution} · {program.total_credit_hours_required} Credit Hours · 2024 Roadmap
