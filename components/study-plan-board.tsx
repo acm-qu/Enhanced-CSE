@@ -1,408 +1,322 @@
 'use client';
 
-import { memo, useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
-import {
-  type Edge,
-  Handle,
-  MarkerType,
-  Position,
-  ReactFlow,
-  type Node,
-  type NodeProps,
-} from '@xyflow/react';
-import { SmartStepEdge } from '@tisoap/react-flow-smart-edge';
+import type { Connection, CourseData, StudyPlanTerm } from '@/app/cs-study-plan/page';
 
-export type StudyPlanEdgeType = 'prereq' | 'coreq';
-export type StudyPlanCourseKind = 'core' | 'elective' | 'package' | 'general';
-
-export interface StudyPlanBoardEdge {
-  source: string;
-  target: string;
-  type: StudyPlanEdgeType;
-  sourceSemesterIndex: number;
-  targetSemesterIndex: number;
+// ─── Internal types ───────────────────────────────────────────────────────────
+interface ComputedArrow extends Connection {
+  sx: number;
+  sy: number;
+  tx: number;
+  ty: number;
+  sameCol: boolean;
 }
 
-export interface StudyPlanBoardCourse {
-  code: string;
-  title: string;
-  creditHours: number;
-  kind: StudyPlanCourseKind;
-  prereqCount: number;
-  coreqCount: number;
+interface Props {
+  terms: StudyPlanTerm[];
+  courses: Record<string, CourseData>;
+  connections: Connection[];
 }
 
-export interface StudyPlanBoardSemester {
-  id: string;
-  year: number;
-  term: string;
-  totalCreditHours: number;
-  courses: StudyPlanBoardCourse[];
-}
+// ─── Color helpers ────────────────────────────────────────────────────────────
+type ColorSet = { card: string; badge: string; cid: string; title: string };
 
-interface StudyPlanBoardProps {
-  semesters: StudyPlanBoardSemester[];
-  edges: StudyPlanBoardEdge[];
-}
+function getColors(id: string, type?: string): ColorSet {
+  if (id.includes('ELECTIVE'))
+    return { card: 'bg-rose-950/50 border-rose-700', badge: 'bg-rose-800/50 text-rose-300', cid: 'text-rose-300', title: 'text-rose-200/80' };
+  if (type === 'package' || id.endsWith('_PKG'))
+    return { card: 'bg-zinc-800/50 border-dashed border-zinc-600/70', badge: 'bg-zinc-700/50 text-zinc-400', cid: 'text-zinc-400', title: 'text-zinc-300/80' };
 
-type AnchorSide = 'left' | 'right' | 'top' | 'bottom';
-
-interface SlotPosition {
-  semesterIndex: number;
-  rowIndex: number;
-}
-
-interface FlowNodeData extends Record<string, unknown> {
-  course: StudyPlanBoardCourse;
-}
-
-interface FlowEdgeData extends Record<string, unknown> {
-  color: string;
-  kind: StudyPlanEdgeType;
-}
-
-type StudyPlanFlowNode = Node<FlowNodeData, 'course'>;
-type StudyPlanFlowEdge = Edge<FlowEdgeData, 'study-smart'>;
-
-const BOARD_PADDING_X = 20;
-const COLUMN_WIDTH = 172;
-const COLUMN_GAP = 56;
-const HEADER_HEIGHT = 72;
-const HEADER_TO_CARDS_GAP = 64;
-const CARD_HEIGHT = 72;
-const ROW_GAP = 54;
-const BOARD_PADDING_BOTTOM = 48;
-const HANDLE_SLOTS = ['18%', '39%', '61%', '82%'] as const;
-
-const EDGE_PALETTE = [
-  '#67f0dd',
-  '#72c9ff',
-  '#8ea6ff',
-  '#8bf0aa',
-  '#ffd56f',
-  '#ffb185',
-  '#d7abff',
-  '#ff97c7',
-  '#89ebff',
-  '#bff67c',
-  '#ffcb93',
-  '#8fd8ff'
-] as const;
-
-const COURSE_KIND_STYLES: Record<StudyPlanCourseKind, { borderClass: string }> = {
-  core: { borderClass: 'border-l-[#2CAD9E]' },
-  elective: { borderClass: 'border-l-[#d98787]' },
-  package: { borderClass: 'border-l-[#d8b95c]' },
-  general: { borderClass: 'border-l-[#6f7e89]' }
-};
-
-function hashValue(value: string): number {
-  let hash = 0;
-
-  for (let index = 0; index < value.length; index += 1) {
-    hash = (hash * 33 + value.charCodeAt(index)) >>> 0;
-  }
-
-  return hash;
-}
-
-function edgeColorForKey(key: string): string {
-  return EDGE_PALETTE[hashValue(key) % EDGE_PALETTE.length];
-}
-
-function columnLeft(semesterIndex: number): number {
-  return BOARD_PADDING_X + semesterIndex * (COLUMN_WIDTH + COLUMN_GAP);
-}
-
-function cardsTop(): number {
-  return HEADER_HEIGHT + HEADER_TO_CARDS_GAP;
-}
-
-function rowTop(rowIndex: number): number {
-  return cardsTop() + rowIndex * (CARD_HEIGHT + ROW_GAP);
-}
-
-function hiddenHandleStyle(side: AnchorSide, slotIndex: number): Record<string, string | number> {
-  const slot = HANDLE_SLOTS[slotIndex % HANDLE_SLOTS.length];
-
-  if (side === 'left' || side === 'right') {
-    return {
-      top: slot,
-      opacity: 0,
-      width: 6,
-      height: 6,
-      border: 'none',
-      background: 'transparent',
-      pointerEvents: 'none'
-    };
-  }
-
-  return {
-    left: slot,
-    opacity: 0,
-    width: 6,
-    height: 6,
-    border: 'none',
-    background: 'transparent',
-    pointerEvents: 'none'
+  const prefix = id.split(' ')[0];
+  const map: Record<string, ColorSet> = {
+    CMPS: { card: 'bg-blue-950/60 border-blue-700/80', badge: 'bg-blue-900/60 text-blue-300', cid: 'text-blue-300', title: 'text-blue-100/80' },
+    CMPE: { card: 'bg-blue-950/60 border-blue-700/80', badge: 'bg-blue-900/60 text-blue-300', cid: 'text-blue-300', title: 'text-blue-100/80' },
+    MATH: { card: 'bg-emerald-950/60 border-emerald-700/80', badge: 'bg-emerald-900/60 text-emerald-300', cid: 'text-emerald-300', title: 'text-emerald-100/80' },
+    PHYS: { card: 'bg-emerald-950/60 border-emerald-700/80', badge: 'bg-emerald-900/60 text-emerald-300', cid: 'text-emerald-300', title: 'text-emerald-100/80' },
+    CHEM: { card: 'bg-emerald-950/60 border-emerald-700/80', badge: 'bg-emerald-900/60 text-emerald-300', cid: 'text-emerald-300', title: 'text-emerald-100/80' },
+    GENG: { card: 'bg-teal-950/50 border-teal-700/70', badge: 'bg-teal-900/50 text-teal-300', cid: 'text-teal-300', title: 'text-teal-100/80' },
+    ENGL: { card: 'bg-amber-950/50 border-amber-700/70', badge: 'bg-amber-900/50 text-amber-300', cid: 'text-amber-300', title: 'text-amber-100/80' },
+    ARAB: { card: 'bg-amber-950/50 border-amber-700/70', badge: 'bg-amber-900/50 text-amber-300', cid: 'text-amber-300', title: 'text-amber-100/80' },
+    HIST: { card: 'bg-amber-950/50 border-amber-700/70', badge: 'bg-amber-900/50 text-amber-300', cid: 'text-amber-300', title: 'text-amber-100/80' },
+    DAWA: { card: 'bg-amber-950/50 border-amber-700/70', badge: 'bg-amber-900/50 text-amber-300', cid: 'text-amber-300', title: 'text-amber-100/80' },
+    MAGT: { card: 'bg-zinc-800/60 border-zinc-600/70', badge: 'bg-zinc-700/50 text-zinc-300', cid: 'text-zinc-300', title: 'text-zinc-200/80' },
   };
+  return map[prefix] ?? { card: 'bg-zinc-800/50 border-zinc-600/70', badge: 'bg-zinc-700/50 text-zinc-400', cid: 'text-zinc-300', title: 'text-zinc-200/80' };
 }
 
-function anchorSideForEdge(source: SlotPosition, target: SlotPosition): { sourceSide: AnchorSide; targetSide: AnchorSide } {
-  if (source.semesterIndex === target.semesterIndex) {
-    if (source.rowIndex <= target.rowIndex) {
-      return {
-        sourceSide: 'bottom',
-        targetSide: 'top'
-      };
-    }
-
-    return {
-      sourceSide: 'top',
-      targetSide: 'bottom'
-    };
+// ─── Position util ────────────────────────────────────────────────────────────
+function offsetFrom(el: HTMLElement, ancestor: HTMLElement) {
+  let x = 0, y = 0;
+  let cur: HTMLElement | null = el;
+  while (cur && cur !== ancestor) {
+    x += cur.offsetLeft;
+    y += cur.offsetTop;
+    cur = cur.offsetParent as HTMLElement | null;
   }
-
-  if (source.semesterIndex < target.semesterIndex) {
-    return {
-      sourceSide: 'right',
-      targetSide: 'left'
-    };
-  }
-
-  return {
-    sourceSide: 'left',
-    targetSide: 'right'
-  };
+  return { x, y, w: el.offsetWidth, h: el.offsetHeight };
 }
 
-function handleId(type: 'source' | 'target', side: AnchorSide, slotIndex: number): string {
-  return `${type}-${side}-${slotIndex % HANDLE_SLOTS.length}`;
+// ─── Sub-components ───────────────────────────────────────────────────────────
+function LegendArrow({ type, label }: { type: 'prereq' | 'concurrent'; label: string }) {
+  const color = type === 'prereq' ? '#ef4444' : '#60a5fa';
+  const mid = `leg-${type}`;
+  return (
+    <span className="flex items-center gap-1.5">
+      <svg width="26" height="10" className="shrink-0">
+        <defs>
+          <marker id={mid} viewBox="0 0 8 8" refX="7" refY="4" markerWidth="4" markerHeight="4" orient="auto">
+            <path d="M0 0L8 4L0 8Z" fill={color} />
+          </marker>
+        </defs>
+        <line x1="0" y1="5" x2="18" y2="5" stroke={color} strokeWidth="1.5"
+          strokeDasharray={type === 'concurrent' ? '4 3' : undefined}
+          markerEnd={`url(#${mid})`} />
+      </svg>
+      {label}
+    </span>
+  );
 }
 
-function CourseNode({ data }: NodeProps<StudyPlanFlowNode>) {
-  const kind = COURSE_KIND_STYLES[data.course.kind];
+function LegendSwatch({ cls, label }: { cls: string; label: string }) {
+  return (
+    <span className="flex items-center gap-1.5">
+      <span className={`w-3 h-3 rounded-sm border inline-block shrink-0 ${cls}`} />
+      {label}
+    </span>
+  );
+}
 
+function CourseTooltip({ courseId, course, x, y }: { courseId: string; course: CourseData; x: number; y: number }) {
+  const prereqText = course.requisites?.prerequisites?.text;
+  const coreqText = course.requisites?.corequisites?.text;
+  const safeX = Math.min(x + 14, (typeof window !== 'undefined' ? window.innerWidth : 1200) - 272);
+  const safeY = Math.min(y + 14, (typeof window !== 'undefined' ? window.innerHeight : 800) - 220);
   return (
     <div
-      className={`h-full w-full overflow-hidden rounded-xl border border-border/70 border-l-[3px] bg-card/96 p-3 shadow-sm backdrop-blur ${kind.borderClass}`}
+      style={{ position: 'fixed', left: safeX, top: safeY, zIndex: 9999 }}
+      className="bg-zinc-900 border border-zinc-700/80 rounded-xl shadow-2xl p-3 w-64 pointer-events-none"
     >
-      {(['left', 'right', 'top', 'bottom'] as const).flatMap((side) =>
-        HANDLE_SLOTS.map((_, slotIndex) => (
-          <Handle
-            key={`source-${side}-${slotIndex}`}
-            id={handleId('source', side, slotIndex)}
-            type="source"
-            position={
-              side === 'left'
-                ? Position.Left
-                : side === 'right'
-                  ? Position.Right
-                  : side === 'top'
-                    ? Position.Top
-                    : Position.Bottom
-            }
-            style={hiddenHandleStyle(side, slotIndex)}
-            isConnectable={false}
-          />
-        ))
-      )}
-
-      {(['left', 'right', 'top', 'bottom'] as const).flatMap((side) =>
-        HANDLE_SLOTS.map((_, slotIndex) => (
-          <Handle
-            key={`target-${side}-${slotIndex}`}
-            id={handleId('target', side, slotIndex)}
-            type="target"
-            position={
-              side === 'left'
-                ? Position.Left
-                : side === 'right'
-                  ? Position.Right
-                  : side === 'top'
-                    ? Position.Top
-                    : Position.Bottom
-            }
-            style={hiddenHandleStyle(side, slotIndex)}
-            isConnectable={false}
-          />
-        ))
-      )}
-
       <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0">
-          <p className="text-[10px] font-semibold tracking-[0.06em] text-foreground/70">{data.course.code}</p>
-          <h3 className="mt-1 overflow-hidden text-[11px] font-semibold leading-snug text-foreground [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]">
-            {data.course.title}
-          </h3>
-        </div>
-        <span className="shrink-0 rounded-md border border-border/70 bg-background/75 px-1.5 py-0.5 text-[10px] font-semibold text-foreground/80">
-          {data.course.creditHours} CH
-        </span>
+        <p className="font-mono font-bold text-white text-[11px] leading-tight">{courseId}</p>
+        <span className="text-[10px] text-zinc-400 shrink-0">{course.credit_hours} CH</span>
       </div>
+      <p className="text-zinc-200 text-[11px] mt-0.5 leading-snug">{course.title}</p>
+      {course.department && <p className="text-zinc-500 text-[10px] mt-1 leading-snug">{course.department}</p>}
+      {course.schedule_types && course.schedule_types.length > 0 && (
+        <p className="text-zinc-600 text-[10px] mt-0.5">{course.schedule_types.join(' · ')}</p>
+      )}
+      {prereqText && (
+        <div className="mt-2 pt-1.5 border-t border-zinc-700/50">
+          <p className="text-[9px] font-semibold text-zinc-500 uppercase tracking-wider mb-0.5">Prerequisites</p>
+          <p className="text-zinc-300 text-[10px] leading-snug">{prereqText}</p>
+        </div>
+      )}
+      {coreqText && (
+        <div className="mt-1.5">
+          <p className="text-[9px] font-semibold text-zinc-500 uppercase tracking-wider mb-0.5">Corequisites</p>
+          <p className="text-zinc-300 text-[10px] leading-snug">{coreqText}</p>
+        </div>
+      )}
+      {course.program_policy_overrides?.map((note, i) => (
+        <p key={i} className="text-amber-400 text-[10px] mt-1.5 leading-snug border-t border-zinc-700/50 pt-1.5">{note}</p>
+      ))}
     </div>
   );
 }
 
-const MemoCourseNode = memo(CourseNode);
+// ─── Main component ───────────────────────────────────────────────────────────
+export function StudyPlanBoard({ terms, courses, connections }: Props) {
+  const boardRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+  const [arrows, setArrows] = useState<ComputedArrow[]>([]);
+  const [svgSize, setSvgSize] = useState({ w: 0, h: 0 });
+  const [hovered, setHovered] = useState<string | null>(null);
+  const [tooltip, setTooltip] = useState<{ id: string; x: number; y: number } | null>(null);
 
-const edgeTypes = {
-  'study-smart': SmartStepEdge
-} as const;
+  const courseTermIdx = useMemo(() => {
+    const m: Record<string, number> = {};
+    terms.forEach((t, i) => t.courses.forEach((id) => { m[id] = i; }));
+    return m;
+  }, [terms]);
 
-const nodeTypes = {
-  course: MemoCourseNode
-} as const;
-
-export function StudyPlanBoard({ semesters, edges }: StudyPlanBoardProps) {
-  const maxRows = Math.max(...semesters.map((semester) => semester.courses.length), 0);
-
-  const boardWidth =
-    BOARD_PADDING_X * 2 + semesters.length * COLUMN_WIDTH + Math.max(0, semesters.length - 1) * COLUMN_GAP;
-  const boardHeight =
-    cardsTop() + maxRows * CARD_HEIGHT + Math.max(0, maxRows - 1) * ROW_GAP + BOARD_PADDING_BOTTOM;
-
-  const slotByCourse = useMemo(() => {
-    const map = new Map<string, SlotPosition>();
-
-    semesters.forEach((semester, semesterIndex) => {
-      semester.courses.forEach((course, rowIndex) => {
-        map.set(course.code, { semesterIndex, rowIndex });
-      });
-    });
-
-    return map;
-  }, [semesters]);
-
-  const flowNodes = useMemo<StudyPlanFlowNode[]>(() => {
-    return semesters.flatMap((semester, semesterIndex) =>
-      semester.courses.map((course, rowIndex) => ({
-        id: course.code,
-        type: 'course',
-        position: {
-          x: columnLeft(semesterIndex),
-          y: rowTop(rowIndex)
-        },
-        draggable: false,
-        selectable: false,
-        data: {
-          course
-        },
-        style: {
-          width: COLUMN_WIDTH,
-          height: CARD_HEIGHT
-        }
-      }))
-    );
-  }, [semesters]);
-
-  const flowEdges = useMemo<StudyPlanFlowEdge[]>(() => {
-    const sourceHandleCounts = new Map<string, number>();
-    const targetHandleCounts = new Map<string, number>();
-
-    return edges.map((edge) => {
-      const sourceSlot = slotByCourse.get(edge.source);
-      const targetSlot = slotByCourse.get(edge.target);
-      if (!sourceSlot || !targetSlot) {
-        throw new Error(`Missing slot for edge ${edge.source} -> ${edge.target}`);
+  useEffect(() => {
+    const compute = () => {
+      const board = boardRef.current;
+      if (!board) return;
+      setSvgSize({ w: board.scrollWidth, h: board.scrollHeight });
+      const out: ComputedArrow[] = [];
+      for (const conn of connections) {
+        const fEl = cardRefs.current.get(conn.from);
+        const tEl = cardRefs.current.get(conn.to);
+        if (!fEl || !tEl) continue;
+        const f = offsetFrom(fEl, board);
+        const t = offsetFrom(tEl, board);
+        const sameCol = courseTermIdx[conn.from] === courseTermIdx[conn.to];
+        out.push({
+          ...conn,
+          sx: f.x + f.w,
+          sy: f.y + f.h / 2,
+          tx: sameCol ? t.x + t.w : t.x,
+          ty: t.y + t.h / 2,
+          sameCol,
+        });
       }
+      setArrows(out);
+    };
 
-      const { sourceSide, targetSide } = anchorSideForEdge(sourceSlot, targetSlot);
-      const sourceHandleKey = `${edge.source}:${sourceSide}`;
-      const targetHandleKey = `${edge.target}:${targetSide}`;
-      const sourceHandleIndex = sourceHandleCounts.get(sourceHandleKey) ?? 0;
-      const targetHandleIndex = targetHandleCounts.get(targetHandleKey) ?? 0;
+    // Delay slightly to ensure all card refs are populated after first paint
+    const id = requestAnimationFrame(() => { compute(); });
+    const ro = new ResizeObserver(compute);
+    if (boardRef.current) ro.observe(boardRef.current);
+    window.addEventListener('resize', compute);
+    return () => { cancelAnimationFrame(id); ro.disconnect(); window.removeEventListener('resize', compute); };
+  }, [connections, courseTermIdx]);
 
-      sourceHandleCounts.set(sourceHandleKey, sourceHandleIndex + 1);
-      targetHandleCounts.set(targetHandleKey, targetHandleIndex + 1);
+  const years = [1, 2, 3, 4].map((y) => ({
+    year: y,
+    fall: terms.find((t) => t.year === y && t.term === 'Fall')!,
+    spring: terms.find((t) => t.year === y && t.term === 'Spring')!,
+  }));
 
-      const color = edgeColorForKey(`${edge.type}:${edge.source}->${edge.target}`);
-
-      return {
-        id: `${edge.type}:${edge.source}->${edge.target}`,
-        type: 'study-smart',
-        source: edge.source,
-        target: edge.target,
-        sourceHandle: handleId('source', sourceSide, sourceHandleIndex),
-        targetHandle: handleId('target', targetSide, targetHandleIndex),
-        selectable: false,
-        focusable: false,
-        data: {
-          color,
-          kind: edge.type
-        },
-        style: {
-          stroke: color
-        },
-        markerEnd: {
-          type: MarkerType.ArrowClosed,
-          color,
-          width: 16,
-          height: 16
-        }
-      };
-    });
-  }, [edges, slotByCourse]);
+  const relatedIds = useMemo(() => {
+    if (!hovered) return new Set<string>();
+    return new Set(connections.flatMap((c) =>
+      c.from === hovered || c.to === hovered ? [c.from, c.to] : []
+    ));
+  }, [hovered, connections]);
 
   return (
-    <section className="space-y-3">
-      <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-foreground/70">
-        <span className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/70 px-3 py-1.5">
-          <span className="inline-block h-0.5 w-7 rounded-full bg-foreground/70" />
-          Solid = prereq
-        </span>
-        <span className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/70 px-3 py-1.5">
-          <span className="inline-block h-0.5 w-7 rounded-full border-t-2 border-dashed border-foreground/70" />
-          Dashed = coreq / concurrent
-        </span>
-        <span className="rounded-full border border-border/70 bg-card/70 px-3 py-1.5">React Flow + smart-edge routing</span>
-      </div>
+    <div className="px-4 sm:px-6">
+      {/* Scrollable board */}
+      <div className="w-full overflow-x-auto pb-2">
+        <div className="relative inline-flex flex-row gap-10 px-6 py-6 pb-20" ref={boardRef}>
 
-      <div className="relative overflow-x-auto rounded-2xl border border-border/70 bg-card/40 p-3">
-        <div className="relative mx-auto" style={{ width: `${boardWidth}px`, height: `${boardHeight}px` }}>
-          {semesters.map((semester, semesterIndex) => (
-            <header
-              key={semester.id}
-              className="absolute z-20 rounded-lg border border-border/70 bg-card/88 px-3 py-2.5 shadow-sm backdrop-blur"
-              style={{
-                left: `${columnLeft(semesterIndex)}px`,
-                top: 0,
-                width: `${COLUMN_WIDTH}px`
-              }}
+          {/* SVG overlay — covers full content area */}
+          {svgSize.w > 0 && (
+            <svg
+              style={{ position: 'absolute', top: 0, left: 0, width: svgSize.w, height: svgSize.h, pointerEvents: 'none', zIndex: 5 }}
+              aria-hidden="true"
             >
-              <p className="text-lg font-semibold tracking-tight text-foreground">Year {semester.year}</p>
-              <p className="text-sm font-medium text-foreground/75">
-                {semester.term} ({semester.totalCreditHours} CH)
-              </p>
-            </header>
-          ))}
+              <defs>
+                <marker id="arh-pre" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto">
+                  <path d="M0 0L8 4L0 8Z" fill="#ef4444cc" />
+                </marker>
+                <marker id="arh-con" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto">
+                  <path d="M0 0L8 4L0 8Z" fill="#60a5facc" />
+                </marker>
+              </defs>
 
-          <ReactFlow
-            nodes={flowNodes}
-            edges={flowEdges}
-            nodeTypes={nodeTypes}
-            edgeTypes={edgeTypes}
-            fitView={false}
-            panOnDrag={false}
-            panOnScroll={false}
-            zoomOnScroll={false}
-            zoomOnPinch={false}
-            zoomOnDoubleClick={false}
-            nodesDraggable={false}
-            nodesConnectable={false}
-            elementsSelectable={false}
-            nodesFocusable={false}
-            edgesFocusable={false}
-            preventScrolling={false}
-            minZoom={1}
-            maxZoom={1}
-            defaultViewport={{ x: 0, y: 0, zoom: 1 }}
-            colorMode="system"
-            className="study-plan-flow"
-          />
+              {arrows.map((ar, i) => {
+                const isRel = hovered ? (ar.from === hovered || ar.to === hovered) : true;
+                const op = hovered ? (isRel ? 0.9 : 0.05) : 0.5;
+                const stroke = ar.type === 'prereq' ? '#ef4444' : '#60a5fa';
+                const marker = ar.type === 'prereq' ? 'url(#arh-pre)' : 'url(#arh-con)';
+                let d: string;
+                if (ar.sameCol) {
+                  // C-curve to the right for same-column (concurrent)
+                  const b = 46;
+                  d = `M${ar.sx} ${ar.sy} C${ar.sx + b} ${ar.sy},${ar.tx + b} ${ar.ty},${ar.tx} ${ar.ty}`;
+                } else {
+                  const dx = Math.max(48, Math.abs(ar.tx - ar.sx) * 0.42);
+                  d = `M${ar.sx} ${ar.sy} C${ar.sx + dx} ${ar.sy},${ar.tx - dx} ${ar.ty},${ar.tx} ${ar.ty}`;
+                }
+                return (
+                  <path
+                    key={i} d={d} fill="none"
+                    stroke={stroke} strokeWidth={1.5}
+                    strokeDasharray={ar.type === 'concurrent' ? '5 3' : undefined}
+                    markerEnd={marker}
+                    opacity={op}
+                    style={{ transition: 'opacity 0.12s' }}
+                  />
+                );
+              })}
+            </svg>
+          )}
+
+          {/* Year groups */}
+          {years.map(({ year, fall, spring }) => (
+            <div key={year} className="flex flex-col" style={{ position: 'relative', zIndex: 10 }}>
+              {/* Year pill header */}
+              <div className="flex justify-center mb-4">
+                <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-foreground/40 px-3 py-1 rounded-full border border-border/40">
+                  Year {year}
+                </span>
+              </div>
+
+              {/* Fall + Spring columns */}
+              <div className="flex flex-row gap-4">
+                {[fall, spring].map((term) => (
+                  <div key={term.term} className="flex flex-col w-[172px]">
+                    {/* Semester label */}
+                    <div className="text-center mb-3 pb-2 border-b border-border/30">
+                      <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-foreground/60">{term.term}</p>
+                      <p className="text-[10px] text-muted-foreground mt-0.5">{term.total_credit_hours} credit hrs</p>
+                    </div>
+
+                    {/* Course cards */}
+                    <div className="flex flex-col gap-2.5">
+                      {term.courses.map((cid) => {
+                        const course = courses[cid];
+                        if (!course) return null;
+                        const col = getColors(cid, course.type);
+                        const isHov = hovered === cid;
+                        const isRel = relatedIds.has(cid);
+                        const dimmed = !!hovered && !isHov && !isRel;
+
+                        return (
+                          <div
+                            key={cid}
+                            ref={(el) => { if (el) cardRefs.current.set(cid, el); else cardRefs.current.delete(cid); }}
+                            onMouseEnter={(e) => { setHovered(cid); setTooltip({ id: cid, x: e.clientX, y: e.clientY }); }}
+                            onMouseMove={(e) => setTooltip((t) => t ? { ...t, x: e.clientX, y: e.clientY } : null)}
+                            onMouseLeave={() => { setHovered(null); setTooltip(null); }}
+                            className={[
+                              'rounded-lg border px-2.5 py-2 cursor-default select-none',
+                              'transition-all duration-150',
+                              col.card,
+                              isHov ? 'ring-2 ring-white/20 shadow-lg shadow-black/40 scale-[1.04]' : '',
+                              dimmed ? 'opacity-25' : 'opacity-100',
+                            ].join(' ')}
+                            style={{ position: 'relative', zIndex: isHov ? 30 : 15 }}
+                          >
+                            <div className="flex items-start justify-between gap-1 mb-1">
+                              <span className={`text-[10px] font-bold font-mono leading-none ${col.cid}`}>{cid}</span>
+                              <span className={`text-[9px] rounded px-1 py-0.5 font-semibold shrink-0 leading-tight ${col.badge}`}>
+                                {course.credit_hours}CH
+                              </span>
+                            </div>
+                            <p className={`text-[10px] leading-snug ${col.title}`}>{course.title}</p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-    </section>
+
+      {/* Legend */}
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-2 px-6 pb-4 text-[11px] text-muted-foreground">
+        <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-foreground/30">Legend</span>
+        <LegendArrow type="prereq" label="Prerequisite" />
+        <LegendArrow type="concurrent" label="Concurrent prereq" />
+        <LegendSwatch cls="bg-blue-900 border-blue-700" label="CS Core" />
+        <LegendSwatch cls="bg-emerald-900 border-emerald-700" label="Math / Science" />
+        <LegendSwatch cls="bg-teal-900 border-teal-700" label="Engineering" />
+        <LegendSwatch cls="bg-amber-900 border-amber-700" label="Languages / Humanities" />
+        <LegendSwatch cls="bg-rose-900 border-rose-700" label="Major Elective" />
+        <LegendSwatch cls="bg-zinc-800 border-dashed border-zinc-600" label="Package" />
+      </div>
+
+      {/* Tooltip */}
+      {tooltip && courses[tooltip.id] && (
+        <CourseTooltip courseId={tooltip.id} course={courses[tooltip.id]} x={tooltip.x} y={tooltip.y} />
+      )}
+    </div>
   );
 }
