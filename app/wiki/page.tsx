@@ -23,7 +23,7 @@ const SORT_OPTIONS: Array<{ value: ArticleSort; label: string }> = [
 ];
 
 interface SearchParamProps {
-  searchParams?: Record<string, string | string[] | undefined>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }
 
 function getFirstParam(value: string | string[] | undefined): string | undefined {
@@ -86,10 +86,11 @@ function buildWikiHref(options: {
 
 
 export default async function WikiPage({ searchParams }: SearchParamProps) {
-  const page = parsePositiveInt(getFirstParam(searchParams?.page), 1);
-  const sort = parseSort(getFirstParam(searchParams?.sort));
-  const category = getFirstParam(searchParams?.category)?.trim() || undefined;
-  const tag = getFirstParam(searchParams?.tag)?.trim() || undefined;
+  const params = await searchParams;
+  const page = parsePositiveInt(getFirstParam(params?.page), 1);
+  const sort = parseSort(getFirstParam(params?.sort));
+  const category = getFirstParam(params?.category)?.trim() || undefined;
+  const tag = getFirstParam(params?.tag)?.trim() || undefined;
 
   const [articleData, categories, tags, syncMeta] = await Promise.all([
     listArticles({
