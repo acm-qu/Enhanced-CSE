@@ -16,7 +16,6 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Toaster } from '@/components/ui/sonner';
 
-import '@xyflow/react/dist/style.css';
 import './globals.css';
 
 export const metadata: Metadata = {
