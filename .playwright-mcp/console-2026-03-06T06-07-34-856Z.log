@@ -1,0 +1,14 @@
+[  237331ms] [ERROR] ./components/study-plan-board.tsx:331:1
+Parsing ecmascript source code failed
+  329 |     </div>
+  330 |   );
+> 331 | }
+      | ^
+  332 |
+
+Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+
+Import trace:
+  Server Component:
+    ./components/study-plan-board.tsx
+    ./app/cs-study-plan/page.tsx @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127

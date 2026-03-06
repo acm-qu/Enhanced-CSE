@@ -632,7 +632,7 @@
       "year": 1,
       "term": "Fall",
       "total_credit_hours": 16,
-      "courses": ["CMPS 151", "CHEM 101", "CHEM 103", "MATH 101", "ENGL 202", "CMPS 205"]
+      "courses": ["CMPS 151", "CHEM 101", "CHEM 103", "MATH 101", "ENGL 202", "HIST 121"]
     },
     {
       "year": 1,
@@ -644,25 +644,25 @@
       "year": 2,
       "term": "Fall",
       "total_credit_hours": 15,
-      "courses": ["CMPS 200", "HIST 121", "CMPS 303", "CMPS 310", "MAJOR_ELECTIVE_I"]
+      "courses": ["CMPS 200", "CMPS 205", "CMPS 303", "ARAB 100", "PHYS 193", "PHYS 194"]
     },
     {
       "year": 2,
       "term": "Spring",
       "total_credit_hours": 16,
-      "courses": ["CMPS 323", "CMPS 351", "CMPE 263", "GENG 200", "CORE_KNOWLEDGE_SKILLS_PKG"]
+      "courses": ["CMPS 323", "CMPS 351", "CMPE 263", "GENG 200", "CMPS 350"]
     },
     {
       "year": 3,
       "term": "Fall",
       "total_credit_hours": 17,
-      "courses": ["ARAB 100", "CMPE 355", "CMPS 380", "GENG 300", "PHYS 193", "PHYS 194"]
+      "courses": ["CMPS 310", "CMPE 355", "CMPS 380", "GENG 300", "MAJOR_ELECTIVE_I"]
     },
     {
       "year": 3,
       "term": "Spring",
       "total_credit_hours": 16,
-      "courses": ["NAT_SCI_MATH_PKG", "CMPS 350", "MAJOR_ELECTIVE_II", "CMPS 405", "DAWA 111"]
+      "courses": ["CMPS 405", "CORE_KNOWLEDGE_SKILLS_PKG", "MAJOR_ELECTIVE_II", "NAT_SCI_MATH_PKG", "DAWA 111"]
     },
     {
       "year": 4,
