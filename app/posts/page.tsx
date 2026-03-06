@@ -25,7 +25,7 @@ const SORT_OPTIONS: Array<{ value: PostSort; label: string }> = [
 ];
 
 interface SearchParamProps {
-  searchParams?: Record<string, string | string[] | undefined>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }
 
 function getFirstParam(value: string | string[] | undefined): string | undefined {
@@ -117,10 +117,11 @@ function buildPostsHref(options: {
 
 
 export default async function PostsPage({ searchParams }: SearchParamProps) {
-  const page = parsePositiveInt(getFirstParam(searchParams?.page), 1);
-  const sort = parseSort(getFirstParam(searchParams?.sort));
-  const category = getFirstParam(searchParams?.category)?.trim() || undefined;
-  const month = parseMonth(getFirstParam(searchParams?.month));
+  const params = await searchParams;
+  const page = parsePositiveInt(getFirstParam(params?.page), 1);
+  const sort = parseSort(getFirstParam(params?.sort));
+  const category = getFirstParam(params?.category)?.trim() || undefined;
+  const month = parseMonth(getFirstParam(params?.month));
 
   const monthRange = month ? monthToRange(month) : undefined;
 

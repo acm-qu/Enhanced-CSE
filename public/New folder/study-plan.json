@@ -1,0 +1,681 @@
+{
+  "program": {
+    "name": "Computer Science",
+    "institution": "Qatar University",
+    "total_credit_hours_required": 120,
+    "roadmap_version": "2024",
+    "senior_project_registration_policy": {
+      "rule_text": "To be eligible for Senior Project registration, a student must have successfully completed a minimum of 84 CH AND CMPS 310 Software Engineering AND either CMPS 350 Web Development Fundamentals OR CMPS 405 Operating Systems.",
+      "source_url": "https://www.qu.edu.qa/en-us/colleges/engineering/documents/cse/cse_documents/study_plan/cs/2024-cs-prerequisite-flowchart.pdf"
+    },
+    "source_documents": {
+      "roadmap_pdf_2024": "https://www.qu.edu.qa/en-us/colleges/engineering/documents/cse/cse_documents/study_plan/cs/2024-cs-prerequisite-flowchart.pdf",
+      "cs_studyplan_page": "https://www.qu.edu.qa/en-us/Colleges/engineering/academics/computer/cs/Pages/studyplan.aspx",
+      "mybanner_course_detail_template": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in={TERM}&subj_code_in={SUBJECT}&crse_numb_in={NUMBER}"
+    }
+  },
+  "courses": {
+    "CMPS 151": {
+      "title": "Programming Concepts",
+      "credit_hours": 3,
+      "schedule_types": ["Lab", "Lecture"],
+      "department": "Computer Science & Engineering Department",
+      "attributes": ["Engineering Course (TUI)"],
+      "restrictions": {
+        "level": ["Undergraduate"],
+        "college": ["Engineering"],
+        "field_of_study": ["Computer Engineering", "Computer Science", "General Engineering"]
+      },
+      "requisites": {
+        "prerequisites": { "text": "", "parsed": null },
+        "corequisites": { "text": "", "parsed": null },
+        "concurrent_prerequisites_from_roadmap": []
+      },
+      "sources": {
+        "catalog_term": "202410",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=151&subj_code_in=CMPS"
+      }
+    },
+    "CHEM 101": {
+      "title": "General Chemistry I",
+      "credit_hours": 3,
+      "schedule_types": ["Lecture"],
+      "department": "Chemistry and Earth Sciences Department",
+      "attributes": ["Science Course (TUI)"],
+      "restrictions": { "level": ["Undergraduate"] },
+      "requisites": {
+        "prerequisites": {
+          "text": "(English competency/placement requirements; see myBanner prereq block)",
+          "parsed": null
+        },
+        "corequisites": { "text": "", "parsed": null },
+        "concurrent_prerequisites_from_roadmap": []
+      },
+      "sources": {
+        "catalog_term": "202410",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=101&subj_code_in=CHEM"
+      }
+    },
+    "CHEM 103": {
+      "title": "Experimental General Chemistry I",
+      "credit_hours": 1,
+      "schedule_types": ["Lab"],
+      "department": "Chemistry and Earth Sciences Department",
+      "attributes": ["Science Course (TUI)"],
+      "restrictions": { "level": ["Undergraduate"] },
+      "requisites": {
+        "prerequisites": { "text": "Undergraduate level CHEM 101 Minimum Grade of D", "parsed": { "all_of": ["CHEM 101"] } },
+        "corequisites": { "text": "", "parsed": null },
+        "concurrent_prerequisites_from_roadmap": ["CHEM 101"]
+      },
+      "notes": ["Roadmap marks CHEM 101 as a concurrent prerequisite for CHEM 103 (can be taken same term)."],
+      "sources": {
+        "catalog_term": "202110",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=103&subj_code_in=CHEM",
+        "roadmap_url": "https://www.qu.edu.qa/en-us/colleges/engineering/documents/cse/cse_documents/study_plan/cs/2024-cs-prerequisite-flowchart.pdf"
+      }
+    },
+    "MATH 101": {
+      "title": "Calculus I",
+      "credit_hours": 3,
+      "schedule_types": ["Lab", "Lecture"],
+      "department": "Mathematics and Statistics Department",
+      "attributes": ["Science Course (TUI)"],
+      "restrictions": { "level": ["Undergraduate"] },
+      "requisites": {
+        "prerequisites": { "text": "(Math placement + English competency/placement requirements; see myBanner prereq block)", "parsed": null },
+        "corequisites": { "text": "", "parsed": null },
+        "concurrent_prerequisites_from_roadmap": []
+      },
+      "sources": {
+        "catalog_term": "202110",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=101&subj_code_in=MATH"
+      }
+    },
+    "ENGL 202": {
+      "title": "English Language I Post Foundation",
+      "credit_hours": 3,
+      "schedule_types": ["Lecture"],
+      "department": "English For Foundation Department",
+      "attributes": ["Foundation Course (TUI)"],
+      "restrictions": { "level": ["Undergraduate", "Foundation"] },
+      "requisites": {
+        "prerequisites": { "text": "(English placement/ESL/IELTS/TOEFL requirements; see myBanner prereq block)", "parsed": null },
+        "corequisites": { "text": "", "parsed": null },
+        "concurrent_prerequisites_from_roadmap": []
+      },
+      "sources": {
+        "catalog_term": "202110",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=202&subj_code_in=ENGL"
+      }
+    },
+    "HIST 121": {
+      "title": "History of Qatar",
+      "credit_hours": 3,
+      "schedule_types": ["Lecture"],
+      "department": "Humanities Department",
+      "attributes": ["Art Course (TUI)"],
+      "restrictions": {},
+      "requisites": {
+        "prerequisites": { "text": "", "parsed": null },
+        "corequisites": { "text": "", "parsed": null },
+        "concurrent_prerequisites_from_roadmap": []
+      },
+      "sources": {
+        "catalog_term": "202410",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=121&subj_code_in=HIST"
+      }
+    },
+    "CMPS 251": {
+      "title": "Object-Oriented Programming",
+      "credit_hours": 4,
+      "schedule_types": ["Lab", "Lecture"],
+      "department": "Computer Science & Engineering Department",
+      "attributes": ["Engineering Course (TUI)"],
+      "restrictions": { "level": ["Undergraduate"] },
+      "requisites": {
+        "prerequisites": {
+          "text": "Undergraduate level CMPS 151 Minimum Grade of D or Undergraduate level GENG 106 Minimum Grade of D",
+          "parsed": { "any_of": ["CMPS 151", "GENG 106"] }
+        },
+        "corequisites": { "text": "", "parsed": null },
+        "concurrent_prerequisites_from_roadmap": []
+      },
+      "sources": {
+        "catalog_term": "202110",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=251&subj_code_in=CMPS"
+      }
+    },
+    "PHYS 191": {
+      "title": "General Physics For Engineering I",
+      "credit_hours": 3,
+      "schedule_types": ["Lab", "Lecture"],
+      "department": "Maths, Stats and Physics Department",
+      "attributes": ["Science Course (TUI)"],
+      "restrictions": { "level": ["Undergraduate"] },
+      "requisites": {
+        "prerequisites": { "text": "Undergraduate level MATH 101 Minimum Grade of D", "parsed": { "all_of": ["MATH 101"] } },
+        "corequisites": { "text": "", "parsed": null },
+        "concurrent_prerequisites_from_roadmap": []
+      },
+      "sources": {
+        "catalog_term": "202110",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=191&subj_code_in=PHYS"
+      }
+    },
+    "PHYS 192": {
+      "title": "Experimental General Physics For Engineering I",
+      "credit_hours": 1,
+      "schedule_types": ["Lab"],
+      "department": "Maths, Stats and Physics Department",
+      "attributes": ["Science Course (TUI)"],
+      "restrictions": { "level": ["Undergraduate"] },
+      "requisites": {
+        "prerequisites": { "text": "Undergraduate level PHYS 191 Minimum Grade of D", "parsed": { "all_of": ["PHYS 191"] } },
+        "corequisites": { "text": "", "parsed": null },
+        "concurrent_prerequisites_from_roadmap": ["PHYS 191"]
+      },
+      "notes": ["Roadmap marks PHYS 191 as a concurrent prerequisite for PHYS 192 (can be taken same term)."],
+      "sources": {
+        "catalog_term": "202110",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=192&subj_code_in=PHYS",
+        "roadmap_url": "https://www.qu.edu.qa/en-us/colleges/engineering/documents/cse/cse_documents/study_plan/cs/2024-cs-prerequisite-flowchart.pdf"
+      }
+    },
+    "MATH 231": {
+      "title": "Linear Algebra",
+      "credit_hours": 3,
+      "schedule_types": ["Lecture"],
+      "department": "Maths, Stats and Physics Department",
+      "attributes": ["Science Course (TUI)"],
+      "restrictions": { "level": ["Undergraduate"] },
+      "requisites": {
+        "prerequisites": { "text": "Undergraduate level MATH 101 Minimum Grade of D", "parsed": { "all_of": ["MATH 101"] } },
+        "corequisites": { "text": "", "parsed": null },
+        "concurrent_prerequisites_from_roadmap": []
+      },
+      "sources": {
+        "catalog_term": "202110",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=231&subj_code_in=MATH"
+      }
+    },
+    "MATH 102": {
+      "title": "Calculus II",
+      "credit_hours": 3,
+      "schedule_types": ["Lab", "Lecture"],
+      "department": "Maths, Stats and Physics Department",
+      "attributes": ["Science Course (TUI)"],
+      "restrictions": { "level": ["Undergraduate"] },
+      "requisites": {
+        "prerequisites": { "text": "Undergraduate level MATH 101 Minimum Grade of D", "parsed": { "all_of": ["MATH 101"] } },
+        "corequisites": { "text": "", "parsed": null },
+        "concurrent_prerequisites_from_roadmap": []
+      },
+      "sources": {
+        "catalog_term": "202110",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=102&subj_code_in=MATH"
+      }
+    },
+    "ENGL 203": {
+      "title": "English Language II Post Foundation",
+      "credit_hours": 3,
+      "schedule_types": ["Lecture"],
+      "department": "English For Foundation Department",
+      "attributes": ["Foundation Course (TUI)"],
+      "restrictions": { "level": ["Undergraduate", "Foundation"] },
+      "requisites": {
+        "prerequisites": { "text": "Undergraduate level ENGL 202 Minimum Grade of D", "parsed": { "all_of": ["ENGL 202"] } },
+        "corequisites": { "text": "", "parsed": null },
+        "concurrent_prerequisites_from_roadmap": []
+      },
+      "sources": {
+        "catalog_term": "202120",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202120&crse_numb_in=203&subj_code_in=ENGL"
+      }
+    },
+    "CMPS 200": {
+      "title": "Computer Ethics",
+      "credit_hours": 1,
+      "schedule_types": ["Lecture"],
+      "department": "Computer Science & Engineering Department",
+      "attributes": ["Engineering Course (TUI)"],
+      "restrictions": {
+        "level": ["Undergraduate"],
+        "college": ["Engineering"],
+        "major": ["Computer Science"]
+      },
+      "requisites": {
+        "prerequisites": { "text": "", "parsed": null },
+        "corequisites": { "text": "", "parsed": null },
+        "concurrent_prerequisites_from_roadmap": []
+      },
+      "sources": {
+        "catalog_term": "202410",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=200&subj_code_in=CMPS"
+      }
+    },
+    "CMPS 205": {
+      "title": "Discrete Structures for Computing",
+      "credit_hours": 3,
+      "schedule_types": ["Lecture"],
+      "department": "Computer Science & Engineering Department",
+      "attributes": ["Engineering Course (TUI)"],
+      "restrictions": { "level": ["Undergraduate"] },
+      "requisites": {
+        "prerequisites": { "text": "", "parsed": null },
+        "corequisites": { "text": "", "parsed": null },
+        "concurrent_prerequisites_from_roadmap": []
+      },
+      "sources": {
+        "catalog_term": "202110",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=205&subj_code_in=CMPS"
+      },
+      "notes": ["An older catalog instance listed MATH 101 as a prerequisite; current myBanner page above shows no prerequisites block filled."]
+    },
+    "CMPS 303": {
+      "title": "Data Structures",
+      "credit_hours": 4,
+      "schedule_types": ["Lab", "Lecture"],
+      "department": "Computer Science & Engineering Department",
+      "attributes": ["Engineering Course (TUI)"],
+      "restrictions": { "level": ["Undergraduate"] },
+      "requisites": {
+        "prerequisites": {
+          "text": "Undergraduate level CMPS 251 Minimum Grade of D or Undergraduate level CMPE 265 Minimum Grade of D",
+          "parsed": { "any_of": ["CMPS 251", "CMPE 265"] }
+        },
+        "corequisites": { "text": "", "parsed": null },
+        "concurrent_prerequisites_from_roadmap": []
+      },
+      "sources": {
+        "catalog_term": "202110",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=303&subj_code_in=CMPS"
+      }
+    },
+    "PHYS 193": {
+      "title": "General Physics For Engineering II",
+      "credit_hours": 3,
+      "schedule_types": ["Lecture"],
+      "department": "Maths, Stats and Physics Department",
+      "attributes": ["Science Course (TUI)"],
+      "restrictions": { "level": ["Undergraduate"] },
+      "requisites": {
+        "prerequisites": {
+          "text": "(Undergraduate level PHYS 191 Minimum Grade of D ...) and (Undergraduate level PHYS 192 Minimum Grade of D ...)",
+          "parsed": { "all_of": ["PHYS 191", "PHYS 192"] }
+        },
+        "corequisites": { "text": "", "parsed": null },
+        "concurrent_prerequisites_from_roadmap": []
+      },
+      "sources": {
+        "catalog_term": "201910",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=201910&crse_numb_in=193&subj_code_in=PHYS"
+      }
+    },
+    "PHYS 194": {
+      "title": "Experimental General Physics for Engineering II",
+      "credit_hours": 1,
+      "schedule_types": ["Lab"],
+      "department": "Maths, Stats and Physics Department",
+      "attributes": ["Science Course (TUI)"],
+      "restrictions": { "level": ["Undergraduate"] },
+      "requisites": {
+        "prerequisites": {
+          "text": "Undergraduate level PHYS 193 Minimum Grade of D and Undergraduate level PHYS 192 Minimum Grade of D and Undergraduate level PHYS 191 Minimum Grade of D",
+          "parsed": { "all_of": ["PHYS 191", "PHYS 192", "PHYS 193"] }
+        },
+        "corequisites": { "text": "", "parsed": null },
+        "concurrent_prerequisites_from_roadmap": ["PHYS 193"]
+      },
+      "notes": ["Roadmap marks PHYS 193 as a concurrent prerequisite for PHYS 194 (can be taken same term)."],
+      "sources": {
+        "catalog_term": "202110",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=194&subj_code_in=PHYS",
+        "roadmap_url": "https://www.qu.edu.qa/en-us/colleges/engineering/documents/cse/cse_documents/study_plan/cs/2024-cs-prerequisite-flowchart.pdf"
+      }
+    },
+    "ARAB 100": {
+      "title": "Arabic Language I",
+      "credit_hours": 3,
+      "schedule_types": ["Lecture"],
+      "department": "Arabic Department",
+      "attributes": ["Art Course (TUI)"],
+      "restrictions": { "level": ["Undergraduate", "Foundation"] },
+      "requisites": {
+        "prerequisites": { "text": "", "parsed": null },
+        "corequisites": { "text": "", "parsed": null },
+        "concurrent_prerequisites_from_roadmap": []
+      },
+      "sources": {
+        "catalog_term": "202110",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=100&subj_code_in=ARAB"
+      }
+    },
+    "CMPS 323": {
+      "title": "Design and Analysis of Algorithms",
+      "credit_hours": 3,
+      "schedule_types": ["Lecture"],
+      "department": "Computer Science & Engineering Department",
+      "attributes": ["Engineering Course (TUI)"],
+      "restrictions": { "level": ["Undergraduate"] },
+      "requisites": {
+        "prerequisites": {
+          "text": "Undergraduate level CMPS 303 Minimum Grade of D and Undergraduate level CMPS 205 Minimum Grade of D",
+          "parsed": { "all_of": ["CMPS 303", "CMPS 205"] }
+        },
+        "corequisites": { "text": "", "parsed": null },
+        "concurrent_prerequisites_from_roadmap": []
+      },
+      "sources": {
+        "catalog_term": "202410",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=323&subj_code_in=CMPS"
+      }
+    },
+    "CMPS 351": {
+      "title": "Fundamentals of Database Systems",
+      "credit_hours": 4,
+      "schedule_types": ["Lab", "Lecture"],
+      "department": "Computer Science & Engineering Department",
+      "attributes": ["Engineering Course (TUI)"],
+      "restrictions": { "level": ["Undergraduate"] },
+      "requisites": {
+        "prerequisites": { "text": "Undergraduate level CMPS 251 Minimum Grade of D", "parsed": { "all_of": ["CMPS 251"] } },
+        "corequisites": { "text": "", "parsed": null },
+        "concurrent_prerequisites_from_roadmap": []
+      },
+      "sources": {
+        "catalog_term": "202110",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=351&subj_code_in=CMPS"
+      }
+    },
+    "CMPE 263": {
+      "title": "Computer Architecture and Organization I",
+      "credit_hours": 3,
+      "schedule_types": ["Lecture"],
+      "department": "Computer Science & Engineering Department",
+      "attributes": ["Engineering Course (TUI)"],
+      "restrictions": { "level": ["Undergraduate"] },
+      "requisites": {
+        "prerequisites": {
+          "text": "Undergraduate level CMPS 205 Minimum Grade of D and (Undergraduate level CMPS 151 Minimum Grade of D or Undergraduate level GENG 106 Minimum Grade of D)",
+          "parsed": { "all_of": ["CMPS 205"], "any_of": ["CMPS 151", "GENG 106"] }
+        },
+        "corequisites": { "text": "", "parsed": null },
+        "concurrent_prerequisites_from_roadmap": []
+      },
+      "sources": {
+        "catalog_term": "202110",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=263&subj_code_in=CMPE"
+      }
+    },
+    "GENG 200": {
+      "title": "Probability and Statistics for Engineers",
+      "credit_hours": 3,
+      "schedule_types": ["Lecture"],
+      "department": "General Engineering Department",
+      "attributes": ["Engineering Course (TUI)"],
+      "restrictions": { "level": ["Undergraduate"] },
+      "requisites": {
+        "prerequisites": { "text": "Undergraduate level MATH 102 Minimum Grade of D", "parsed": { "all_of": ["MATH 102"] } },
+        "corequisites": { "text": "", "parsed": null },
+        "concurrent_prerequisites_from_roadmap": []
+      },
+      "sources": {
+        "catalog_term": "202310",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202310&crse_numb_in=200&subj_code_in=GENG"
+      }
+    },
+    "CORE_KNOWLEDGE_SKILLS_PKG": {
+      "title": "Core Knowledge and Skills Package",
+      "credit_hours": 3,
+      "type": "package",
+      "requisites": { "prerequisites": { "text": "", "parsed": null }, "corequisites": { "text": "", "parsed": null }, "concurrent_prerequisites_from_roadmap": [] },
+      "sources": { "roadmap_url": "https://www.qu.edu.qa/en-us/colleges/engineering/documents/cse/cse_documents/study_plan/cs/2024-cs-prerequisite-flowchart.pdf" }
+    },
+    "CMPS 310": {
+      "title": "Software Engineering",
+      "credit_hours": 4,
+      "schedule_types": ["Lab", "Lecture"],
+      "department": "Computer Science & Engineering Department",
+      "attributes": ["Engineering Course (TUI)"],
+      "requisites": {
+        "prerequisites": { "text": "Undergraduate level CMPS 251 Minimum Grade of D", "parsed": { "all_of": ["CMPS 251"] } },
+        "corequisites": { "text": "", "parsed": null },
+        "concurrent_prerequisites_from_roadmap": []
+      },
+      "sources": {
+        "catalog_term": "202110",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=310&subj_code_in=CMPS"
+      }
+    },
+    "CMPE 355": {
+      "title": "Data Communication and Computer Networks I",
+      "credit_hours": 4,
+      "schedule_types": ["Lab", "Lecture"],
+      "department": "Computer Science & Engineering Department",
+      "attributes": ["Engineering Course (TUI)"],
+      "restrictions": { "level": ["Undergraduate"], "college": ["Engineering"], "major": ["Computer Engineering", "Computer Science"] },
+      "requisites": {
+        "prerequisites": { "text": "Undergraduate level CMPS 303 Minimum Grade of D and Undergraduate level CMPE 263 Minimum Grade of D", "parsed": { "all_of": ["CMPS 303", "CMPE 263"] } },
+        "corequisites": { "text": "", "parsed": null },
+        "concurrent_prerequisites_from_roadmap": []
+      },
+      "sources": {
+        "catalog_term": "202110",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=355&subj_code_in=CMPE"
+      }
+    },
+    "CMPS 380": {
+      "title": "Cybersecurity Fundamentals",
+      "credit_hours": 3,
+      "schedule_types": ["Lecture"],
+      "department": "Computer Science & Engineering Department",
+      "attributes": ["Engineering Course (TUI)"],
+      "requisites": {
+        "prerequisites": { "text": "Undergraduate level CMPS 303 Minimum Grade of D", "parsed": { "all_of": ["CMPS 303"] } },
+        "corequisites": { "text": "", "parsed": null },
+        "concurrent_prerequisites_from_roadmap": []
+      },
+      "sources": {
+        "catalog_term": "202410",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=380&subj_code_in=CMPS"
+      }
+    },
+    "GENG 300": {
+      "title": "Numerical Methods",
+      "credit_hours": 3,
+      "schedule_types": ["Lab", "Lecture", "Lecture/Lab"],
+      "department": "General Engineering Department",
+      "attributes": ["Engineering Course (TUI)"],
+      "requisites": {
+        "prerequisites": {
+          "text": "(Undergraduate level GENG 106 Minimum Grade of D or Undergraduate level CMPS 151 Minimum Grade of D) and (Undergraduate level MATH 211 Minimum Grade of D or (Undergraduate level MATH 102 Minimum Grade of D and Undergraduate level MATH 231 Minimum Grade of D))",
+          "parsed": {
+            "all_of": [
+              { "any_of": ["GENG 106", "CMPS 151"] },
+              { "any_of": ["MATH 211", { "all_of": ["MATH 102", "MATH 231"] }] }
+            ]
+          }
+        },
+        "corequisites": { "text": "", "parsed": null },
+        "concurrent_prerequisites_from_roadmap": []
+      },
+      "sources": {
+        "catalog_term": "202110",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=300&subj_code_in=GENG"
+      }
+    },
+    "MAJOR_ELECTIVE_I": { "title": "Major Elective I", "credit_hours": 3, "type": "elective_placeholder" },
+    "CMPS 405": {
+      "title": "Operating Systems",
+      "credit_hours": 4,
+      "schedule_types": ["Lab", "Lecture"],
+      "department": "Computer Science & Engineering Department",
+      "attributes": ["Engineering Course (TUI)"],
+      "requisites": {
+        "prerequisites": { "text": "Undergraduate level CMPS 303 Minimum Grade of D and Undergraduate level CMPE 263 Minimum Grade of D", "parsed": { "all_of": ["CMPS 303", "CMPE 263"] } },
+        "corequisites": { "text": "", "parsed": null },
+        "concurrent_prerequisites_from_roadmap": []
+      },
+      "sources": {
+        "catalog_term": "202110",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=405&subj_code_in=CMPS"
+      }
+    },
+    "CMPS 350": {
+      "title": "Web development Fundamentals",
+      "credit_hours": 3,
+      "schedule_types": ["Lab", "Lecture"],
+      "department": "Computer Science & Engineering Department",
+      "attributes": ["Engineering Course (TUI)"],
+      "requisites": {
+        "prerequisites": { "text": "Undergraduate level CMPS 251 Minimum Grade of D", "parsed": { "all_of": ["CMPS 251"] } },
+        "corequisites": { "text": "", "parsed": null },
+        "concurrent_prerequisites_from_roadmap": []
+      },
+      "sources": {
+        "catalog_term": "202410",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=350&subj_code_in=CMPS"
+      }
+    },
+    "MAJOR_ELECTIVE_II": { "title": "Major Elective II", "credit_hours": 3, "type": "elective_placeholder" },
+    "NAT_SCI_MATH_PKG": { "title": "Natural Science/Mathematics package", "credit_hours": 3, "type": "package" },
+    "DAWA 111": {
+      "title": "Islamic Culture",
+      "credit_hours": 3,
+      "schedule_types": ["Lecture"],
+      "department": "Dawa and Islamic Culture Department",
+      "attributes": ["Shariaa Course (TUI)"],
+      "restrictions": { "level": ["Undergraduate", "Foundation"] },
+      "requisites": { "prerequisites": { "text": "", "parsed": null }, "corequisites": { "text": "", "parsed": null }, "concurrent_prerequisites_from_roadmap": [] },
+      "sources": {
+        "catalog_term": "201920",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=201920&crse_numb_in=111&subj_code_in=DAWA"
+      }
+    },
+    "CMPS 493": {
+      "title": "Senior Project I",
+      "credit_hours": 3,
+      "schedule_types": ["Senior Project"],
+      "department": "Computer Science & Engineering Department",
+      "attributes": ["Engineering Course (TUI)"],
+      "requisites": {
+        "prerequisites": { "text": "Undergraduate level CMPS 310 Minimum Grade of D", "parsed": { "all_of": ["CMPS 310"] } },
+        "corequisites": { "text": "", "parsed": null },
+        "concurrent_prerequisites_from_roadmap": []
+      },
+      "program_policy_overrides": [
+        "Must satisfy Senior Project registration policy (84 CH + CMPS 310 + (CMPS 350 or CMPS 405))."
+      ],
+      "sources": {
+        "catalog_term": "202410",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=493&subj_code_in=CMPS",
+        "roadmap_url": "https://www.qu.edu.qa/en-us/colleges/engineering/documents/cse/cse_documents/study_plan/cs/2024-cs-prerequisite-flowchart.pdf",
+        "cs_studyplan_url": "https://www.qu.edu.qa/en-us/Colleges/engineering/academics/computer/cs/Pages/studyplan.aspx"
+      }
+    },
+    "MAJOR_ELECTIVE_III": { "title": "Major Elective III", "credit_hours": 3, "type": "elective_placeholder" },
+    "CMPS 307": {
+      "title": "Introduction to Project Management and Entrepreneurship",
+      "credit_hours": 2,
+      "schedule_types": ["Lecture"],
+      "department": "Computer Science & Engineering Department",
+      "attributes": ["Engineering Course (TUI)"],
+      "restrictions": {
+        "classification": ["Junior 60-74", "Junior 75-89", "Earned 90-104 cr", "Earned 105-119 cr", "Senior"]
+      },
+      "requisites": { "prerequisites": { "text": "", "parsed": null }, "corequisites": { "text": "", "parsed": null }, "concurrent_prerequisites_from_roadmap": [] },
+      "sources": {
+        "catalog_term": "202110",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=307&subj_code_in=CMPS"
+      }
+    },
+    "HUM_FINE_ARTS_PKG": { "title": "Humanities/Fine Arts package", "credit_hours": 3, "type": "package" },
+    "CMPS 499": {
+      "title": "Senior Project II",
+      "credit_hours": 3,
+      "schedule_types": ["Senior Project"],
+      "department": "Computer Science & Engineering Department",
+      "attributes": ["Engineering Course (TUI)"],
+      "requisites": {
+        "prerequisites": { "text": "Undergraduate level CMPS 493 Minimum Grade of D", "parsed": { "all_of": ["CMPS 493"] } },
+        "corequisites": { "text": "", "parsed": null },
+        "concurrent_prerequisites_from_roadmap": []
+      },
+      "sources": {
+        "catalog_term": "202410",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=499&subj_code_in=CMPS"
+      }
+    },
+    "MAJOR_ELECTIVE_IV": { "title": "Major Elective IV", "credit_hours": 3, "type": "elective_placeholder" },
+    "MAGT 101": {
+      "title": "Principles of Management",
+      "credit_hours": 3,
+      "schedule_types": ["Lecture"],
+      "department": "Management and Marketing Department",
+      "attributes": ["Business Course (TUI)"],
+      "restrictions": { "level": ["Undergraduate", "Foundation"] },
+      "requisites": {
+        "prerequisites": { "text": "Undergraduate level ARAB 100 Minimum Grade of D or Undergraduate level ENGL 202 Minimum Grade of D or TOEFL iBT 061 or IELTS 5.5 or (Integrated Core/ESL combo)", "parsed": null },
+        "corequisites": { "text": "", "parsed": null },
+        "concurrent_prerequisites_from_roadmap": []
+      },
+      "sources": {
+        "catalog_term": "202110",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=101&subj_code_in=MAGT"
+      }
+    },
+    "SOC_BEHAV_PKG": { "title": "Social/Behavioral Sciences package", "credit_hours": 3, "type": "package" }
+  },
+  "study_plan_terms": [
+    {
+      "year": 1,
+      "term": "Fall",
+      "total_credit_hours": 16,
+      "courses": ["CMPS 151", "CHEM 101", "CHEM 103", "MATH 101", "ENGL 202", "CMPS 205"]
+    },
+    {
+      "year": 1,
+      "term": "Spring",
+      "total_credit_hours": 17,
+      "courses": ["CMPS 251", "PHYS 191", "PHYS 192", "MATH 231", "MATH 102", "ENGL 203"]
+    },
+    {
+      "year": 2,
+      "term": "Fall",
+      "total_credit_hours": 15,
+      "courses": ["CMPS 200", "HIST 121", "CMPS 303", "CMPS 310", "MAJOR_ELECTIVE_I"]
+    },
+    {
+      "year": 2,
+      "term": "Spring",
+      "total_credit_hours": 16,
+      "courses": ["CMPS 323", "CMPS 351", "CMPE 263", "GENG 200", "CORE_KNOWLEDGE_SKILLS_PKG"]
+    },
+    {
+      "year": 3,
+      "term": "Fall",
+      "total_credit_hours": 17,
+      "courses": ["ARAB 100", "CMPE 355", "CMPS 380", "GENG 300", "PHYS 193", "PHYS 194"]
+    },
+    {
+      "year": 3,
+      "term": "Spring",
+      "total_credit_hours": 16,
+      "courses": ["NAT_SCI_MATH_PKG", "CMPS 350", "MAJOR_ELECTIVE_II", "CMPS 405", "DAWA 111"]
+    },
+    {
+      "year": 4,
+      "term": "Fall",
+      "total_credit_hours": 11,
+      "courses": ["CMPS 493", "MAJOR_ELECTIVE_III", "CMPS 307", "HUM_FINE_ARTS_PKG"]
+    },
+    {
+      "year": 4,
+      "term": "Spring",
+      "total_credit_hours": 12,
+      "courses": ["CMPS 499", "MAJOR_ELECTIVE_IV", "MAGT 101", "SOC_BEHAV_PKG"]
+    }
+  ]
+}
+

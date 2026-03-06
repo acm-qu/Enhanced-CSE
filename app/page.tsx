@@ -26,7 +26,7 @@ const FEATURED_CATEGORY_RULES = [
 ] as const;
 
 const CONTENT_LINK_CLASS =
-  'group inline-flex items-start gap-2 text-[17px] leading-relaxed text-[#2CAD9E] transition-colors hover:text-[#3AE4D1]';
+  'group inline-flex items-start gap-2 text-[17px] font-semibold leading-relaxed text-[#2CAD9E] transition-colors hover:text-[#3AE4D1]';
 
 function normalizeText(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
@@ -182,20 +182,20 @@ export default async function HomePage() {
 
   return (
     <main className="w-full">
-      <section className="relative overflow-hidden border-b border-white/10 bg-[#04060c] text-white">
-        <div className="absolute inset-0 [background-image:linear-gradient(to_right,rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:48px_48px]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(58,228,209,0.08),transparent_55%)]" />
+      <section className="relative overflow-hidden border-b border-black/10 bg-[#f5f7f8] text-[#111217] dark:border-white/10 dark:bg-[#04060c] dark:text-white">
+        <div className="absolute inset-0 [background-image:linear-gradient(to_right,rgba(15,23,42,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.06)_1px,transparent_1px)] dark:[background-image:linear-gradient(to_right,rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:48px_48px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(44,173,158,0.12),transparent_58%)] dark:bg-[radial-gradient(ellipse_at_top,rgba(58,228,209,0.08),transparent_55%)]" />
 
         <div className="content-shell relative py-14 sm:py-16 lg:py-20">
           <div className="grid gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
             <div>
-              <p className="mb-4 inline-flex rounded-md border border-white/15 px-3 py-1 text-xs font-semibold tracking-[0.03em] text-white/85">
+              <p className="mb-4 inline-flex rounded-md border border-[#373637]/20 px-3 py-1 text-xs font-semibold tracking-[0.03em] text-[#373637]/80 dark:border-white/15 dark:text-white/85">
                 Qatar University - College of Engineering
               </p>
               <h1 className="max-w-2xl text-5xl font-semibold leading-tight tracking-tight sm:text-6xl">
                 Computer Science and Engineering Portal
               </h1>
-              <p className="mt-5 max-w-2xl text-lg leading-relaxed text-white/70">
+              <p className="mt-5 max-w-2xl text-lg leading-relaxed text-[#373637]/80 dark:text-white/70">
                 Access departmental services, policies, advisement resources, and senior project archives in one
                 unified platform.
               </p>
@@ -204,7 +204,7 @@ export default async function HomePage() {
                 <Button
                   asChild
                   size="lg"
-                  className="h-11 min-w-[170px] rounded-md border border-white/15 bg-[#111217] text-white hover:bg-[#1b1d24]"
+                  className="h-11 min-w-[170px] rounded-md border border-[#373637]/20 bg-[#111217] text-white hover:bg-[#23252d] dark:border-white/15 dark:bg-[#111217]"
                 >
                   <Link href="/wiki">Browse Wiki</Link>
                 </Button>
@@ -219,15 +219,15 @@ export default async function HomePage() {
                   asChild
                   variant="outline"
                   size="lg"
-                  className="h-11 min-w-[170px] rounded-md border-[#2CAD9E]/60 bg-transparent text-white hover:bg-[#2CAD9E]/15 hover:text-white"
+                  className="h-11 min-w-[170px] rounded-md border-[#2CAD9E]/50 bg-transparent text-[#111217] hover:bg-[#2CAD9E]/12 hover:text-[#111217] dark:border-[#2CAD9E]/60 dark:text-white dark:hover:bg-[#2CAD9E]/15 dark:hover:text-white"
                 >
                   <Link href="/wiki?sort=modified_desc">Latest Updates</Link>
                 </Button>
               </div>
 
-              <p className="mt-8 text-sm text-white/70">
+              <p className="mt-8 text-sm text-[#373637]/75 dark:text-white/70">
                 Last successful sync:{' '}
-                <span className="font-semibold text-white">{formatDate(meta.lastSuccessAt?.toISOString() ?? null)}</span>
+                <span className="font-semibold text-[#111217] dark:text-white">{formatDate(meta.lastSuccessAt?.toISOString() ?? null)}</span>
               </p>
             </div>
 
@@ -249,14 +249,14 @@ export default async function HomePage() {
             asChild
             variant="outline"
             size="sm"
-            className="border-white/20 bg-black/50 text-white hover:bg-white/10 hover:text-white"
+            className="border-[#373637]/20 bg-white/60 text-[#111217] hover:bg-white dark:border-white/20 dark:bg-black/50 dark:text-white dark:hover:bg-white/10 dark:hover:text-white"
           >
             <Link href="/api/v1/wiki/categories">All Categories</Link>
           </Button>
         </div>
       </section>
 
-      <section className="content-shell pt-6">
+      <section className="relative z-[1] mx-auto w-full max-w-[96rem] px-2 pt-6 sm:px-3 lg:px-4">
         <div className="overflow-hidden rounded-2xl border border-foreground/12 bg-transparent">
           <div className="flex flex-wrap items-start justify-between gap-4 px-6 py-5 sm:px-8">
             <div>

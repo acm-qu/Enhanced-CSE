@@ -8,12 +8,15 @@ import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
 import { NavigationProgress } from '@/components/navigation-progress';
+import { SearchCommand, SearchTrigger } from '@/components/search-command';
+import { SupportChatBubble } from '@/components/support-chat/SupportChatBubble';
 import { ThemeProvider } from '@/components/theme-provider';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Toaster } from '@/components/ui/sonner';
 
+import '@xyflow/react/dist/style.css';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -26,6 +29,7 @@ export const metadata: Metadata = {
 
 const NAV_LINKS = [
   { href: '/', label: 'Home' },
+  { href: '/cs-study-plan', label: 'CS Study Plan' },
   { href: '/wiki', label: 'Wiki' },
   { href: '/posts', label: 'Blog' }
 ] as const;
@@ -36,30 +40,23 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className={`${GeistSans.variable} ${GeistMono.variable} font-sans`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <div className="min-h-screen bg-background text-foreground">
-            <header className="sticky top-0 z-50 border-b border-white/10 bg-[#04060c]/92 backdrop-blur-xl">
+            <header className="sticky top-0 z-50 border-b border-border/60 bg-background/90 backdrop-blur-xl">
               <div className="mx-auto flex h-16 w-full max-w-7xl items-center gap-3 px-4 sm:px-6">
-                <Link href="/" className="inline-flex min-w-0 items-center rounded-md px-1 py-1">
-                  <span className="truncate text-xl font-bold tracking-tight text-white sm:text-3xl">
-                    <span className="brand-accent">&lt;</span>
-                    ACM.QU
-                    <span className="brand-accent">/&gt;</span>
-                  </span>
-                </Link>
-
-                <nav className="ml-auto hidden items-center gap-1 md:flex">
+                <nav className="hidden items-center gap-1 md:flex">
                   {NAV_LINKS.map((link) => (
                     <Link
                       key={link.href}
                       href={link.href}
-                      className="inline-flex h-9 items-center rounded-md px-4 text-sm font-semibold text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+                      className="inline-flex h-9 items-center rounded-md px-4 text-sm font-semibold text-foreground/80 transition-colors hover:bg-foreground/5 hover:text-foreground"
                     >
                       {link.label}
                     </Link>
                   ))}
                 </nav>
 
-                <div className="ml-auto flex items-center gap-2 md:ml-2">
-                  <ThemeToggle className="border-white/20 text-white/80 hover:bg-white/10 hover:text-white data-[state=on]:bg-[#2CAD9E]/15 data-[state=on]:text-white" />
+                <div className="ml-auto flex items-center gap-2">
+                  <SearchTrigger className="border-border/60 bg-transparent text-foreground/70 hover:bg-foreground/5 hover:text-foreground" />
+                  <ThemeToggle className="border-border text-foreground/80 hover:bg-foreground/5 hover:text-foreground data-[state=on]:bg-[#2CAD9E]/20 data-[state=on]:text-foreground" />
 
                   <div className="md:hidden">
                     <Sheet>
@@ -67,7 +64,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                         <Button
                           variant="outline"
                           size="icon"
-                          className="rounded-full border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white"
+                          className="rounded-full border-border bg-transparent text-foreground hover:bg-foreground/5 hover:text-foreground"
                         >
                           <MenuIcon className="h-4 w-4" />
                           <span className="sr-only">Open navigation menu</span>
@@ -140,6 +137,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 
           <Toaster richColors position="bottom-right" />
           <NavigationProgress />
+          <SearchCommand />
+          <SupportChatBubble />
         </ThemeProvider>
         <Analytics />
         <SpeedInsights />
