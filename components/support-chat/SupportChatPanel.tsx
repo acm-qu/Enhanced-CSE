@@ -127,7 +127,26 @@ export function SupportChatPanel({ onClose }: { onClose: () => void }) {
 
   const handleRegenerate = (question: string) => {
     // Remove the last assistant message and re-send the question
-    setMessages((prev) => prev.filter((m) => !(m.role === 'assistant' && m.question === question && m.id === prev.findLast((x) => x.role === 'assistant' && x.question === question)?.id)));
+    setMessages((prev) => {
+      let lastAssistantIdForQuestion: string | undefined;
+
+      for (let index = prev.length - 1; index >= 0; index -= 1) {
+        const message = prev[index];
+        if (message.role === 'assistant' && message.question === question) {
+          lastAssistantIdForQuestion = message.id;
+          break;
+        }
+      }
+
+      return prev.filter(
+        (message) =>
+          !(
+            message.role === 'assistant' &&
+            message.question === question &&
+            message.id === lastAssistantIdForQuestion
+          )
+      );
+    });
     void sendMessage(question);
   };
 
