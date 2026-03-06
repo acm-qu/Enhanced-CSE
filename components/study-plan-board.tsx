@@ -57,6 +57,14 @@ function offsetFrom(el: HTMLElement, ancestor: HTMLElement) {
   return { x, y, w: el.offsetWidth, h: el.offsetHeight };
 }
 
+// ─── Course ID display ────────────────────────────────────────────────────────
+function displayCourseId(id: string): string | null {
+  if (id.includes(' ')) return id;
+  const m = id.match(/ELECTIVE_([IVX]+)$/);
+  if (m) return `Elective ${m[1]}`;
+  return null; // packages — hide internal ID
+}
+
 // ─── Sub-components ───────────────────────────────────────────────────────────
 function LegendArrow({ type, label }: { type: 'prereq' | 'concurrent'; label: string }) {
   const color = type === 'prereq' ? '#ef4444' : '#60a5fa';
@@ -188,9 +196,10 @@ export function StudyPlanBoard({ terms, courses, connections }: Props) {
 
   return (
     <div className="px-4 sm:px-6">
+      <div className="rounded-2xl bg-zinc-950 border border-white/[0.06] overflow-hidden">
       {/* Scrollable board */}
-      <div className="w-full overflow-x-auto pb-2">
-        <div className="relative inline-flex flex-row gap-10 px-6 py-6 pb-20" ref={boardRef}>
+      <div className="w-full overflow-x-auto">
+        <div className="relative inline-flex flex-row gap-10 px-6 py-6 pb-4" ref={boardRef}>
 
           {/* SVG overlay — covers full content area */}
           {svgSize.w > 0 && (
@@ -240,7 +249,7 @@ export function StudyPlanBoard({ terms, courses, connections }: Props) {
             <div key={year} className="flex flex-col" style={{ position: 'relative', zIndex: 10 }}>
               {/* Year pill header */}
               <div className="flex justify-center mb-4">
-                <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-foreground/40 px-3 py-1 rounded-full border border-border/40">
+                <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-500 px-3 py-1 rounded-full border border-zinc-700/60">
                   Year {year}
                 </span>
               </div>
@@ -250,9 +259,9 @@ export function StudyPlanBoard({ terms, courses, connections }: Props) {
                 {[fall, spring].map((term) => (
                   <div key={term.term} className="flex flex-col w-[172px]">
                     {/* Semester label */}
-                    <div className="text-center mb-3 pb-2 border-b border-border/30">
-                      <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-foreground/60">{term.term}</p>
-                      <p className="text-[10px] text-muted-foreground mt-0.5">{term.total_credit_hours} credit hrs</p>
+                    <div className="text-center mb-3 pb-2 border-b border-zinc-800">
+                      <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-zinc-400">{term.term}</p>
+                      <p className="text-[10px] text-zinc-500 mt-0.5">{term.total_credit_hours} credit hrs</p>
                     </div>
 
                     {/* Course cards */}
@@ -282,7 +291,9 @@ export function StudyPlanBoard({ terms, courses, connections }: Props) {
                             style={{ position: 'relative', zIndex: isHov ? 30 : 15 }}
                           >
                             <div className="flex items-start justify-between gap-1 mb-1">
-                              <span className={`text-[10px] font-bold font-mono leading-none ${col.cid}`}>{cid}</span>
+                              {displayCourseId(cid) !== null && (
+                                <span className={`text-[10px] font-bold font-mono leading-none ${col.cid}`}>{displayCourseId(cid)}</span>
+                              )}
                               <span className={`text-[9px] rounded px-1 py-0.5 font-semibold shrink-0 leading-tight ${col.badge}`}>
                                 {course.credit_hours}CH
                               </span>
@@ -301,8 +312,8 @@ export function StudyPlanBoard({ terms, courses, connections }: Props) {
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap items-center gap-x-5 gap-y-2 px-6 pb-4 text-[11px] text-muted-foreground">
-        <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-foreground/30">Legend</span>
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-2 px-6 py-4 border-t border-white/[0.06] text-[11px] text-zinc-400">
+        <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-zinc-600">Legend</span>
         <LegendArrow type="prereq" label="Prerequisite" />
         <LegendArrow type="concurrent" label="Concurrent prereq" />
         <LegendSwatch cls="bg-blue-900 border-blue-700" label="CS Core" />
@@ -311,6 +322,7 @@ export function StudyPlanBoard({ terms, courses, connections }: Props) {
         <LegendSwatch cls="bg-amber-900 border-amber-700" label="Languages / Humanities" />
         <LegendSwatch cls="bg-rose-900 border-rose-700" label="Major Elective" />
         <LegendSwatch cls="bg-zinc-800 border-dashed border-zinc-600" label="Package" />
+      </div>
       </div>
 
       {/* Tooltip */}
