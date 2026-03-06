@@ -1,9 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowUpRight, CalendarClock } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { toArticleListResponse, toPostListResponse } from '@/lib/content/transform';
 import { listPosts } from '@/lib/db/posts-queries';
@@ -11,8 +9,6 @@ import { getSyncMeta, listArticles, listCategories, type TermWithCount } from '@
 import { formatDate } from '@/lib/utils/date';
 
 export const dynamic = 'force-dynamic';
-
-const SECTION_DOT_CLASSES = ['bg-[#3AE4D1]', 'bg-[#2CAD9E]', 'bg-[#373637]'] as const;
 
 const FEATURED_CATEGORY_RULES = [
   {
@@ -29,20 +25,29 @@ const FEATURED_CATEGORY_RULES = [
   }
 ] as const;
 
+const CONTENT_LINK_CLASS =
+  'group inline-flex items-start gap-2 text-[17px] leading-relaxed text-[#2CAD9E] transition-colors hover:text-[#3AE4D1]';
+
 function normalizeText(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 }
 
-function toPlainText(html: string): string {
-  return html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-}
+function sectionDotClass(displayName: string): string {
+  const normalized = normalizeText(displayName);
 
-function trimText(value: string, maxLength: number): string {
-  if (value.length <= maxLength) {
-    return value;
+  if (normalized.includes('student')) {
+    return 'bg-[#3AE4D1]';
   }
 
-  return `${value.slice(0, maxLength - 1).trimEnd()}...`;
+  if (normalized.includes('senior')) {
+    return 'bg-[#2CAD9E]';
+  }
+
+  if (normalized.includes('focal')) {
+    return 'bg-[#373637]';
+  }
+
+  return 'bg-[#2CAD9E]';
 }
 
 function pickFeaturedCategories(categories: TermWithCount[]): Array<{
@@ -122,7 +127,7 @@ export default async function HomePage() {
     featuredCategories.map(async (category) => {
       const articleData = await listArticles({
         page: 1,
-        pageSize: 3,
+        pageSize: 5,
         categorySlug: category.slug,
         sort: 'modified_desc'
       });
@@ -136,6 +141,44 @@ export default async function HomePage() {
 
   const recentPosts = latestPosts.items.map(toPostListResponse);
   const recentWiki = latestWiki.items.map(toArticleListResponse);
+
+  const studentServicesSection =
+    featuredSections.find((section) => normalizeText(section.displayName).includes('student service')) ?? null;
+  const seniorProjectsSection =
+    featuredSections.find((section) => normalizeText(section.displayName).includes('senior project')) ?? null;
+  const focalPointSection =
+    featuredSections.find((section) => normalizeText(section.displayName).includes('focal point')) ?? null;
+
+  const topSections: Array<(typeof featuredSections)[number]> = [];
+  const usedSlugs = new Set<string>();
+
+  if (studentServicesSection) {
+    topSections.push(studentServicesSection);
+    usedSlugs.add(studentServicesSection.slug);
+  }
+
+  if (seniorProjectsSection && !usedSlugs.has(seniorProjectsSection.slug)) {
+    topSections.push(seniorProjectsSection);
+    usedSlugs.add(seniorProjectsSection.slug);
+  }
+
+  for (const section of featuredSections) {
+    if (topSections.length >= 2) {
+      break;
+    }
+
+    if (usedSlugs.has(section.slug)) {
+      continue;
+    }
+
+    topSections.push(section);
+    usedSlugs.add(section.slug);
+  }
+
+  const trailingSection =
+    (focalPointSection && !usedSlugs.has(focalPointSection.slug) ? focalPointSection : null) ??
+    featuredSections.find((section) => !usedSlugs.has(section.slug)) ??
+    null;
 
   return (
     <main className="w-full">
@@ -213,91 +256,164 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="content-shell pb-4 pt-4">
-        <p className="section-kicker">Highlights</p>
-        <div className="grid gap-4 lg:grid-cols-3">
-          {featuredSections.map((section, index) => {
-            const leadItem = section.items[0] ?? null;
-            const summary = leadItem ? trimText(toPlainText(leadItem.excerptHtml), 155) : 'No article summary available yet.';
-            const dotClass = SECTION_DOT_CLASSES[index % SECTION_DOT_CLASSES.length];
+      <section className="content-shell pt-6">
+        <div className="overflow-hidden rounded-2xl border border-foreground/12 bg-transparent">
+          <div className="flex flex-wrap items-start justify-between gap-4 px-6 py-5 sm:px-8">
+            <div>
+              <h2 className="text-2xl font-semibold tracking-tight">Explore CSE Content</h2>
+              <p className="mt-1 text-sm text-foreground/70">One surface for key topics, recent wiki edits, and latest blog posts.</p>
+            </div>
+            <Button asChild variant="outline" className="border-foreground/20 bg-transparent hover:border-[#2CAD9E]/60 hover:bg-[#2CAD9E]/10">
+              <Link href="/wiki">Browse All Wiki Pages</Link>
+            </Button>
+          </div>
 
-            return (
-              <Card key={section.slug} className="home-panel h-full">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-3 text-2xl font-semibold tracking-tight brand-accent">
-                    <span className={`home-section-dot ${dotClass}`} />
-                    {section.displayName}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <p className="text-base leading-relaxed text-foreground/80">{summary}</p>
-                  <Button asChild variant="link" className="h-auto p-0 text-sm brand-accent">
+          <Separator className="bg-foreground/10" />
+
+          <div className="grid lg:grid-cols-2">
+            {topSections.map((section, index) => (
+              <div
+                key={section.slug}
+                className={`p-6 sm:p-8 ${index === 0 ? 'border-b border-foreground/10 lg:border-r lg:border-b-0' : 'border-b border-foreground/10'}`}
+              >
+                <div className="flex items-center gap-3">
+                  <span className={`inline-block h-3.5 w-3.5 rounded-full ${sectionDotClass(section.displayName)}`} />
+                  <h3 className="text-2xl font-semibold tracking-tight">{section.displayName}</h3>
+                </div>
+
+                <div className="mt-5 space-y-2.5">
+                  {section.items.length === 0 ? (
+                    <p className="text-sm text-foreground/70">No links synced for this section yet.</p>
+                  ) : (
+                    section.items.slice(0, 5).map((article) => (
+                      <p key={article.id} className="leading-relaxed">
+                        <Link href={`/wiki/${article.slug}`} className={CONTENT_LINK_CLASS}>
+                          <span aria-hidden="true" className="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full bg-current" />
+                          <span>{article.title}</span>
+                        </Link>
+                      </p>
+                    ))
+                  )}
+                </div>
+
+                <div className="mt-5">
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="border-foreground/20 bg-transparent hover:border-[#2CAD9E]/60 hover:bg-[#2CAD9E]/10"
+                  >
                     <Link href={`/wiki?category=${encodeURIComponent(section.slug)}`}>
-                      Browse {section.articleCount} articles <ArrowUpRight className="h-4 w-4" />
+                      Show all {section.articleCount} in {section.displayName}
                     </Link>
                   </Button>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-      </section>
-
-      <section className="content-shell pt-2">
-        <div className="grid gap-6 lg:grid-cols-2">
-          <Card className="home-panel">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-3 text-2xl">
-                <span className="home-section-dot bg-[#3AE4D1]" />
-                Recent Blog Posts
-              </CardTitle>
-              <CardDescription>Latest announcements and departmental news.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {recentPosts.slice(0, 4).map((post, index) => (
-                <div key={post.id}>
-                  <Link
-                    href={`/posts/${post.slug}`}
-                    className="group home-list-item"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <h3 className="text-lg font-semibold text-foreground group-hover:text-[#2CAD9E]">{post.title}</h3>
-                      <ArrowUpRight className="h-4 w-4 shrink-0 text-[#2CAD9E]" />
-                    </div>
-                    <p className="mt-2 text-sm text-foreground/75">Published {formatDate(post.publishedAtGmt)}</p>
-                  </Link>
-                  {index < 3 ? <Separator className="mt-4 bg-foreground/12" /> : null}
                 </div>
-              ))}
-            </CardContent>
-          </Card>
+              </div>
+            ))}
+          </div>
 
-          <Card className="home-panel">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-2xl">
-                <span className="home-section-dot bg-[#2CAD9E]" />
-                <CalendarClock className="h-5 w-5 brand-accent" />
-                Recent Wiki Updates
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {recentWiki.slice(0, 4).map((article, index) => (
-                <div key={article.id}>
-                  <Link
-                    href={`/wiki/${article.slug}`}
-                    className="group home-list-item"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <h3 className="text-lg font-semibold text-foreground group-hover:text-[#2CAD9E]">{article.title}</h3>
-                      <ArrowUpRight className="h-4 w-4 shrink-0 text-[#2CAD9E]" />
-                    </div>
-                    <p className="mt-2 text-sm text-foreground/75">Updated {formatDate(article.modifiedAtGmt)}</p>
-                  </Link>
-                  {index < 3 ? <Separator className="mt-4 bg-foreground/12" /> : null}
+          <div className="grid lg:grid-cols-2">
+            <div className="border-b border-foreground/10 p-6 sm:p-8 lg:border-r lg:border-b-0">
+              <div className="mb-5 flex items-center justify-between gap-3">
+                <div>
+                  <h3 className="text-2xl font-semibold tracking-tight">Recent Updates</h3>
+                  <p className="text-sm text-foreground/70">Most recently modified wiki pages.</p>
                 </div>
-              ))}
-            </CardContent>
-          </Card>
+                <Button
+                  asChild
+                  variant="outline"
+                  className="border-foreground/20 bg-transparent hover:border-[#2CAD9E]/60 hover:bg-[#2CAD9E]/10"
+                >
+                  <Link href="/wiki">All Wiki Pages</Link>
+                </Button>
+              </div>
+
+              <div className="space-y-2.5">
+                {recentWiki.slice(0, 7).map((article) => (
+                  <p key={article.id} className="leading-relaxed">
+                    <Link href={`/wiki/${article.slug}`} className={CONTENT_LINK_CLASS}>
+                      <span aria-hidden="true" className="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full bg-current" />
+                      <span>{article.title}</span>
+                    </Link>
+                  </p>
+                ))}
+              </div>
+            </div>
+
+            <div className="p-6 sm:p-8">
+              <div className="mb-5">
+                <h3 className="text-2xl font-semibold tracking-tight">Blog Posts</h3>
+                <p className="text-sm text-foreground/70">Latest announcements and departmental news.</p>
+                <p className="mt-1 text-xs text-foreground/60">
+                  Last sync: {formatDate(meta.lastSuccessAt?.toISOString() ?? null)}
+                </p>
+              </div>
+
+              <div className="space-y-2.5">
+                {recentPosts.length === 0 ? (
+                  <p className="text-sm text-foreground/70">No posts available yet.</p>
+                ) : (
+                  recentPosts.slice(0, 6).map((post) => (
+                    <p key={post.id} className="leading-relaxed">
+                      <Link href={`/posts/${post.slug}`} className={CONTENT_LINK_CLASS}>
+                        <span aria-hidden="true" className="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full bg-current" />
+                        <span>{post.title}</span>
+                      </Link>
+                    </p>
+                  ))
+                )}
+              </div>
+
+              <div className="pt-5">
+                <Button
+                  asChild
+                  variant="outline"
+                  className="border-foreground/20 bg-transparent hover:border-[#2CAD9E]/60 hover:bg-[#2CAD9E]/10"
+                >
+                  <Link href="/posts">Open Posts Archive</Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {trailingSection ? (
+            <>
+              <Separator className="bg-foreground/10" />
+
+              <div className="p-6 sm:p-8">
+                <div className="flex items-center gap-3">
+                  <span className={`inline-block h-3.5 w-3.5 rounded-full ${sectionDotClass(trailingSection.displayName)}`} />
+                  <h3 className="text-2xl font-semibold tracking-tight">{trailingSection.displayName}</h3>
+                </div>
+
+                <div className="mt-5 grid gap-x-8 gap-y-2.5 sm:grid-cols-2">
+                  {trailingSection.items.length === 0 ? (
+                    <p className="text-sm text-foreground/70">No links synced for this section yet.</p>
+                  ) : (
+                    trailingSection.items.slice(0, 6).map((article) => (
+                      <p key={article.id} className="leading-relaxed">
+                        <Link href={`/wiki/${article.slug}`} className={CONTENT_LINK_CLASS}>
+                          <span aria-hidden="true" className="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full bg-current" />
+                          <span>{article.title}</span>
+                        </Link>
+                      </p>
+                    ))
+                  )}
+                </div>
+
+                <div className="mt-5">
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="border-foreground/20 bg-transparent hover:border-[#2CAD9E]/60 hover:bg-[#2CAD9E]/10"
+                  >
+                    <Link href={`/wiki?category=${encodeURIComponent(trailingSection.slug)}`}>
+                      Show all {trailingSection.articleCount} in {trailingSection.displayName}
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            </>
+          ) : null}
         </div>
       </section>
     </main>
