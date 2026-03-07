@@ -328,9 +328,6 @@ export function sanitizeWikiHtml(html: string): string {
           nextAttribs.srcset = rewriteImageSrcSet(attribs.srcset);
         }
 
-        if (!nextAttribs.loading) {
-          nextAttribs.loading = 'lazy';
-        }
 
         return {
           tagName: 'img',
@@ -342,3 +339,4 @@ export function sanitizeWikiHtml(html: string): string {
 }
 
 export const sanitizeContentHtml = sanitizeWikiHtml;
+

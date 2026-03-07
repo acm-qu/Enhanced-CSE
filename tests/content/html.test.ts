@@ -87,7 +87,7 @@ describe('content html utilities', () => {
     expect(sanitized).toContain(
       'srcset="/api/media?url=https%3A%2F%2Fblogs.qu.edu.qa%2Fcse%2Ffiles%2F2021%2F01%2Fimage-1-768x524.png 768w, https://example.com/hero.png 1024w"'
     );
-    expect(sanitized).toContain('loading="lazy"');
+    expect(sanitized).not.toContain('loading="lazy"');
   });
 
   it('strips legacy knowledge-base chrome and feedback blocks', () => {
