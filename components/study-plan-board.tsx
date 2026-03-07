@@ -273,7 +273,7 @@ export function StudyPlanBoard({ terms, courses, connections }: Props) {
               </svg>
             )}
 
-            <div className="flex w-full flex-row gap-6 px-6 py-6 pb-4" ref={contentRef}>
+            <div className="relative flex w-full flex-row gap-6 px-6 py-6 pb-4" ref={contentRef}>
               {years.map(({ year, fall, spring }) => (
                 <div key={year} className="flex min-w-0 flex-1 flex-col" style={{ position: 'relative', zIndex: 10 }}>
                   <div className="mb-4 flex justify-center">

@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Combobox, type ComboboxOption } from '@/components/ui/combobox';
@@ -29,11 +29,6 @@ export function WikiFilterSidebar({
   const [sort, setSort] = useState(currentSort);
   const [category, setCategory] = useState(currentCategory ?? '');
   const [tag, setTag] = useState(currentTag ?? '');
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   const buildHref = (newSort: string, newCategory: string, newTag: string) => {
     const params = new URLSearchParams();
@@ -76,28 +71,24 @@ export function WikiFilterSidebar({
     router.push('/wiki');
   };
 
-  if (!isMounted) {
-    return null;
-  }
-
-  const sortComboboxOptions: ComboboxOption[] = sortOptions.map((opt) => ({
-    value: opt.value,
-    label: opt.label
+  const sortComboboxOptions: ComboboxOption[] = sortOptions.map((option) => ({
+    value: option.value,
+    label: option.label
   }));
 
   const categoryComboboxOptions: ComboboxOption[] = [
     { value: '', label: 'All categories' },
-    ...categories.map((cat) => ({
-      value: cat.slug,
-      label: formatContentLabel(cat.name)
+    ...categories.map((categoryItem) => ({
+      value: categoryItem.slug,
+      label: formatContentLabel(categoryItem.name)
     }))
   ];
 
   const tagComboboxOptions: ComboboxOption[] = [
     { value: '', label: 'All tags' },
-    ...tags.map((t) => ({
-      value: t.slug,
-      label: formatContentLabel(t.name)
+    ...tags.map((tagItem) => ({
+      value: tagItem.slug,
+      label: formatContentLabel(tagItem.name)
     }))
   ];
 
@@ -134,12 +125,7 @@ export function WikiFilterSidebar({
       />
 
       <div className="mt-3 flex gap-2">
-        <Button
-          onClick={() => handleReset()}
-          variant="outline"
-          size="sm"
-          className="flex-1"
-        >
+        <Button onClick={handleReset} variant="outline" size="sm" className="flex-1">
           Reset
         </Button>
       </div>

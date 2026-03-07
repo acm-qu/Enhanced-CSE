@@ -1,9 +1,12 @@
 import Link from 'next/link';
+import { ChevronDownIcon, SlidersHorizontalIcon, XIcon } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { ContentCardPreview } from '@/components/content-card-preview';
 import {
   Pagination,
   PaginationContent,
@@ -16,7 +19,6 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { PostsFilterSidebar } from '@/components/posts-filter-sidebar';
-import { ContentCardPreview } from '@/components/content-card-preview';
 import { toPostListResponse } from '@/lib/content/transform';
 import { listPostArchives, listPostCategories, listPosts, type PostSort } from '@/lib/db/posts-queries';
 import { formatContentLabel } from '@/lib/utils/content';
@@ -26,13 +28,15 @@ import { buildPaginationTokens } from '@/lib/utils/pagination';
 export const dynamic = 'force-dynamic';
 
 const PAGE_SIZE = 10;
-
+const DEFAULT_SORT: PostSort = 'published_desc';
 const SORT_OPTIONS: Array<{ value: PostSort; label: string }> = [
   { value: 'published_desc', label: 'Newest published' },
   { value: 'published_asc', label: 'Oldest published' },
   { value: 'modified_desc', label: 'Recently updated' },
   { value: 'modified_asc', label: 'Oldest updated' }
 ];
+const CONTINUE_READING_CLASS =
+  'inline-flex items-center gap-2 text-sm font-semibold text-[#2CAD9E] transition-colors hover:text-[#3AE4D1]';
 
 interface SearchParamProps {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
@@ -61,11 +65,11 @@ function parsePositiveInt(value: string | undefined, fallback: number): number {
 
 function parseSort(value: string | undefined): PostSort {
   if (!value) {
-    return 'published_desc';
+    return DEFAULT_SORT;
   }
 
   const found = SORT_OPTIONS.find((option) => option.value === value);
-  return found?.value ?? 'published_desc';
+  return found?.value ?? DEFAULT_SORT;
 }
 
 function parseMonth(value: string | undefined): string | undefined {
@@ -109,7 +113,7 @@ function buildPostsHref(options: {
     params.set('page', String(options.page));
   }
 
-  if (options.sort !== 'published_desc') {
+  if (options.sort !== DEFAULT_SORT) {
     params.set('sort', options.sort);
   }
 
@@ -151,9 +155,36 @@ export default async function PostsPage({ searchParams }: SearchParamProps) {
   const totalPages = Math.max(1, Math.ceil(postData.total / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
   const paginationTokens = buildPaginationTokens(currentPage, totalPages);
+  const recentArchives = archives.slice(0, 6);
+  const overflowArchives = archives.slice(6);
 
   const categoryNameBySlug = new Map(categories.map((item) => [item.slug, formatContentLabel(item.name)]));
   const activeArchive = archives.find((bucket) => bucket.month === month) ?? null;
+  const sortLabelByValue = new Map(SORT_OPTIONS.map((option) => [option.value, option.label]));
+
+  const activeFilters = [
+    sort !== DEFAULT_SORT
+      ? {
+          key: 'sort',
+          label: `Sort: ${sortLabelByValue.get(sort) ?? sort}`,
+          href: buildPostsHref({ sort: DEFAULT_SORT, category, month, page: 1 })
+        }
+      : null,
+    category
+      ? {
+          key: 'category',
+          label: `Category: ${categoryNameBySlug.get(category) ?? category}`,
+          href: buildPostsHref({ sort, category: undefined, month, page: 1 })
+        }
+      : null,
+    activeArchive
+      ? {
+          key: 'month',
+          label: `Archive: ${activeArchive.label}`,
+          href: buildPostsHref({ sort, category, month: undefined, page: 1 })
+        }
+      : null
+  ].filter((item): item is { key: string; label: string; href: string } => Boolean(item));
 
   return (
     <main className="content-shell content-shell-tight">
@@ -177,7 +208,7 @@ export default async function PostsPage({ searchParams }: SearchParamProps) {
       </section>
 
       <section className="mt-5 grid gap-4 lg:grid-cols-[260px_minmax(0,1fr)]">
-        <Card className="panel-muted h-fit lg:sticky lg:top-20">
+        <Card id="posts-filters" className="panel-muted order-2 h-fit lg:order-1 lg:sticky lg:top-20">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm uppercase tracking-[0.14em]">Filters</CardTitle>
           </CardHeader>
@@ -193,43 +224,98 @@ export default async function PostsPage({ searchParams }: SearchParamProps) {
             <Separator className="my-4" />
 
             <div>
-              <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">Archives</p>
-              <ScrollArea className="h-64">
-                <div className="mt-2 flex flex-col gap-1 pr-3">
-                  {archives.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">No archive buckets yet.</p>
-                  ) : (
-                    archives.map((bucket) => {
-                      const active = month === bucket.month;
-                      return (
-                        <Button
-                          key={bucket.month}
-                          asChild
-                          variant={active ? 'default' : 'ghost'}
-                          size="sm"
-                          className="h-8 justify-between px-2 text-[10px]"
-                        >
-                          <Link href={buildPostsHref({ page: 1, sort, category, month: active ? undefined : bucket.month })}>
-                            <span>{bucket.label}</span>
-                            <span>{bucket.postCount}</span>
-                          </Link>
-                        </Button>
-                      );
-                    })
-                  )}
-                </div>
-              </ScrollArea>
+              <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">Recent archives</p>
+              <div className="mt-2 flex flex-col gap-1">
+                {recentArchives.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No archive buckets yet.</p>
+                ) : (
+                  recentArchives.map((bucket) => {
+                    const active = month === bucket.month;
+                    return (
+                      <Button
+                        key={bucket.month}
+                        asChild
+                        variant={active ? 'default' : 'ghost'}
+                        size="sm"
+                        className="h-8 justify-between px-2 text-[10px]"
+                      >
+                        <Link href={buildPostsHref({ page: 1, sort, category, month: active ? undefined : bucket.month })}>
+                          <span>{bucket.label}</span>
+                          <span>{bucket.postCount}</span>
+                        </Link>
+                      </Button>
+                    );
+                  })
+                )}
+              </div>
+
+              {overflowArchives.length > 0 ? (
+                <Collapsible className="mt-3">
+                  <CollapsibleTrigger asChild>
+                    <Button variant="ghost" size="sm" className="h-8 w-full justify-between px-2 text-[11px] text-muted-foreground">
+                      More archives
+                      <ChevronDownIcon className="h-4 w-4" />
+                    </Button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <ScrollArea className="mt-2 h-56">
+                      <div className="flex flex-col gap-1 pr-3">
+                        {overflowArchives.map((bucket) => {
+                          const active = month === bucket.month;
+                          return (
+                            <Button
+                              key={bucket.month}
+                              asChild
+                              variant={active ? 'default' : 'ghost'}
+                              size="sm"
+                              className="h-8 justify-between px-2 text-[10px]"
+                            >
+                              <Link href={buildPostsHref({ page: 1, sort, category, month: active ? undefined : bucket.month })}>
+                                <span>{bucket.label}</span>
+                                <span>{bucket.postCount}</span>
+                              </Link>
+                            </Button>
+                          );
+                        })}
+                      </div>
+                    </ScrollArea>
+                  </CollapsibleContent>
+                </Collapsible>
+              ) : null}
             </div>
           </CardContent>
         </Card>
 
-        <section>
-          <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-            <span>
-              Showing {transformedItems.length} of {postData.total} post{postData.total === 1 ? '' : 's'}
-            </span>
-            {category ? <Badge variant="outline">Category: {categoryNameBySlug.get(category) ?? category}</Badge> : null}
-            {activeArchive ? <Badge variant="outline">Archive: {activeArchive.label}</Badge> : null}
+        <section className="order-1 lg:order-2">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <p className="text-sm text-muted-foreground">
+                Showing {transformedItems.length} of {postData.total} post{postData.total === 1 ? '' : 's'}
+              </p>
+
+              {activeFilters.length > 0 ? (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {activeFilters.map((filter) => (
+                    <Button key={filter.key} asChild variant="outline" size="sm" className="h-8 rounded-full px-3 text-xs">
+                      <Link href={filter.href}>
+                        {filter.label}
+                        <XIcon className="ml-1.5 h-3 w-3" />
+                      </Link>
+                    </Button>
+                  ))}
+                  <Button asChild variant="ghost" size="sm" className="h-8 px-2 text-xs text-muted-foreground">
+                    <Link href="/posts">Clear all</Link>
+                  </Button>
+                </div>
+              ) : null}
+            </div>
+
+            <Button asChild variant="outline" size="sm" className="w-fit lg:hidden">
+              <a href="#posts-filters">
+                <SlidersHorizontalIcon className="mr-2 h-4 w-4" />
+                Refine results
+              </a>
+            </Button>
           </div>
 
           {transformedItems.length === 0 ? (
@@ -251,7 +337,13 @@ export default async function PostsPage({ searchParams }: SearchParamProps) {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="article-html text-sm" dangerouslySetInnerHTML={{ __html: item.excerptHtml }} />
+                    <div className="space-y-3">
+                      <p className="text-sm leading-7 text-foreground/78">{item.summary}</p>
+                      <Link href={`/posts/${item.slug}`} className={CONTINUE_READING_CLASS}>
+                        Continue reading {'->'}
+                      </Link>
+                    </div>
+
                     <ContentCardPreview href={`/posts/${item.slug}`} previews={item.mediaPreviews} />
 
                     <div className="mt-4 flex flex-wrap gap-1.5">
@@ -304,3 +396,4 @@ export default async function PostsPage({ searchParams }: SearchParamProps) {
     </main>
   );
 }
+
