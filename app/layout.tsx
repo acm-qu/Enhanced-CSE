@@ -90,11 +90,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             {children}
 
             <footer className="mt-16 border-t border-white/10 bg-[#060606] text-white">
-              <div className="mx-auto grid w-full max-w-7xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-3">
+              <div className="mx-auto grid w-full max-w-7xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-2">
                 <div>
                   <h3 className="mb-4 text-lg font-semibold">Platform</h3>
                   <p className="text-sm text-white/70">
-                    Enhanced CSE Portal for synced wiki articles and blog content from Qatar University sources.
+                    Enhanced CSE Portal for wiki articles and blog content from Qatar University sources.
                   </p>
                 </div>
 
@@ -109,21 +109,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                     </Link>
                     <Link href="/posts" className="block transition-colors hover:text-[hsl(var(--brand-cyan-light))]">
                       Blog Posts
-                    </Link>
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="mb-4 text-lg font-semibold">API</h3>
-                  <div className="space-y-2 text-sm text-white/80">
-                    <Link href="/api/v1/wiki/articles?page=1&pageSize=5" className="block transition-colors hover:text-[hsl(var(--brand-cyan-light))]">
-                      Wiki Articles Endpoint
-                    </Link>
-                    <Link href="/api/v1/posts?page=1&pageSize=5" className="block transition-colors hover:text-[hsl(var(--brand-cyan-light))]">
-                      Blog Posts Endpoint
-                    </Link>
-                    <Link href="/api/health" className="block transition-colors hover:text-[hsl(var(--brand-cyan-light))]">
-                      Health Check
                     </Link>
                   </div>
                 </div>

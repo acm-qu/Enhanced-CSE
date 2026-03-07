@@ -127,6 +127,10 @@
     @apply relative z-[1] mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:py-10;
   }
 
+  .content-shell-tight {
+    @apply px-2 sm:px-3;
+  }
+
   .panel {
     @apply rounded-2xl border border-border/80 bg-card shadow-[0_14px_40px_rgba(0,0,0,0.06)];
   }
@@ -208,7 +212,7 @@
     @apply px-1.5 py-0.5 text-[13px];
   }
 
-  /* overflow:hidden + rounded-xl clips all table corners — no cell-level radius needed */
+  /* overflow:hidden + rounded-xl clips all table corners - no cell-level radius needed */
   .article-html table {
     @apply my-6 w-full overflow-hidden rounded-xl shadow-lg;
     border-collapse: separate;
@@ -231,12 +235,12 @@
     border-left: 1px solid hsl(var(--foreground) / 0.07);
   }
 
-  /* ── HEADER ROWS (dark band) ── */
-  /* Use fixed dark colours — hsl(var(--foreground)/0.9) inverts to near-white in dark mode,
+  /* -- HEADER ROWS (dark band) -- */
+  /* Use fixed dark colours - hsl(var(--foreground)/0.9) inverts to near-white in dark mode,
      and colour set on <td> is overridden by the .article-html p rule on child <p> elements.
      Fixed colours + `color: inherit` on children solve both problems. */
 
-  /* Case 1: proper <th> cells (Table 1 — "Current Electives") */
+  /* Case 1: proper <th> cells (Table 1 - "Current Electives") */
   .article-html th {
     background: hsl(var(--brand-gray));
     color: hsl(0 0% 94%);
@@ -247,7 +251,7 @@
     border-left: 1px solid hsl(0 0% 100% / 0.12);
   }
 
-  /* Case 2: no <thead> — first tbody row is the CS/CE label row (Past Electives tables)
+  /* Case 2: no <thead> - first tbody row is the CS/CE label row (Past Electives tables)
      Guard: only when that first row contains NO <a> links (i.e. it's purely a label row,
      not a data row like in the old rowspan-based Table 5 format) */
   .article-html table:not(:has(thead)) tbody tr:first-child:not(:has(td a)) td {
@@ -268,16 +272,16 @@
   }
 
   /* Force all child elements (p, strong, span, etc.) to inherit the cell's text colour
-     — the .article-html p/span rules would otherwise override it */
+     - the .article-html p/span rules would otherwise override it */
   .article-html th *,
   .article-html table:not(:has(thead)) tbody tr:first-child:not(:has(td a)) td * {
     color: inherit;
   }
 
-  /* ── TERM / SEMESTER ROWS (accent band) ── */
+  /* -- TERM / SEMESTER ROWS (accent band) -- */
   /* sanitize-html strips class="term", so we detect by content shape:
-     — Table 1 (has <thead>): tbody rows that contain NO <a> link = term rows
-     — Tables 2-4, 6 (no <thead>, pure-label first row): rows after first with <strong> but no <a>
+     - Table 1 (has <thead>): tbody rows that contain NO <a> link = term rows
+     - Tables 2-4, 6 (no <thead>, pure-label first row): rows after first with <strong> but no <a>
      Note: Table 5 (rowspan format) is excluded by requiring the first row to be link-free */
   .article-html table:has(thead) tbody tr:not(:has(td a)) td,
   .article-html table:not(:has(thead)):has(tbody tr:first-child:not(:has(td a))) tbody tr:not(:first-child):has(td strong):not(:has(td a)) td {
@@ -298,7 +302,7 @@
     color: inherit;
   }
 
-  /* ── ALTERNATING ROWS + HOVER ── */
+  /* -- ALTERNATING ROWS + HOVER -- */
   .article-html tbody tr:nth-child(even) {
     background: hsl(var(--foreground) / 0.02);
   }
@@ -309,7 +313,7 @@
     background: hsl(var(--foreground) / 0.05);
   }
 
-  /* ── BOTTOM CORNERS ── */
+  /* -- BOTTOM CORNERS -- */
   .article-html tbody tr:last-child td:first-child {
     border-bottom-left-radius: 0.625rem;
   }

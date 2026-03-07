@@ -1,11 +1,12 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Combobox, type ComboboxOption } from '@/components/ui/combobox';
 import type { ArticleSort } from '@/lib/db/queries';
+import { formatContentLabel } from '@/lib/utils/content';
 
 interface WikiFilterSidebarProps {
   categories: Array<{ slug: string; name: string }>;
@@ -25,7 +26,6 @@ export function WikiFilterSidebar({
   currentTag
 }: WikiFilterSidebarProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [sort, setSort] = useState(currentSort);
   const [category, setCategory] = useState(currentCategory ?? '');
   const [tag, setTag] = useState(currentTag ?? '');
@@ -89,7 +89,7 @@ export function WikiFilterSidebar({
     { value: '', label: 'All categories' },
     ...categories.map((cat) => ({
       value: cat.slug,
-      label: cat.name
+      label: formatContentLabel(cat.name)
     }))
   ];
 
@@ -97,7 +97,7 @@ export function WikiFilterSidebar({
     { value: '', label: 'All tags' },
     ...tags.map((t) => ({
       value: t.slug,
-      label: t.name
+      label: formatContentLabel(t.name)
     }))
   ];
 
@@ -133,7 +133,7 @@ export function WikiFilterSidebar({
         placeholder="Select tag..."
       />
 
-      <div className="mt-1 flex gap-2">
+      <div className="mt-3 flex gap-2">
         <Button
           onClick={() => handleReset()}
           variant="outline"

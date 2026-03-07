@@ -27,6 +27,7 @@ export interface ArticleListItem {
   id: number;
   slug: string;
   title: string;
+  contentHtmlRaw: string;
   excerptHtmlRaw: string;
   sourceLink: string;
   publishedAtGmt: Date | null;
@@ -193,6 +194,7 @@ export async function listArticles(input: ListArticlesInput): Promise<{
       id: wikiArticles.id,
       slug: wikiArticles.slug,
       title: wikiArticles.title,
+      contentHtmlRaw: wikiArticles.contentHtmlRaw,
       excerptHtmlRaw: wikiArticles.excerptHtmlRaw,
       sourceLink: wikiArticles.sourceLink,
       publishedAtGmt: wikiArticles.publishedAtGmt,
@@ -368,3 +370,5 @@ export async function getSyncStatus(): Promise<SyncStatus> {
     latestRun: latestRun ?? null
   };
 }
+
+

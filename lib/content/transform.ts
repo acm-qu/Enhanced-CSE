@@ -3,6 +3,7 @@ import sanitizeHtml from 'sanitize-html';
 import type { PostDetailItem, PostListItem } from '@/lib/db/posts-queries';
 import type { ArticleDetailItem, ArticleListItem } from '@/lib/db/queries';
 import { sanitizeContentHtml, sanitizeWikiHtml } from '@/lib/content/html';
+import { extractContentMediaPreviews } from '@/lib/content/media-preview';
 
 function sanitizeTitle(title: string): string {
   return sanitizeHtml(title, {
@@ -17,6 +18,7 @@ export function toArticleListResponse(article: ArticleListItem) {
     slug: article.slug,
     title: sanitizeTitle(article.title),
     excerptHtml: sanitizeWikiHtml(article.excerptHtmlRaw),
+    mediaPreviews: extractContentMediaPreviews(article.contentHtmlRaw || article.excerptHtmlRaw),
     sourceLink: article.sourceLink,
     publishedAtGmt: article.publishedAtGmt?.toISOString() ?? null,
     modifiedAtGmt: article.modifiedAtGmt?.toISOString() ?? null,
@@ -46,6 +48,7 @@ export function toPostListResponse(post: PostListItem) {
     slug: post.slug,
     title: sanitizeTitle(post.title),
     excerptHtml: sanitizeContentHtml(post.excerptHtmlRaw),
+    mediaPreviews: extractContentMediaPreviews(post.contentHtmlRaw || post.excerptHtmlRaw),
     sourceLink: post.sourceLink,
     publishedAtGmt: post.publishedAtGmt?.toISOString() ?? null,
     modifiedAtGmt: post.modifiedAtGmt?.toISOString() ?? null,

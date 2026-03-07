@@ -4,6 +4,18 @@ export interface TocItem {
   level: number;
 }
 
+export function decodeHtmlEntities(value: string): string {
+  return value
+    .replace(/&quot;/g, '"')
+    .replace(/&#34;/g, '"')
+    .replace(/&#039;/g, "'")
+    .replace(/&amp;/g, '&');
+}
+
+export function formatContentLabel(value: string): string {
+  return decodeHtmlEntities(value).trim();
+}
+
 export function stripTags(value: string): string {
   return value.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 }

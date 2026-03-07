@@ -3,15 +3,25 @@ import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious
+} from '@/components/ui/pagination';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { PostsFilterSidebar } from '@/components/posts-filter-sidebar';
+import { ContentCardPreview } from '@/components/content-card-preview';
 import { toPostListResponse } from '@/lib/content/transform';
 import { listPostArchives, listPostCategories, listPosts, type PostSort } from '@/lib/db/posts-queries';
-import { getSyncMeta } from '@/lib/db/queries';
+import { formatContentLabel } from '@/lib/utils/content';
 import { formatDate } from '@/lib/utils/date';
+import { buildPaginationTokens } from '@/lib/utils/pagination';
 
 export const dynamic = 'force-dynamic';
 
@@ -115,7 +125,6 @@ function buildPostsHref(options: {
   return query ? `/posts?${query}` : '/posts';
 }
 
-
 export default async function PostsPage({ searchParams }: SearchParamProps) {
   const params = await searchParams;
   const page = parsePositiveInt(getFirstParam(params?.page), 1);
@@ -125,7 +134,7 @@ export default async function PostsPage({ searchParams }: SearchParamProps) {
 
   const monthRange = month ? monthToRange(month) : undefined;
 
-  const [postData, categories, archives, syncMeta] = await Promise.all([
+  const [postData, categories, archives] = await Promise.all([
     listPosts({
       page,
       pageSize: PAGE_SIZE,
@@ -135,45 +144,35 @@ export default async function PostsPage({ searchParams }: SearchParamProps) {
       sort
     }),
     listPostCategories(),
-    listPostArchives({ categorySlug: category }),
-    getSyncMeta()
+    listPostArchives({ categorySlug: category })
   ]);
 
   const transformedItems = postData.items.map(toPostListResponse);
   const totalPages = Math.max(1, Math.ceil(postData.total / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const paginationTokens = buildPaginationTokens(currentPage, totalPages);
 
-  const categoryNameBySlug = new Map(categories.map((item) => [item.slug, item.name]));
+  const categoryNameBySlug = new Map(categories.map((item) => [item.slug, formatContentLabel(item.name)]));
   const activeArchive = archives.find((bucket) => bucket.month === month) ?? null;
 
   return (
-    <main className="content-shell">
+    <main className="content-shell content-shell-tight">
       <section className="panel px-5 py-6 sm:px-6">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <Breadcrumb className="mb-3">
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbLink href="/">Home</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Blog</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-            <Badge variant="outline" className="mb-2">Blog</Badge>
-            <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Articles</h1>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Main-site posts with category and archive navigation. Last sync:{' '}
-              {formatDate(syncMeta.lastSuccessAt?.toISOString() ?? null)}.
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Badge variant="default" className="capitalize">{syncMeta.lastRunStatus ?? 'unknown'}</Badge>
-            <Button asChild variant="outline" size="sm">
-              <Link href="/api/v1/posts?page=1&pageSize=20">API</Link>
-            </Button>
-          </div>
+        <div>
+          <Breadcrumb className="mb-3">
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink href="/">Home</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Blog</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+          <Badge variant="outline" className="mb-2">Blog</Badge>
+          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Articles</h1>
+          <p className="mt-2 text-sm text-muted-foreground">Main-site posts with category and archive navigation.</p>
         </div>
       </section>
 
@@ -253,6 +252,7 @@ export default async function PostsPage({ searchParams }: SearchParamProps) {
                   </CardHeader>
                   <CardContent>
                     <div className="article-html text-sm" dangerouslySetInnerHTML={{ __html: item.excerptHtml }} />
+                    <ContentCardPreview href={`/posts/${item.slug}`} previews={item.mediaPreviews} />
 
                     <div className="mt-4 flex flex-wrap gap-1.5">
                       {item.categories.map((slug) => (
@@ -271,17 +271,30 @@ export default async function PostsPage({ searchParams }: SearchParamProps) {
 
           <Pagination className="mt-5">
             <PaginationContent>
-              {page > 1 && (
+              {currentPage > 1 && (
                 <PaginationItem>
-                  <PaginationPrevious href={buildPostsHref({ sort, category, month, page: page - 1 })} />
+                  <PaginationPrevious href={buildPostsHref({ sort, category, month, page: currentPage - 1 })} />
                 </PaginationItem>
               )}
-              <PaginationItem>
-                <PaginationLink isActive>{Math.min(page, totalPages)}</PaginationLink>
-              </PaginationItem>
-              {page < totalPages && (
+              {paginationTokens.map((token, index) => (
+                <PaginationItem key={`${token}-${index}`}>
+                  {token === 'ellipsis' ? (
+                    <PaginationEllipsis />
+                  ) : (
+                    <PaginationLink
+                      href={buildPostsHref({ sort, category, month, page: token })}
+                      isActive={token === currentPage}
+                      size="default"
+                      className="min-w-9 px-3"
+                    >
+                      {token}
+                    </PaginationLink>
+                  )}
+                </PaginationItem>
+              ))}
+              {currentPage < totalPages && (
                 <PaginationItem>
-                  <PaginationNext href={buildPostsHref({ sort, category, month, page: page + 1 })} />
+                  <PaginationNext href={buildPostsHref({ sort, category, month, page: currentPage + 1 })} />
                 </PaginationItem>
               )}
             </PaginationContent>

@@ -30,6 +30,7 @@ export interface PostListItem {
   id: number;
   slug: string;
   title: string;
+  contentHtmlRaw: string;
   excerptHtmlRaw: string;
   sourceLink: string;
   publishedAtGmt: Date | null;
@@ -161,6 +162,7 @@ export async function listPosts(input: ListPostsInput): Promise<{
       id: blogPosts.id,
       slug: blogPosts.slug,
       title: blogPosts.title,
+      contentHtmlRaw: blogPosts.contentHtmlRaw,
       excerptHtmlRaw: blogPosts.excerptHtmlRaw,
       sourceLink: blogPosts.sourceLink,
       publishedAtGmt: blogPosts.publishedAtGmt,
@@ -287,3 +289,5 @@ export async function listPostArchives(input?: { categorySlug?: string }): Promi
     };
   });
 }
+
+
