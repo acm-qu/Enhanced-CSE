@@ -5,8 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { toArticleListResponse, toPostListResponse } from '@/lib/content/transform';
 import { listPosts } from '@/lib/db/posts-queries';
-import { getSyncMeta, listArticles, listCategories, type TermWithCount } from '@/lib/db/queries';
-import { formatDate } from '@/lib/utils/date';
+import { listArticles, listCategories, type TermWithCount } from '@/lib/db/queries';
 
 export const dynamic = 'force-dynamic';
 
@@ -107,8 +106,7 @@ function pickFeaturedCategories(categories: TermWithCount[]): Array<{
 }
 
 export default async function HomePage() {
-  const [meta, categories, latestPosts, latestWiki] = await Promise.all([
-    getSyncMeta(),
+  const [categories, latestPosts, latestWiki] = await Promise.all([
     listCategories(),
     listPosts({
       page: 1,
@@ -224,11 +222,6 @@ export default async function HomePage() {
                   <Link href="/wiki?sort=modified_desc">Latest Updates</Link>
                 </Button>
               </div>
-
-              <p className="mt-8 text-sm text-[#373637]/75 dark:text-white/70">
-                Last successful sync:{' '}
-                <span className="font-semibold text-[#111217] dark:text-white">{formatDate(meta.lastSuccessAt?.toISOString() ?? null)}</span>
-              </p>
             </div>
 
             <div className="mx-auto w-full max-w-[420px] rounded-3xl border border-[#2CAD9E]/25 bg-black p-6 shadow-[0_20px_45px_rgba(0,0,0,0.35)]">
@@ -242,17 +235,6 @@ export default async function HomePage() {
               />
             </div>
           </div>
-        </div>
-
-        <div className="absolute right-6 bottom-6 hidden lg:block">
-          <Button
-            asChild
-            variant="outline"
-            size="sm"
-            className="border-[#373637]/20 bg-white/60 text-[#111217] hover:bg-white dark:border-white/20 dark:bg-black/50 dark:text-white dark:hover:bg-white/10 dark:hover:text-white"
-          >
-            <Link href="/api/v1/wiki/categories">All Categories</Link>
-          </Button>
         </div>
       </section>
 
@@ -343,9 +325,6 @@ export default async function HomePage() {
               <div className="mb-5">
                 <h3 className="text-2xl font-semibold tracking-tight">Blog Posts</h3>
                 <p className="text-sm text-foreground/70">Latest announcements and departmental news.</p>
-                <p className="mt-1 text-xs text-foreground/60">
-                  Last sync: {formatDate(meta.lastSuccessAt?.toISOString() ?? null)}
-                </p>
               </div>
 
               <div className="space-y-2.5">

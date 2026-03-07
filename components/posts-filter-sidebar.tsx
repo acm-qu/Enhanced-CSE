@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Combobox, type ComboboxOption } from '@/components/ui/combobox';
 import type { PostSort } from '@/lib/db/posts-queries';
+import { formatContentLabel } from '@/lib/utils/content';
 
 interface PostsFilterSidebarProps {
   categories: Array<{ slug: string; name: string }>;
@@ -81,7 +82,7 @@ export function PostsFilterSidebar({
     { value: '', label: 'All categories' },
     ...categories.map((cat) => ({
       value: cat.slug,
-      label: cat.name
+      label: formatContentLabel(cat.name)
     }))
   ];
 
@@ -107,7 +108,7 @@ export function PostsFilterSidebar({
         placeholder="Select category..."
       />
 
-      <div className="mt-1 flex gap-2">
+      <div className="mt-3 flex gap-2">
         <Button
           onClick={() => handleReset()}
           variant="outline"

@@ -3,14 +3,25 @@ import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious
+} from '@/components/ui/pagination';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { WikiFilterSidebar } from '@/components/wiki-filter-sidebar';
+import { ContentCardPreview } from '@/components/content-card-preview';
 import { toArticleListResponse } from '@/lib/content/transform';
-import { getSyncMeta, listArticles, listCategories, listTags, type ArticleSort } from '@/lib/db/queries';
+import { listArticles, listCategories, listTags, type ArticleSort } from '@/lib/db/queries';
+import { formatContentLabel } from '@/lib/utils/content';
 import { formatDate } from '@/lib/utils/date';
+import { buildPaginationTokens } from '@/lib/utils/pagination';
 
 export const dynamic = 'force-dynamic';
 
@@ -84,7 +95,6 @@ function buildWikiHref(options: {
   return query ? `/wiki?${query}` : '/wiki';
 }
 
-
 export default async function WikiPage({ searchParams }: SearchParamProps) {
   const params = await searchParams;
   const page = parsePositiveInt(getFirstParam(params?.page), 1);
@@ -92,7 +102,7 @@ export default async function WikiPage({ searchParams }: SearchParamProps) {
   const category = getFirstParam(params?.category)?.trim() || undefined;
   const tag = getFirstParam(params?.tag)?.trim() || undefined;
 
-  const [articleData, categories, tags, syncMeta] = await Promise.all([
+  const [articleData, categories, tags] = await Promise.all([
     listArticles({
       page,
       pageSize: PAGE_SIZE,
@@ -101,45 +111,35 @@ export default async function WikiPage({ searchParams }: SearchParamProps) {
       tagSlug: tag
     }),
     listCategories(),
-    listTags(),
-    getSyncMeta()
+    listTags()
   ]);
 
   const transformedItems = articleData.items.map(toArticleListResponse);
   const totalPages = Math.max(1, Math.ceil(articleData.total / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const paginationTokens = buildPaginationTokens(currentPage, totalPages);
 
-  const categoryNameBySlug = new Map(categories.map((item) => [item.slug, item.name]));
-  const tagNameBySlug = new Map(tags.map((item) => [item.slug, item.name]));
+  const categoryNameBySlug = new Map(categories.map((item) => [item.slug, formatContentLabel(item.name)]));
+  const tagNameBySlug = new Map(tags.map((item) => [item.slug, formatContentLabel(item.name)]));
 
   return (
-    <main className="content-shell">
+    <main className="content-shell content-shell-tight">
       <section className="panel px-5 py-6 sm:px-6">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <Breadcrumb className="mb-3">
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbLink href="/">Home</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Wiki</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-            <Badge variant="outline" className="mb-2">Wiki</Badge>
-            <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Articles</h1>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Refined internal guides and technical documentation. Last sync:{' '}
-              {formatDate(syncMeta.lastSuccessAt?.toISOString() ?? null)}.
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Badge variant="default" className="capitalize">{syncMeta.lastRunStatus ?? 'unknown'}</Badge>
-            <Button asChild variant="outline" size="sm">
-              <Link href="/api/v1/wiki/articles?page=1&pageSize=20">API</Link>
-            </Button>
-          </div>
+        <div>
+          <Breadcrumb className="mb-3">
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink href="/">Home</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Wiki</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+          <Badge variant="outline" className="mb-2">Wiki</Badge>
+          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Articles</h1>
+          <p className="mt-2 text-sm text-muted-foreground">Refined internal guides and technical documentation.</p>
         </div>
       </section>
 
@@ -158,6 +158,8 @@ export default async function WikiPage({ searchParams }: SearchParamProps) {
               currentTag={tag}
             />
 
+            <Separator className="my-4" />
+
             <div>
               <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">Categories</p>
               <ScrollArea className="h-64">
@@ -173,7 +175,7 @@ export default async function WikiPage({ searchParams }: SearchParamProps) {
                         className="h-7 px-2 text-[10px]"
                       >
                         <Link href={buildWikiHref({ sort, category: active ? undefined : item.slug, tag, page: 1 })}>
-                          {item.name}
+                          {formatContentLabel(item.name)}
                         </Link>
                       </Button>
                     );
@@ -209,6 +211,7 @@ export default async function WikiPage({ searchParams }: SearchParamProps) {
                   </CardHeader>
                   <CardContent>
                     <div className="article-html text-sm" dangerouslySetInnerHTML={{ __html: item.excerptHtml }} />
+                    <ContentCardPreview href={`/wiki/${item.slug}`} previews={item.mediaPreviews} />
 
                     <div className="mt-4 flex flex-wrap gap-1.5">
                       {item.categories.map((slug) => (
@@ -234,17 +237,30 @@ export default async function WikiPage({ searchParams }: SearchParamProps) {
 
           <Pagination className="mt-5">
             <PaginationContent>
-              {page > 1 && (
+              {currentPage > 1 && (
                 <PaginationItem>
-                  <PaginationPrevious href={buildWikiHref({ sort, category, tag, page: page - 1 })} />
+                  <PaginationPrevious href={buildWikiHref({ sort, category, tag, page: currentPage - 1 })} />
                 </PaginationItem>
               )}
-              <PaginationItem>
-                <PaginationLink isActive>{Math.min(page, totalPages)}</PaginationLink>
-              </PaginationItem>
-              {page < totalPages && (
+              {paginationTokens.map((token, index) => (
+                <PaginationItem key={`${token}-${index}`}>
+                  {token === 'ellipsis' ? (
+                    <PaginationEllipsis />
+                  ) : (
+                    <PaginationLink
+                      href={buildWikiHref({ sort, category, tag, page: token })}
+                      isActive={token === currentPage}
+                      size="default"
+                      className="min-w-9 px-3"
+                    >
+                      {token}
+                    </PaginationLink>
+                  )}
+                </PaginationItem>
+              ))}
+              {currentPage < totalPages && (
                 <PaginationItem>
-                  <PaginationNext href={buildWikiHref({ sort, category, tag, page: page + 1 })} />
+                  <PaginationNext href={buildWikiHref({ sort, category, tag, page: currentPage + 1 })} />
                 </PaginationItem>
               )}
             </PaginationContent>
