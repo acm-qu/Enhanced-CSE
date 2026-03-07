@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import type { Connection, CourseData, StudyPlanTerm } from '@/app/cs-study-plan/page';
@@ -302,35 +303,33 @@ export function StudyPlanBoard({ terms, courses, connections }: Props) {
                             const isRelated = relatedIds.has(courseId);
                             const isDimmed = !!hovered && !isHovered && !isRelated;
 
-                            return (
-                              <div
-                                key={courseId}
-                                ref={(element) => {
-                                  if (element) {
-                                    cardRefs.current.set(courseId, element);
-                                  } else {
-                                    cardRefs.current.delete(courseId);
-                                  }
-                                }}
-                                onMouseEnter={(event) => {
-                                  setHovered(courseId);
-                                  setTooltip({ id: courseId, x: event.clientX, y: event.clientY });
-                                }}
-                                onMouseMove={(event) => {
-                                  setTooltip((current) => (current ? { ...current, x: event.clientX, y: event.clientY } : null));
-                                }}
-                                onMouseLeave={() => {
-                                  setHovered(null);
-                                  setTooltip(null);
-                                }}
-                                className={[
-                                  'cursor-default select-none rounded-lg border px-3 py-2.5 transition-all duration-150',
-                                  colors.card,
-                                  isHovered ? 'scale-[1.04] ring-2 ring-white/20 shadow-lg shadow-black/40' : '',
-                                  isDimmed ? 'opacity-25' : 'opacity-100',
-                                ].join(' ')}
-                                style={{ position: 'relative', zIndex: isHovered ? 30 : 15 }}
-                              >
+                            const isPackage = course.type === 'package' || courseId.endsWith('_PKG');
+                            const url = course.sources?.mybanner_url
+                              ?? (isPackage ? 'https://www.qu.edu.qa/en-us/core/student-information/Pages/packages.aspx' : undefined);
+                            const cardClassName = [
+                              'rounded-lg border px-3 py-2.5 transition-all duration-150',
+                              url ? 'cursor-pointer' : 'cursor-default',
+                              'select-none',
+                              colors.card,
+                              isHovered ? 'scale-[1.04] ring-2 ring-white/20 shadow-lg shadow-black/40' : '',
+                              isDimmed ? 'opacity-25' : 'opacity-100',
+                            ].join(' ');
+                            const cardStyle = { position: 'relative' as const, zIndex: isHovered ? 30 : 15 };
+                            const cardHandlers = {
+                              onMouseEnter: (event: React.MouseEvent) => {
+                                setHovered(courseId);
+                                setTooltip({ id: courseId, x: event.clientX, y: event.clientY });
+                              },
+                              onMouseMove: (event: React.MouseEvent) => {
+                                setTooltip((current) => (current ? { ...current, x: event.clientX, y: event.clientY } : null));
+                              },
+                              onMouseLeave: () => {
+                                setHovered(null);
+                                setTooltip(null);
+                              },
+                            };
+                            const cardInner = (
+                              <>
                                 <div className="mb-1 flex items-start justify-between gap-1">
                                   {displayCourseId(courseId) !== null && (
                                     <span className={`font-mono text-xs font-bold leading-none ${colors.cid}`}>{displayCourseId(courseId)}</span>
@@ -340,6 +339,43 @@ export function StudyPlanBoard({ terms, courses, connections }: Props) {
                                   </span>
                                 </div>
                                 <p className={`text-[11px] leading-snug ${colors.title}`}>{course.title}</p>
+                              </>
+                            );
+
+                            return url ? (
+                              <Link
+                                key={courseId}
+                                href={url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                ref={(element) => {
+                                  if (element) {
+                                    cardRefs.current.set(courseId, element as unknown as HTMLDivElement);
+                                  } else {
+                                    cardRefs.current.delete(courseId);
+                                  }
+                                }}
+                                className={cardClassName}
+                                style={cardStyle}
+                                {...cardHandlers}
+                              >
+                                {cardInner}
+                              </Link>
+                            ) : (
+                              <div
+                                key={courseId}
+                                ref={(element) => {
+                                  if (element) {
+                                    cardRefs.current.set(courseId, element);
+                                  } else {
+                                    cardRefs.current.delete(courseId);
+                                  }
+                                }}
+                                className={cardClassName}
+                                style={cardStyle}
+                                {...cardHandlers}
+                              >
+                                {cardInner}
                               </div>
                             );
                           })}
