@@ -58,5 +58,11 @@ export function addHeadingIdsAndBuildToc(html: string): { html: string; toc: Toc
     return `<h${level}${attrsRaw} id="${headingId}">${innerHtml}</h${level}>`;
   });
 
-  return { html: htmlWithAnchors, toc };
+  // Unwrap <a> tags that only contain an <img> so image clicks aren't swallowed by links
+  const htmlUnwrapped = htmlWithAnchors.replace(
+    /<a\b[^>]*>\s*(<img\b[^>]*\/?>)\s*<\/a>/gi,
+    '$1'
+  );
+
+  return { html: htmlUnwrapped, toc };
 }
