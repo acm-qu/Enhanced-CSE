@@ -1,14 +1,12 @@
 import { HackerLoader } from '@/components/hacker-loader';
 
+const LINES = [
+  'Connecting to wiki index',
+  'Loading article metadata',
+  'Resolving filters and categories',
+  'Rendering article collection'
+];
+
 export default function WikiLoading() {
-  return (
-    <HackerLoader
-      lines={[
-        '> QUERYING ARTICLE RECORDS...',
-        '> RESOLVING CATEGORIES...',
-        '> APPLYING FILTERS...',
-        '> RENDERING WIKI INDEX...',
-      ]}
-    />
-  );
+  return <HackerLoader lines={LINES} />;
 }

@@ -1,18 +1,19 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { ChevronDownIcon } from 'lucide-react';
 
+import { RelatedContentSection } from '@/components/related-content-section';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Separator } from '@/components/ui/separator';
-import { ChevronDownIcon } from 'lucide-react';
 import { TocNav } from '@/components/toc-nav';
-import { toPostDetailResponse } from '@/lib/content/transform';
-import { getPostBySlug, listPostCategories } from '@/lib/db/posts-queries';
-import { addHeadingIdsAndBuildToc, type TocItem } from '@/lib/utils/content';
+import { toPostDetailResponse, toPostListResponse } from '@/lib/content/transform';
+import { getPostBySlug, listPostCategories, listPosts } from '@/lib/db/posts-queries';
+import { addHeadingIdsAndBuildToc, formatContentLabel } from '@/lib/utils/content';
 import { formatDate } from '@/lib/utils/date';
 
 export const dynamic = 'force-dynamic';
@@ -51,12 +52,30 @@ export default async function PostDetailPage({ params }: DetailPageProps) {
 
   const transformed = toPostDetailResponse(post);
   const { html, toc } = addHeadingIdsAndBuildToc(transformed.contentHtml);
+  const hasToc = toc.length > 0;
 
-  const categoryNameBySlug = new Map(categories.map((item) => [item.slug, item.name]));
+  const categoryNameBySlug = new Map(categories.map((item) => [item.slug, formatContentLabel(item.name)]));
+  const primaryCategory = transformed.categories[0];
+
+  const relatedPosts = primaryCategory
+    ? (await listPosts({
+        page: 1,
+        pageSize: 6,
+        categorySlug: primaryCategory,
+        sort: 'published_desc'
+      })).items
+        .filter((item) => item.slug !== transformed.slug)
+        .slice(0, 3)
+        .map(toPostListResponse)
+    : [];
+
+  const layoutClass = hasToc
+    ? 'grid gap-4 xl:grid-cols-[220px_minmax(0,1fr)_220px]'
+    : 'grid gap-4 xl:grid-cols-[220px_minmax(0,1fr)]';
 
   return (
     <main className="content-shell">
-      <div className="grid gap-4 xl:grid-cols-[220px_minmax(0,1fr)_220px]">
+      <div className={layoutClass}>
         <aside className="hidden xl:block">
           <Card className="panel-muted sticky top-20">
             <CardHeader className="pb-3">
@@ -87,10 +106,14 @@ export default async function PostDetailPage({ params }: DetailPageProps) {
                   </BreadcrumbItem>
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
-                    <BreadcrumbPage>{transformed.slug}</BreadcrumbPage>
+                    <BreadcrumbPage>{transformed.title}</BreadcrumbPage>
                   </BreadcrumbItem>
                 </BreadcrumbList>
               </Breadcrumb>
+
+              <Button asChild variant="ghost" size="sm" className="-ml-2 w-fit px-2 text-muted-foreground xl:hidden">
+                <Link href="/posts">Back to posts</Link>
+              </Button>
 
               <CardTitle className="text-3xl sm:text-5xl">{transformed.title}</CardTitle>
 
@@ -100,9 +123,11 @@ export default async function PostDetailPage({ params }: DetailPageProps) {
               </CardDescription>
 
               <div className="flex flex-wrap gap-2">
-                {transformed.categories.map((slug) => (
-                  <Badge key={`c:${slug}`} variant="outline">
-                    <Link href={`/posts?category=${encodeURIComponent(slug)}`}>{categoryNameBySlug.get(slug) ?? slug}</Link>
+                {transformed.categories.map((categorySlug) => (
+                  <Badge key={`c:${categorySlug}`} variant="outline">
+                    <Link href={`/posts?category=${encodeURIComponent(categorySlug)}`}>
+                      {categoryNameBySlug.get(categorySlug) ?? categorySlug}
+                    </Link>
                   </Badge>
                 ))}
               </div>
@@ -114,38 +139,51 @@ export default async function PostDetailPage({ params }: DetailPageProps) {
           </Card>
         </article>
 
-        <aside className="hidden xl:block">
-          <div className="no-scrollbar sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto pt-4 pb-10">
-            <p className="mb-3 text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground/60">
-              On This Page
-            </p>
-            {toc.length === 0 ? (
-              <p className="text-[13px] text-muted-foreground/40">No headings available.</p>
-            ) : (
+        {hasToc ? (
+          <aside className="hidden xl:block">
+            <div className="no-scrollbar sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto pt-4 pb-10">
+              <p className="mb-3 text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground/60">
+                On This Page
+              </p>
               <TocNav items={toc} />
-            )}
-          </div>
-        </aside>
+            </div>
+          </aside>
+        ) : null}
       </div>
 
-      <div className="mt-4 space-y-3 xl:hidden">
-        <Collapsible>
-          <CollapsibleTrigger asChild>
-            <Button variant="outline" size="sm" className="w-full justify-between">
-              On This Page <ChevronDownIcon className="h-4 w-4" />
-            </Button>
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            <nav className="mt-2 space-y-1 pl-2">
-              {toc.map((item) => (
-                <a key={item.id} href={`#${item.id}`} className="block text-sm hover:underline">
-                  {item.text}
-                </a>
-              ))}
-            </nav>
-          </CollapsibleContent>
-        </Collapsible>
-      </div>
+      {hasToc ? (
+        <div className="mt-4 space-y-3 xl:hidden">
+          <Collapsible>
+            <CollapsibleTrigger asChild>
+              <Button variant="outline" size="sm" className="w-full justify-between">
+                On This Page <ChevronDownIcon className="h-4 w-4" />
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <nav className="mt-2 space-y-1 pl-2">
+                {toc.map((item) => (
+                  <a key={item.id} href={`#${item.id}`} className="block text-sm hover:underline">
+                    {item.text}
+                  </a>
+                ))}
+              </nav>
+            </CollapsibleContent>
+          </Collapsible>
+        </div>
+      ) : null}
+
+      <RelatedContentSection
+        eyebrow={primaryCategory ? `More in ${categoryNameBySlug.get(primaryCategory) ?? primaryCategory}` : 'Related posts'}
+        title="Keep reading"
+        items={relatedPosts.map((item) => ({
+          href: `/posts/${item.slug}`,
+          title: item.title,
+          summary: item.summary,
+          dateLabel: `Published ${formatDate(item.publishedAtGmt)}`
+        }))}
+        viewAllHref={primaryCategory ? `/posts?category=${encodeURIComponent(primaryCategory)}` : '/posts'}
+        viewAllLabel={primaryCategory ? 'Browse category' : 'Browse all posts'}
+      />
     </main>
   );
 }

@@ -4,6 +4,7 @@ import type { PostDetailItem, PostListItem } from '@/lib/db/posts-queries';
 import type { ArticleDetailItem, ArticleListItem } from '@/lib/db/queries';
 import { sanitizeContentHtml, sanitizeWikiHtml } from '@/lib/content/html';
 import { extractContentMediaPreviews } from '@/lib/content/media-preview';
+import { buildContentSummary } from '@/lib/content/summary';
 
 function sanitizeTitle(title: string): string {
   return sanitizeHtml(title, {
@@ -13,10 +14,17 @@ function sanitizeTitle(title: string): string {
 }
 
 export function toArticleListResponse(article: ArticleListItem) {
+  const title = sanitizeTitle(article.title);
+
   return {
     id: article.id,
     slug: article.slug,
-    title: sanitizeTitle(article.title),
+    title,
+    summary: buildContentSummary({
+      title,
+      contentHtml: article.contentHtmlRaw,
+      excerptHtml: article.excerptHtmlRaw
+    }),
     excerptHtml: sanitizeWikiHtml(article.excerptHtmlRaw),
     mediaPreviews: extractContentMediaPreviews(article.contentHtmlRaw || article.excerptHtmlRaw),
     sourceLink: article.sourceLink,
@@ -28,10 +36,12 @@ export function toArticleListResponse(article: ArticleListItem) {
 }
 
 export function toArticleDetailResponse(article: ArticleDetailItem) {
+  const title = sanitizeTitle(article.title);
+
   return {
     id: article.id,
     slug: article.slug,
-    title: sanitizeTitle(article.title),
+    title,
     contentHtml: sanitizeWikiHtml(article.contentHtmlRaw),
     excerptHtml: sanitizeWikiHtml(article.excerptHtmlRaw),
     sourceLink: article.sourceLink,
@@ -43,10 +53,17 @@ export function toArticleDetailResponse(article: ArticleDetailItem) {
 }
 
 export function toPostListResponse(post: PostListItem) {
+  const title = sanitizeTitle(post.title);
+
   return {
     id: post.id,
     slug: post.slug,
-    title: sanitizeTitle(post.title),
+    title,
+    summary: buildContentSummary({
+      title,
+      contentHtml: post.contentHtmlRaw,
+      excerptHtml: post.excerptHtmlRaw
+    }),
     excerptHtml: sanitizeContentHtml(post.excerptHtmlRaw),
     mediaPreviews: extractContentMediaPreviews(post.contentHtmlRaw || post.excerptHtmlRaw),
     sourceLink: post.sourceLink,
@@ -57,10 +74,12 @@ export function toPostListResponse(post: PostListItem) {
 }
 
 export function toPostDetailResponse(post: PostDetailItem) {
+  const title = sanitizeTitle(post.title);
+
   return {
     id: post.id,
     slug: post.slug,
-    title: sanitizeTitle(post.title),
+    title,
     contentHtml: sanitizeContentHtml(post.contentHtmlRaw),
     excerptHtml: sanitizeContentHtml(post.excerptHtmlRaw),
     sourceLink: post.sourceLink,

@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Combobox, type ComboboxOption } from '@/components/ui/combobox';
@@ -27,11 +27,6 @@ export function PostsFilterSidebar({
   const [sort, setSort] = useState(currentSort);
   const [category, setCategory] = useState(currentCategory ?? '');
   const [month, setMonth] = useState(currentMonth ?? '');
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   const buildHref = (newSort: string, newCategory: string, newMonth: string) => {
     const params = new URLSearchParams();
@@ -69,20 +64,16 @@ export function PostsFilterSidebar({
     router.push('/posts');
   };
 
-  if (!isMounted) {
-    return null;
-  }
-
-  const sortComboboxOptions: ComboboxOption[] = sortOptions.map((opt) => ({
-    value: opt.value,
-    label: opt.label
+  const sortComboboxOptions: ComboboxOption[] = sortOptions.map((option) => ({
+    value: option.value,
+    label: option.label
   }));
 
   const categoryComboboxOptions: ComboboxOption[] = [
     { value: '', label: 'All categories' },
-    ...categories.map((cat) => ({
-      value: cat.slug,
-      label: formatContentLabel(cat.name)
+    ...categories.map((categoryItem) => ({
+      value: categoryItem.slug,
+      label: formatContentLabel(categoryItem.name)
     }))
   ];
 
@@ -109,12 +100,7 @@ export function PostsFilterSidebar({
       />
 
       <div className="mt-3 flex gap-2">
-        <Button
-          onClick={() => handleReset()}
-          variant="outline"
-          size="sm"
-          className="flex-1"
-        >
+        <Button onClick={handleReset} variant="outline" size="sm" className="flex-1">
           Reset
         </Button>
       </div>

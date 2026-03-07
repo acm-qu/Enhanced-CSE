@@ -1,14 +1,12 @@
 import { HackerLoader } from '@/components/hacker-loader';
 
+const LINES = [
+  'Booting Enhanced CSE portal',
+  'Syncing homepage modules',
+  'Preparing navigation surface',
+  'Rendering content index'
+];
+
 export default function Loading() {
-  return (
-    <HackerLoader
-      lines={[
-        '> INITIALIZING CSE PORTAL...',
-        '> LOADING WIKI DATABASE...',
-        '> BUILDING CONTENT INDEX...',
-        '> READY',
-      ]}
-    />
-  );
+  return <HackerLoader lines={LINES} />;
 }
