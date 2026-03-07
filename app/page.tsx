@@ -305,24 +305,75 @@ async function ExploreSection() {
   );
 }
 
+function SkeletonBar({ w, h = 'h-4', pct }: { w?: string; h?: string; pct?: number }) {
+  return (
+    <div
+      className={`${h} ${w ?? ''} rounded-md bg-foreground/[0.08] animate-pulse`}
+      style={pct ? { width: `${pct}%` } : undefined}
+    />
+  );
+}
+
 function ExploreSkeleton() {
   return (
     <section className="relative z-[1] mx-auto w-full max-w-[96rem] px-2 pt-6 sm:px-3 lg:px-4">
       <div className="overflow-hidden rounded-2xl border border-foreground/12">
+        {/* Header */}
         <div className="flex flex-wrap items-start justify-between gap-4 px-6 py-5 sm:px-8">
-          <div className="space-y-2">
-            <div className="h-7 w-52 rounded-md bg-foreground/8 animate-pulse" />
-            <div className="h-4 w-80 rounded-md bg-foreground/6 animate-pulse" />
+          <div className="space-y-2.5">
+            <SkeletonBar w="w-52" h="h-7" />
+            <SkeletonBar w="w-72" />
           </div>
+          <SkeletonBar w="w-36" h="h-9" />
         </div>
+
         <Separator className="bg-foreground/10" />
+
+        {/* Top 2 sections */}
         <div className="grid lg:grid-cols-2">
           {[0, 1].map((i) => (
             <div key={i} className={`p-6 sm:p-8 ${i === 0 ? 'border-b border-foreground/10 lg:border-r lg:border-b-0' : 'border-b border-foreground/10'}`}>
-              <div className="h-6 w-36 rounded-md bg-foreground/8 animate-pulse" />
-              <div className="mt-5 space-y-3">
-                {[...Array(5)].map((_, j) => (
-                  <div key={j} className="h-4 rounded-md bg-foreground/6 animate-pulse" style={{ width: `${70 + (j % 3) * 10}%` }} />
+              <div className="flex items-center gap-3 mb-5">
+                <div className="h-3.5 w-3.5 rounded-full bg-foreground/[0.08] animate-pulse shrink-0" />
+                <SkeletonBar w="w-40" h="h-6" />
+              </div>
+              <div className="space-y-3">
+                {[90, 70, 80, 65, 75].map((pct, j) => (
+                  <SkeletonBar key={j} pct={pct} />
+                ))}
+              </div>
+              <div className="mt-5">
+                <SkeletonBar w="w-48" h="h-9" />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <Separator className="bg-foreground/10" />
+
+        {/* Better QU Schedule row placeholder */}
+        <div className="flex items-center justify-between border-b border-foreground/10 px-6 py-5 sm:px-8">
+          <div className="space-y-2">
+            <SkeletonBar w="w-44" h="h-5" />
+            <SkeletonBar w="w-64" />
+          </div>
+          <div className="h-4 w-4 rounded bg-foreground/[0.08] animate-pulse shrink-0" />
+        </div>
+
+        {/* Bottom 2 sections */}
+        <div className="grid lg:grid-cols-2">
+          {[0, 1].map((i) => (
+            <div key={i} className={`p-6 sm:p-8 ${i === 0 ? 'lg:border-r border-foreground/10' : ''}`}>
+              <div className="mb-5 flex items-start justify-between gap-3">
+                <div className="space-y-2">
+                  <SkeletonBar w="w-36" h="h-6" />
+                  <SkeletonBar w="w-48" />
+                </div>
+                <SkeletonBar w="w-28" h="h-9" />
+              </div>
+              <div className="space-y-3">
+                {[85, 60, 75, 65, 70, 55].map((pct, j) => (
+                  <SkeletonBar key={j} pct={pct} />
                 ))}
               </div>
             </div>
