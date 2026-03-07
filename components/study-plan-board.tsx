@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import type { Connection, CourseData, StudyPlanTerm } from '@/app/cs-study-plan/page';
 
-// ─── Internal types ───────────────────────────────────────────────────────────
+// â”€â”€â”€ Internal types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 interface ComputedArrow extends Connection {
   sx: number;
   sy: number;
@@ -19,7 +19,7 @@ interface Props {
   connections: Connection[];
 }
 
-// ─── Color helpers ────────────────────────────────────────────────────────────
+// â”€â”€â”€ Color helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 type ColorSet = { card: string; badge: string; cid: string; title: string };
 
 function getColors(id: string, type?: string): ColorSet {
@@ -45,7 +45,7 @@ function getColors(id: string, type?: string): ColorSet {
   return map[prefix] ?? { card: 'bg-zinc-800/50 border-zinc-600/70', badge: 'bg-zinc-700/50 text-zinc-400', cid: 'text-zinc-300', title: 'text-zinc-200/80' };
 }
 
-// ─── Position util ────────────────────────────────────────────────────────────
+// â”€â”€â”€ Position util â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function offsetFrom(el: HTMLElement, ancestor: HTMLElement) {
   let x = 0, y = 0;
   let cur: HTMLElement | null = el;
@@ -57,15 +57,15 @@ function offsetFrom(el: HTMLElement, ancestor: HTMLElement) {
   return { x, y, w: el.offsetWidth, h: el.offsetHeight };
 }
 
-// ─── Course ID display ────────────────────────────────────────────────────────
+// â”€â”€â”€ Course ID display â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function displayCourseId(id: string): string | null {
   if (id.includes(' ')) return id;
   const m = id.match(/ELECTIVE_([IVX]+)$/);
   if (m) return `Elective ${m[1]}`;
-  return null; // packages — hide internal ID
+  return null; // packages â€” hide internal ID
 }
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
+// â”€â”€â”€ Sub-components â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function LegendArrow({ type, label }: { type: 'prereq' | 'concurrent'; label: string }) {
   const color = type === 'prereq' ? '#ef4444' : '#60a5fa';
   const mid = `leg-${type}`;
@@ -112,7 +112,7 @@ function CourseTooltip({ courseId, course, x, y }: { courseId: string; course: C
       <p className="text-zinc-200 text-[11px] mt-0.5 leading-snug">{course.title}</p>
       {course.department && <p className="text-zinc-500 text-[10px] mt-1 leading-snug">{course.department}</p>}
       {course.schedule_types && course.schedule_types.length > 0 && (
-        <p className="text-zinc-600 text-[10px] mt-0.5">{course.schedule_types.join(' · ')}</p>
+        <p className="text-zinc-600 text-[10px] mt-0.5">{course.schedule_types.join(' Â· ')}</p>
       )}
       {prereqText && (
         <div className="mt-2 pt-1.5 border-t border-zinc-700/50">
@@ -133,9 +133,9 @@ function CourseTooltip({ courseId, course, x, y }: { courseId: string; course: C
   );
 }
 
-// ─── Main component ───────────────────────────────────────────────────────────
+// â”€â”€â”€ Main component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export function StudyPlanBoard({ terms, courses, connections }: Props) {
-  const boardRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const [arrows, setArrows] = useState<ComputedArrow[]>([]);
   const [svgSize, setSvgSize] = useState({ w: 0, h: 0 });
@@ -143,189 +143,229 @@ export function StudyPlanBoard({ terms, courses, connections }: Props) {
   const [tooltip, setTooltip] = useState<{ id: string; x: number; y: number } | null>(null);
 
   const courseTermIdx = useMemo(() => {
-    const m: Record<string, number> = {};
-    terms.forEach((t, i) => t.courses.forEach((id) => { m[id] = i; }));
-    return m;
+    const map: Record<string, number> = {};
+    terms.forEach((term, index) => {
+      term.courses.forEach((id) => {
+        map[id] = index;
+      });
+    });
+    return map;
   }, [terms]);
 
   useEffect(() => {
     const compute = () => {
-      const board = boardRef.current;
-      if (!board) return;
-      setSvgSize({ w: board.scrollWidth, h: board.scrollHeight });
-      const out: ComputedArrow[] = [];
-      for (const conn of connections) {
-        const fEl = cardRefs.current.get(conn.from);
-        const tEl = cardRefs.current.get(conn.to);
-        if (!fEl || !tEl) continue;
-        const f = offsetFrom(fEl, board);
-        const t = offsetFrom(tEl, board);
-        const sameCol = courseTermIdx[conn.from] === courseTermIdx[conn.to];
-        out.push({
-          ...conn,
-          sx: f.x + f.w,
-          sy: f.y + f.h / 2,
-          tx: sameCol ? t.x + t.w : t.x,
-          ty: t.y + t.h / 2,
+      const content = contentRef.current;
+      if (!content) {
+        return;
+      }
+
+      setSvgSize({ w: content.scrollWidth, h: content.scrollHeight });
+      const nextArrows: ComputedArrow[] = [];
+
+      for (const connection of connections) {
+        const fromElement = cardRefs.current.get(connection.from);
+        const toElement = cardRefs.current.get(connection.to);
+        if (!fromElement || !toElement) {
+          continue;
+        }
+
+        const from = offsetFrom(fromElement, content);
+        const to = offsetFrom(toElement, content);
+        const sameCol = courseTermIdx[connection.from] === courseTermIdx[connection.to];
+
+        nextArrows.push({
+          ...connection,
+          sx: from.x + from.w,
+          sy: from.y + from.h / 2,
+          tx: sameCol ? to.x + to.w : to.x,
+          ty: to.y + to.h / 2,
           sameCol,
         });
       }
-      setArrows(out);
+
+      setArrows(nextArrows);
     };
 
-    // Delay slightly to ensure all card refs are populated after first paint
-    const id = requestAnimationFrame(() => { compute(); });
-    const ro = new ResizeObserver(compute);
-    if (boardRef.current) ro.observe(boardRef.current);
+    const frameId = requestAnimationFrame(() => {
+      compute();
+    });
+    const resizeObserver = new ResizeObserver(compute);
+
+    if (contentRef.current) {
+      resizeObserver.observe(contentRef.current);
+    }
+
     window.addEventListener('resize', compute);
-    return () => { cancelAnimationFrame(id); ro.disconnect(); window.removeEventListener('resize', compute); };
+
+    return () => {
+      cancelAnimationFrame(frameId);
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', compute);
+    };
   }, [connections, courseTermIdx]);
 
-  const years = [1, 2, 3, 4].map((y) => ({
-    year: y,
-    fall: terms.find((t) => t.year === y && t.term === 'Fall')!,
-    spring: terms.find((t) => t.year === y && t.term === 'Spring')!,
+  const years = [1, 2, 3, 4].map((year) => ({
+    year,
+    fall: terms.find((term) => term.year === year && term.term === 'Fall')!,
+    spring: terms.find((term) => term.year === year && term.term === 'Spring')!,
   }));
 
   const relatedIds = useMemo(() => {
-    if (!hovered) return new Set<string>();
-    return new Set(connections.flatMap((c) =>
-      c.from === hovered || c.to === hovered ? [c.from, c.to] : []
-    ));
+    if (!hovered) {
+      return new Set<string>();
+    }
+
+    return new Set(
+      connections.flatMap((connection) =>
+        connection.from === hovered || connection.to === hovered ? [connection.from, connection.to] : []
+      )
+    );
   }, [hovered, connections]);
 
   return (
     <div className="px-4 sm:px-6">
-      <div className="rounded-2xl bg-zinc-950 border border-white/[0.06] overflow-hidden">
-      {/* Scrollable board */}
-      <div className="w-full overflow-x-auto">
-        <div className="relative flex flex-row gap-6 px-6 py-6 pb-4 w-full" ref={boardRef}>
+      <div className="overflow-hidden rounded-2xl border border-white/[0.06] bg-zinc-950">
+        <div className="w-full overflow-x-auto overflow-y-hidden">
+          <div className="relative min-w-full">
+            {svgSize.w > 0 && (
+              <svg
+                style={{ position: 'absolute', top: 0, left: 0, width: svgSize.w, height: svgSize.h, pointerEvents: 'none', zIndex: 5 }}
+                aria-hidden="true"
+              >
+                <defs>
+                  <marker id="arh-pre" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto">
+                    <path d="M0 0L8 4L0 8Z" fill="#ef4444cc" />
+                  </marker>
+                  <marker id="arh-con" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto">
+                    <path d="M0 0L8 4L0 8Z" fill="#60a5facc" />
+                  </marker>
+                </defs>
 
-          {/* SVG overlay — covers full content area */}
-          {svgSize.w > 0 && (
-            <svg
-              style={{ position: 'absolute', top: 0, left: 0, width: svgSize.w, height: svgSize.h, pointerEvents: 'none', zIndex: 5 }}
-              aria-hidden="true"
-            >
-              <defs>
-                <marker id="arh-pre" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto">
-                  <path d="M0 0L8 4L0 8Z" fill="#ef4444cc" />
-                </marker>
-                <marker id="arh-con" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto">
-                  <path d="M0 0L8 4L0 8Z" fill="#60a5facc" />
-                </marker>
-              </defs>
+                {arrows.map((arrow, index) => {
+                  const isRelated = hovered ? arrow.from === hovered || arrow.to === hovered : true;
+                  const opacity = hovered ? (isRelated ? 0.9 : 0.04) : 0.1;
+                  const stroke = arrow.type === 'prereq' ? '#ef4444' : '#60a5fa';
+                  const marker = arrow.type === 'prereq' ? 'url(#arh-pre)' : 'url(#arh-con)';
 
-              {arrows.map((ar, i) => {
-                const isRel = hovered ? (ar.from === hovered || ar.to === hovered) : true;
-                const op = hovered ? (isRel ? 0.9 : 0.04) : 0.1;
-                const stroke = ar.type === 'prereq' ? '#ef4444' : '#60a5fa';
-                const marker = ar.type === 'prereq' ? 'url(#arh-pre)' : 'url(#arh-con)';
-                let d: string;
-                if (ar.sameCol) {
-                  // C-curve to the right for same-column (concurrent)
-                  const b = 46;
-                  d = `M${ar.sx} ${ar.sy} C${ar.sx + b} ${ar.sy},${ar.tx + b} ${ar.ty},${ar.tx} ${ar.ty}`;
-                } else {
-                  const dx = Math.max(48, Math.abs(ar.tx - ar.sx) * 0.42);
-                  d = `M${ar.sx} ${ar.sy} C${ar.sx + dx} ${ar.sy},${ar.tx - dx} ${ar.ty},${ar.tx} ${ar.ty}`;
-                }
-                return (
-                  <path
-                    key={i} d={d} fill="none"
-                    stroke={stroke} strokeWidth={1.5}
-                    strokeDasharray={ar.type === 'concurrent' ? '5 3' : undefined}
-                    markerEnd={marker}
-                    opacity={op}
-                    style={{ transition: 'opacity 0.12s' }}
-                  />
-                );
-              })}
-            </svg>
-          )}
+                  let path: string;
+                  if (arrow.sameCol) {
+                    const bend = 46;
+                    path = `M${arrow.sx} ${arrow.sy} C${arrow.sx + bend} ${arrow.sy},${arrow.tx + bend} ${arrow.ty},${arrow.tx} ${arrow.ty}`;
+                  } else {
+                    const deltaX = Math.max(48, Math.abs(arrow.tx - arrow.sx) * 0.42);
+                    path = `M${arrow.sx} ${arrow.sy} C${arrow.sx + deltaX} ${arrow.sy},${arrow.tx - deltaX} ${arrow.ty},${arrow.tx} ${arrow.ty}`;
+                  }
 
-          {/* Year groups */}
-          {years.map(({ year, fall, spring }) => (
-            <div key={year} className="flex flex-col flex-1 min-w-0" style={{ position: 'relative', zIndex: 10 }}>
-              {/* Year pill header */}
-              <div className="flex justify-center mb-4">
-                <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-500 px-3 py-1 rounded-full border border-zinc-700/60">
-                  Year {year}
-                </span>
-              </div>
+                  return (
+                    <path
+                      key={index}
+                      d={path}
+                      fill="none"
+                      stroke={stroke}
+                      strokeWidth={1.5}
+                      strokeDasharray={arrow.type === 'concurrent' ? '5 3' : undefined}
+                      markerEnd={marker}
+                      opacity={opacity}
+                      style={{ transition: 'opacity 0.12s' }}
+                    />
+                  );
+                })}
+              </svg>
+            )}
 
-              {/* Fall + Spring columns */}
-              <div className="flex flex-row gap-3 flex-1">
-                {[fall, spring].map((term) => (
-                  <div key={term.term} className="flex flex-col flex-1 min-w-0">
-                    {/* Semester label */}
-                    <div className="text-center mb-3 pb-2 border-b border-zinc-800">
-                      <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-zinc-400">{term.term}</p>
-                      <p className="text-[10px] text-zinc-500 mt-0.5">{term.total_credit_hours} credit hrs</p>
-                    </div>
-
-                    {/* Course cards */}
-                    <div className="flex flex-col gap-2.5">
-                      {term.courses.map((cid) => {
-                        const course = courses[cid];
-                        if (!course) return null;
-                        const col = getColors(cid, course.type);
-                        const isHov = hovered === cid;
-                        const isRel = relatedIds.has(cid);
-                        const dimmed = !!hovered && !isHov && !isRel;
-
-                        return (
-                          <div
-                            key={cid}
-                            ref={(el) => { if (el) cardRefs.current.set(cid, el); else cardRefs.current.delete(cid); }}
-                            onMouseEnter={(e) => { setHovered(cid); setTooltip({ id: cid, x: e.clientX, y: e.clientY }); }}
-                            onMouseMove={(e) => setTooltip((t) => t ? { ...t, x: e.clientX, y: e.clientY } : null)}
-                            onMouseLeave={() => { setHovered(null); setTooltip(null); }}
-                            className={[
-                              'rounded-lg border px-3 py-2.5 cursor-default select-none',
-                              'transition-all duration-150',
-                              col.card,
-                              isHov ? 'ring-2 ring-white/20 shadow-lg shadow-black/40 scale-[1.04]' : '',
-                              dimmed ? 'opacity-25' : 'opacity-100',
-                            ].join(' ')}
-                            style={{ position: 'relative', zIndex: isHov ? 30 : 15 }}
-                          >
-                            <div className="flex items-start justify-between gap-1 mb-1">
-                              {displayCourseId(cid) !== null && (
-                                <span className={`text-xs font-bold font-mono leading-none ${col.cid}`}>{displayCourseId(cid)}</span>
-                              )}
-                              <span className={`text-[10px] rounded px-1.5 py-0.5 font-semibold shrink-0 leading-tight ${col.badge}`}>
-                                {course.credit_hours}CH
-                              </span>
-                            </div>
-                            <p className={`text-[11px] leading-snug ${col.title}`}>{course.title}</p>
-                          </div>
-                        );
-                      })}
-                    </div>
+            <div className="flex w-full flex-row gap-6 px-6 py-6 pb-4" ref={contentRef}>
+              {years.map(({ year, fall, spring }) => (
+                <div key={year} className="flex min-w-0 flex-1 flex-col" style={{ position: 'relative', zIndex: 10 }}>
+                  <div className="mb-4 flex justify-center">
+                    <span className="rounded-full border border-zinc-700/60 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-500">
+                      Year {year}
+                    </span>
                   </div>
-                ))}
-              </div>
+
+                  <div className="flex flex-1 flex-row gap-3">
+                    {[fall, spring].map((term) => (
+                      <div key={term.term} className="flex min-w-0 flex-1 flex-col">
+                        <div className="mb-3 border-b border-zinc-800 pb-2 text-center">
+                          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-zinc-400">{term.term}</p>
+                          <p className="mt-0.5 text-[10px] text-zinc-500">{term.total_credit_hours} credit hrs</p>
+                        </div>
+
+                        <div className="flex flex-col gap-2.5">
+                          {term.courses.map((courseId) => {
+                            const course = courses[courseId];
+                            if (!course) {
+                              return null;
+                            }
+
+                            const colors = getColors(courseId, course.type);
+                            const isHovered = hovered === courseId;
+                            const isRelated = relatedIds.has(courseId);
+                            const isDimmed = !!hovered && !isHovered && !isRelated;
+
+                            return (
+                              <div
+                                key={courseId}
+                                ref={(element) => {
+                                  if (element) {
+                                    cardRefs.current.set(courseId, element);
+                                  } else {
+                                    cardRefs.current.delete(courseId);
+                                  }
+                                }}
+                                onMouseEnter={(event) => {
+                                  setHovered(courseId);
+                                  setTooltip({ id: courseId, x: event.clientX, y: event.clientY });
+                                }}
+                                onMouseMove={(event) => {
+                                  setTooltip((current) => (current ? { ...current, x: event.clientX, y: event.clientY } : null));
+                                }}
+                                onMouseLeave={() => {
+                                  setHovered(null);
+                                  setTooltip(null);
+                                }}
+                                className={[
+                                  'cursor-default select-none rounded-lg border px-3 py-2.5 transition-all duration-150',
+                                  colors.card,
+                                  isHovered ? 'scale-[1.04] ring-2 ring-white/20 shadow-lg shadow-black/40' : '',
+                                  isDimmed ? 'opacity-25' : 'opacity-100',
+                                ].join(' ')}
+                                style={{ position: 'relative', zIndex: isHovered ? 30 : 15 }}
+                              >
+                                <div className="mb-1 flex items-start justify-between gap-1">
+                                  {displayCourseId(courseId) !== null && (
+                                    <span className={`font-mono text-xs font-bold leading-none ${colors.cid}`}>{displayCourseId(courseId)}</span>
+                                  )}
+                                  <span className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] font-semibold leading-tight ${colors.badge}`}>
+                                    {course.credit_hours}CH
+                                  </span>
+                                </div>
+                                <p className={`text-[11px] leading-snug ${colors.title}`}>{course.title}</p>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-white/[0.06] px-6 py-4 text-[11px] text-zinc-400">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-zinc-600">Legend</span>
+          <LegendArrow type="prereq" label="Prerequisite" />
+          <LegendArrow type="concurrent" label="Concurrent prereq" />
+          <LegendSwatch cls="border-blue-700 bg-blue-900" label="CS Core" />
+          <LegendSwatch cls="border-emerald-700 bg-emerald-900" label="Math / Science" />
+          <LegendSwatch cls="border-teal-700 bg-teal-900" label="Engineering" />
+          <LegendSwatch cls="border-amber-700 bg-amber-900" label="Languages / Humanities" />
+          <LegendSwatch cls="border-rose-700 bg-rose-900" label="Major Elective" />
+          <LegendSwatch cls="border-dashed border-zinc-600 bg-zinc-800" label="Package" />
         </div>
       </div>
 
-      {/* Legend */}
-      <div className="flex flex-wrap items-center gap-x-5 gap-y-2 px-6 py-4 border-t border-white/[0.06] text-[11px] text-zinc-400">
-        <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-zinc-600">Legend</span>
-        <LegendArrow type="prereq" label="Prerequisite" />
-        <LegendArrow type="concurrent" label="Concurrent prereq" />
-        <LegendSwatch cls="bg-blue-900 border-blue-700" label="CS Core" />
-        <LegendSwatch cls="bg-emerald-900 border-emerald-700" label="Math / Science" />
-        <LegendSwatch cls="bg-teal-900 border-teal-700" label="Engineering" />
-        <LegendSwatch cls="bg-amber-900 border-amber-700" label="Languages / Humanities" />
-        <LegendSwatch cls="bg-rose-900 border-rose-700" label="Major Elective" />
-        <LegendSwatch cls="bg-zinc-800 border-dashed border-zinc-600" label="Package" />
-      </div>
-      </div>
-
-      {/* Tooltip */}
       {tooltip && courses[tooltip.id] && (
         <CourseTooltip courseId={tooltip.id} course={courses[tooltip.id]} x={tooltip.x} y={tooltip.y} />
       )}

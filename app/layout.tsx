@@ -23,7 +23,12 @@ export const metadata: Metadata = {
     default: 'Enhanced CSE Platform',
     template: '%s | Enhanced CSE Platform'
   },
-  description: 'Qatar University CSE knowledge and blog portal'
+  description: 'Qatar University CSE knowledge and blog portal',
+  icons: {
+    icon: '/footer-logo.png',
+    shortcut: '/footer-logo.png',
+    apple: '/footer-logo.png'
+  }
 };
 
 const NAV_LINKS = [
