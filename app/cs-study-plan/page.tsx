@@ -41,6 +41,7 @@ export interface CourseData {
   };
   notes?: string[];
   program_policy_overrides?: string[];
+  sources?: { mybanner_url?: string; catalog_term?: string; roadmap_url?: string };
 }
 
 export interface StudyPlanTerm {
