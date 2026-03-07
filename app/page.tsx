@@ -106,54 +106,170 @@ function pickFeaturedCategories(categories: TermWithCount[]): Array<{
   return selected.slice(0, 3);
 }
 
-async function ExploreSection() {
-  const [categories, latestPosts, latestWiki] = await Promise.all([
-    listCategories(),
-    listPosts({ page: 1, pageSize: 6, sort: 'published_desc' }),
-    listArticles({ page: 1, pageSize: 8, sort: 'modified_desc' }),
-  ]);
+// ─── Async data slices ────────────────────────────────────────────────────────
 
+async function FeaturedSections() {
+  const categories = await listCategories();
   const featuredCategories = pickFeaturedCategories(categories);
   const featuredSections = await Promise.all(
     featuredCategories.map(async (category) => {
-      const articleData = await listArticles({
-        page: 1,
-        pageSize: 5,
-        categorySlug: category.slug,
-        sort: 'modified_desc',
-      });
-      return { ...category, items: articleData.items.map(toArticleListResponse) };
+      const data = await listArticles({ page: 1, pageSize: 5, categorySlug: category.slug, sort: 'modified_desc' });
+      return { ...category, items: data.items.map(toArticleListResponse) };
     })
   );
 
-  const recentPosts = latestPosts.items.map(toPostListResponse);
-  const recentWiki = latestWiki.items.map(toArticleListResponse);
-
-  const studentServicesSection =
-    featuredSections.find((s) => normalizeText(s.displayName).includes('student service')) ?? null;
-  const seniorProjectsSection =
-    featuredSections.find((s) => normalizeText(s.displayName).includes('senior project')) ?? null;
-  const focalPointSection =
-    featuredSections.find((s) => normalizeText(s.displayName).includes('focal point')) ?? null;
+  const studentServicesSection = featuredSections.find((s) => normalizeText(s.displayName).includes('student service')) ?? null;
+  const seniorProjectsSection = featuredSections.find((s) => normalizeText(s.displayName).includes('senior project')) ?? null;
+  const focalPointSection = featuredSections.find((s) => normalizeText(s.displayName).includes('focal point')) ?? null;
 
   const topSections: Array<(typeof featuredSections)[number]> = [];
   const usedSlugs = new Set<string>();
-
   if (studentServicesSection) { topSections.push(studentServicesSection); usedSlugs.add(studentServicesSection.slug); }
   if (seniorProjectsSection && !usedSlugs.has(seniorProjectsSection.slug)) { topSections.push(seniorProjectsSection); usedSlugs.add(seniorProjectsSection.slug); }
-  for (const section of featuredSections) {
+  for (const s of featuredSections) {
     if (topSections.length >= 2) break;
-    if (!usedSlugs.has(section.slug)) { topSections.push(section); usedSlugs.add(section.slug); }
+    if (!usedSlugs.has(s.slug)) { topSections.push(s); usedSlugs.add(s.slug); }
   }
-
   const trailingSection =
     (focalPointSection && !usedSlugs.has(focalPointSection.slug) ? focalPointSection : null) ??
-    featuredSections.find((s) => !usedSlugs.has(s.slug)) ??
-    null;
+    featuredSections.find((s) => !usedSlugs.has(s.slug)) ?? null;
 
+  return (
+    <>
+      <div className="grid lg:grid-cols-2">
+        {topSections.map((section, index) => (
+          <div key={section.slug} className={`p-6 sm:p-8 ${index === 0 ? 'border-b border-foreground/10 lg:border-r lg:border-b-0' : 'border-b border-foreground/10'}`}>
+            <div className="flex items-center gap-3">
+              <span className={`inline-block h-3.5 w-3.5 rounded-full ${sectionDotClass(section.displayName)}`} />
+              <h3 className="text-2xl font-semibold tracking-tight">{section.displayName}</h3>
+            </div>
+            <div className="mt-5 space-y-2.5">
+              {section.items.length === 0 ? (
+                <p className="text-sm text-foreground/70">No links synced for this section yet.</p>
+              ) : (
+                section.items.slice(0, 5).map((article) => (
+                  <p key={article.id} className="leading-relaxed">
+                    <Link href={`/wiki/${article.slug}`} className={CONTENT_LINK_CLASS}>
+                      <span aria-hidden="true" className="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full bg-current" />
+                      <span>{article.title}</span>
+                    </Link>
+                  </p>
+                ))
+              )}
+            </div>
+            <div className="mt-5">
+              <Button asChild variant="outline" className="border-foreground/20 bg-transparent hover:border-[#2CAD9E]/60 hover:bg-[#2CAD9E]/10">
+                <Link href={`/wiki?category=${encodeURIComponent(section.slug)}`}>
+                  Show all {section.articleCount} in {section.displayName}
+                </Link>
+              </Button>
+            </div>
+          </div>
+        ))}
+      </div>
+      {trailingSection && (
+        <>
+          <Separator className="bg-foreground/10" />
+          <div className="p-6 sm:p-8">
+            <div className="flex items-center gap-3">
+              <span className={`inline-block h-3.5 w-3.5 rounded-full ${sectionDotClass(trailingSection.displayName)}`} />
+              <h3 className="text-2xl font-semibold tracking-tight">{trailingSection.displayName}</h3>
+            </div>
+            <div className="mt-5 grid gap-x-8 gap-y-2.5 sm:grid-cols-2">
+              {trailingSection.items.length === 0 ? (
+                <p className="text-sm text-foreground/70">No links synced for this section yet.</p>
+              ) : (
+                trailingSection.items.slice(0, 6).map((article) => (
+                  <p key={article.id} className="leading-relaxed">
+                    <Link href={`/wiki/${article.slug}`} className={CONTENT_LINK_CLASS}>
+                      <span aria-hidden="true" className="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full bg-current" />
+                      <span>{article.title}</span>
+                    </Link>
+                  </p>
+                ))
+              )}
+            </div>
+            <div className="mt-5">
+              <Button asChild variant="outline" className="border-foreground/20 bg-transparent hover:border-[#2CAD9E]/60 hover:bg-[#2CAD9E]/10">
+                <Link href={`/wiki?category=${encodeURIComponent(trailingSection.slug)}`}>
+                  Show all {trailingSection.articleCount} in {trailingSection.displayName}
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </>
+      )}
+    </>
+  );
+}
+
+async function RecentUpdatesSection() {
+  const latestWiki = await listArticles({ page: 1, pageSize: 8, sort: 'modified_desc' });
+  const recentWiki = latestWiki.items.map(toArticleListResponse);
+  return (
+    <div className="border-b border-foreground/10 p-6 sm:p-8 lg:border-r lg:border-b-0">
+      <div className="mb-5 flex items-center justify-between gap-3">
+        <div>
+          <h3 className="text-2xl font-semibold tracking-tight">Recent Updates</h3>
+          <p className="text-sm text-foreground/70">Most recently modified wiki pages.</p>
+        </div>
+        <Button asChild variant="outline" className="border-foreground/20 bg-transparent hover:border-[#2CAD9E]/60 hover:bg-[#2CAD9E]/10">
+          <Link href="/wiki">All Wiki Pages</Link>
+        </Button>
+      </div>
+      <div className="space-y-2.5">
+        {recentWiki.slice(0, 7).map((article) => (
+          <p key={article.id} className="leading-relaxed">
+            <Link href={`/wiki/${article.slug}`} className={CONTENT_LINK_CLASS}>
+              <span aria-hidden="true" className="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full bg-current" />
+              <span>{article.title}</span>
+            </Link>
+          </p>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+async function BlogPostsSection() {
+  const latestPosts = await listPosts({ page: 1, pageSize: 6, sort: 'published_desc' });
+  const recentPosts = latestPosts.items.map(toPostListResponse);
+  return (
+    <div className="p-6 sm:p-8">
+      <div className="mb-5">
+        <h3 className="text-2xl font-semibold tracking-tight">Blog Posts</h3>
+        <p className="text-sm text-foreground/70">Latest announcements and departmental news.</p>
+      </div>
+      <div className="space-y-2.5">
+        {recentPosts.length === 0 ? (
+          <p className="text-sm text-foreground/70">No posts available yet.</p>
+        ) : (
+          recentPosts.slice(0, 6).map((post) => (
+            <p key={post.id} className="leading-relaxed">
+              <Link href={`/posts/${post.slug}`} className={CONTENT_LINK_CLASS}>
+                <span aria-hidden="true" className="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full bg-current" />
+                <span>{post.title}</span>
+              </Link>
+            </p>
+          ))
+        )}
+      </div>
+      <div className="pt-5">
+        <Button asChild variant="outline" className="border-foreground/20 bg-transparent hover:border-[#2CAD9E]/60 hover:bg-[#2CAD9E]/10">
+          <Link href="/posts">Open Posts Archive</Link>
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+// ─── Shell (renders immediately, data slots stream in) ────────────────────────
+
+function ExploreSection() {
   return (
     <section className="relative z-[1] mx-auto w-full max-w-[96rem] px-2 pt-6 sm:px-3 lg:px-4">
       <div className="overflow-hidden rounded-2xl border border-foreground/12 bg-transparent">
+        {/* Header — static */}
         <div className="flex flex-wrap items-start justify-between gap-4 px-6 py-5 sm:px-8">
           <div>
             <h2 className="text-2xl font-semibold tracking-tight">Explore CSE Content</h2>
@@ -166,43 +282,29 @@ async function ExploreSection() {
 
         <Separator className="bg-foreground/10" />
 
-        <div className="grid lg:grid-cols-2">
-          {topSections.map((section, index) => (
-            <div
-              key={section.slug}
-              className={`p-6 sm:p-8 ${index === 0 ? 'border-b border-foreground/10 lg:border-r lg:border-b-0' : 'border-b border-foreground/10'}`}
-            >
-              <div className="flex items-center gap-3">
-                <span className={`inline-block h-3.5 w-3.5 rounded-full ${sectionDotClass(section.displayName)}`} />
-                <h3 className="text-2xl font-semibold tracking-tight">{section.displayName}</h3>
+        {/* Featured categories — slow (listCategories + sub-queries per category) */}
+        <Suspense fallback={
+          <div className="grid lg:grid-cols-2">
+            {[0, 1].map((i) => (
+              <div key={i} className={`p-6 sm:p-8 ${i === 0 ? 'border-b border-foreground/10 lg:border-r lg:border-b-0' : 'border-b border-foreground/10'}`}>
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="h-3.5 w-3.5 rounded-full bg-foreground/[0.08] animate-pulse shrink-0" />
+                  <SkeletonBar w="w-40" h="h-6" />
+                </div>
+                <div className="space-y-3">
+                  {[90, 70, 80, 65, 75].map((pct, j) => <SkeletonBar key={j} pct={pct} />)}
+                </div>
+                <div className="mt-5"><SkeletonBar w="w-48" h="h-9" /></div>
               </div>
-              <div className="mt-5 space-y-2.5">
-                {section.items.length === 0 ? (
-                  <p className="text-sm text-foreground/70">No links synced for this section yet.</p>
-                ) : (
-                  section.items.slice(0, 5).map((article) => (
-                    <p key={article.id} className="leading-relaxed">
-                      <Link href={`/wiki/${article.slug}`} className={CONTENT_LINK_CLASS}>
-                        <span aria-hidden="true" className="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full bg-current" />
-                        <span>{article.title}</span>
-                      </Link>
-                    </p>
-                  ))
-                )}
-              </div>
-              <div className="mt-5">
-                <Button asChild variant="outline" className="border-foreground/20 bg-transparent hover:border-[#2CAD9E]/60 hover:bg-[#2CAD9E]/10">
-                  <Link href={`/wiki?category=${encodeURIComponent(section.slug)}`}>
-                    Show all {section.articleCount} in {section.displayName}
-                  </Link>
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        }>
+          <FeaturedSections />
+        </Suspense>
 
         <Separator className="bg-foreground/10" />
 
+        {/* Static external link */}
         <a
           href="https://better-qu-schedule.netlify.app/"
           target="_blank"
@@ -218,88 +320,29 @@ async function ExploreSection() {
           </svg>
         </a>
 
+        {/* Recent updates + blog posts — independent queries, stream in separately */}
         <div className="grid lg:grid-cols-2">
-          <div className="border-b border-foreground/10 p-6 sm:p-8 lg:border-r lg:border-b-0">
-            <div className="mb-5 flex items-center justify-between gap-3">
-              <div>
-                <h3 className="text-2xl font-semibold tracking-tight">Recent Updates</h3>
-                <p className="text-sm text-foreground/70">Most recently modified wiki pages.</p>
+          <Suspense fallback={
+            <div className="border-b border-foreground/10 p-6 sm:p-8 lg:border-r lg:border-b-0">
+              <div className="mb-5 flex items-start justify-between gap-3">
+                <div className="space-y-2"><SkeletonBar w="w-36" h="h-6" /><SkeletonBar w="w-48" /></div>
+                <SkeletonBar w="w-28" h="h-9" />
               </div>
-              <Button asChild variant="outline" className="border-foreground/20 bg-transparent hover:border-[#2CAD9E]/60 hover:bg-[#2CAD9E]/10">
-                <Link href="/wiki">All Wiki Pages</Link>
-              </Button>
+              <div className="space-y-3">{[85, 60, 75, 65, 70, 55, 80].map((pct, j) => <SkeletonBar key={j} pct={pct} />)}</div>
             </div>
-            <div className="space-y-2.5">
-              {recentWiki.slice(0, 7).map((article) => (
-                <p key={article.id} className="leading-relaxed">
-                  <Link href={`/wiki/${article.slug}`} className={CONTENT_LINK_CLASS}>
-                    <span aria-hidden="true" className="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full bg-current" />
-                    <span>{article.title}</span>
-                  </Link>
-                </p>
-              ))}
-            </div>
-          </div>
+          }>
+            <RecentUpdatesSection />
+          </Suspense>
 
-          <div className="p-6 sm:p-8">
-            <div className="mb-5">
-              <h3 className="text-2xl font-semibold tracking-tight">Blog Posts</h3>
-              <p className="text-sm text-foreground/70">Latest announcements and departmental news.</p>
-            </div>
-            <div className="space-y-2.5">
-              {recentPosts.length === 0 ? (
-                <p className="text-sm text-foreground/70">No posts available yet.</p>
-              ) : (
-                recentPosts.slice(0, 6).map((post) => (
-                  <p key={post.id} className="leading-relaxed">
-                    <Link href={`/posts/${post.slug}`} className={CONTENT_LINK_CLASS}>
-                      <span aria-hidden="true" className="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full bg-current" />
-                      <span>{post.title}</span>
-                    </Link>
-                  </p>
-                ))
-              )}
-            </div>
-            <div className="pt-5">
-              <Button asChild variant="outline" className="border-foreground/20 bg-transparent hover:border-[#2CAD9E]/60 hover:bg-[#2CAD9E]/10">
-                <Link href="/posts">Open Posts Archive</Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {trailingSection ? (
-          <>
-            <Separator className="bg-foreground/10" />
+          <Suspense fallback={
             <div className="p-6 sm:p-8">
-              <div className="flex items-center gap-3">
-                <span className={`inline-block h-3.5 w-3.5 rounded-full ${sectionDotClass(trailingSection.displayName)}`} />
-                <h3 className="text-2xl font-semibold tracking-tight">{trailingSection.displayName}</h3>
-              </div>
-              <div className="mt-5 grid gap-x-8 gap-y-2.5 sm:grid-cols-2">
-                {trailingSection.items.length === 0 ? (
-                  <p className="text-sm text-foreground/70">No links synced for this section yet.</p>
-                ) : (
-                  trailingSection.items.slice(0, 6).map((article) => (
-                    <p key={article.id} className="leading-relaxed">
-                      <Link href={`/wiki/${article.slug}`} className={CONTENT_LINK_CLASS}>
-                        <span aria-hidden="true" className="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full bg-current" />
-                        <span>{article.title}</span>
-                      </Link>
-                    </p>
-                  ))
-                )}
-              </div>
-              <div className="mt-5">
-                <Button asChild variant="outline" className="border-foreground/20 bg-transparent hover:border-[#2CAD9E]/60 hover:bg-[#2CAD9E]/10">
-                  <Link href={`/wiki?category=${encodeURIComponent(trailingSection.slug)}`}>
-                    Show all {trailingSection.articleCount} in {trailingSection.displayName}
-                  </Link>
-                </Button>
-              </div>
+              <div className="mb-5 space-y-2"><SkeletonBar w="w-32" h="h-6" /><SkeletonBar w="w-56" /></div>
+              <div className="space-y-3">{[80, 65, 70, 60, 75, 55].map((pct, j) => <SkeletonBar key={j} pct={pct} />)}</div>
             </div>
-          </>
-        ) : null}
+          }>
+            <BlogPostsSection />
+          </Suspense>
+        </div>
       </div>
     </section>
   );
@@ -311,76 +354,6 @@ function SkeletonBar({ w, h = 'h-4', pct }: { w?: string; h?: string; pct?: numb
       className={`${h} ${w ?? ''} rounded-md bg-foreground/[0.08] animate-pulse`}
       style={pct ? { width: `${pct}%` } : undefined}
     />
-  );
-}
-
-function ExploreSkeleton() {
-  return (
-    <section className="relative z-[1] mx-auto w-full max-w-[96rem] px-2 pt-6 sm:px-3 lg:px-4">
-      <div className="overflow-hidden rounded-2xl border border-foreground/12">
-        {/* Header */}
-        <div className="flex flex-wrap items-start justify-between gap-4 px-6 py-5 sm:px-8">
-          <div className="space-y-2.5">
-            <SkeletonBar w="w-52" h="h-7" />
-            <SkeletonBar w="w-72" />
-          </div>
-          <SkeletonBar w="w-36" h="h-9" />
-        </div>
-
-        <Separator className="bg-foreground/10" />
-
-        {/* Top 2 sections */}
-        <div className="grid lg:grid-cols-2">
-          {[0, 1].map((i) => (
-            <div key={i} className={`p-6 sm:p-8 ${i === 0 ? 'border-b border-foreground/10 lg:border-r lg:border-b-0' : 'border-b border-foreground/10'}`}>
-              <div className="flex items-center gap-3 mb-5">
-                <div className="h-3.5 w-3.5 rounded-full bg-foreground/[0.08] animate-pulse shrink-0" />
-                <SkeletonBar w="w-40" h="h-6" />
-              </div>
-              <div className="space-y-3">
-                {[90, 70, 80, 65, 75].map((pct, j) => (
-                  <SkeletonBar key={j} pct={pct} />
-                ))}
-              </div>
-              <div className="mt-5">
-                <SkeletonBar w="w-48" h="h-9" />
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <Separator className="bg-foreground/10" />
-
-        {/* Better QU Schedule row placeholder */}
-        <div className="flex items-center justify-between border-b border-foreground/10 px-6 py-5 sm:px-8">
-          <div className="space-y-2">
-            <SkeletonBar w="w-44" h="h-5" />
-            <SkeletonBar w="w-64" />
-          </div>
-          <div className="h-4 w-4 rounded bg-foreground/[0.08] animate-pulse shrink-0" />
-        </div>
-
-        {/* Bottom 2 sections */}
-        <div className="grid lg:grid-cols-2">
-          {[0, 1].map((i) => (
-            <div key={i} className={`p-6 sm:p-8 ${i === 0 ? 'lg:border-r border-foreground/10' : ''}`}>
-              <div className="mb-5 flex items-start justify-between gap-3">
-                <div className="space-y-2">
-                  <SkeletonBar w="w-36" h="h-6" />
-                  <SkeletonBar w="w-48" />
-                </div>
-                <SkeletonBar w="w-28" h="h-9" />
-              </div>
-              <div className="space-y-3">
-                {[85, 60, 75, 65, 70, 55].map((pct, j) => (
-                  <SkeletonBar key={j} pct={pct} />
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
   );
 }
 
@@ -431,9 +404,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <Suspense fallback={<ExploreSkeleton />}>
-        <ExploreSection />
-      </Suspense>
+      <ExploreSection />
     </main>
   );
 }
