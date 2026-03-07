@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ChevronDownIcon } from 'lucide-react';
 
+import { ArticleBody } from '@/components/article-body';
 import { RelatedContentSection } from '@/components/related-content-section';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -134,7 +135,7 @@ export default async function PostDetailPage({ params }: DetailPageProps) {
             </CardHeader>
 
             <CardContent>
-              <div className="article-html" dangerouslySetInnerHTML={{ __html: html }} />
+              <ArticleBody html={html} />
             </CardContent>
           </Card>
         </article>
