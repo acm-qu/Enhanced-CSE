@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 
 import { useSupportStream } from '@/hooks/useSupportStream';
 import { getGuestId, getOrCreateSessionId, newSession } from '@/lib/guestSession';
@@ -58,7 +58,7 @@ export function SupportChatPanel({ onClose }: { onClose: () => void }) {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const sendMessage = async (text: string) => {
+  const sendMessage = useCallback(async (text: string) => {
     if (!text.trim() || isStreaming) return;
     setInput('');
 
@@ -104,13 +104,13 @@ export function SupportChatPanel({ onClose }: { onClose: () => void }) {
         prev.map((m) =>
           m.id === aiMsgId
             ? {
-                ...m,
-                isStreaming: false,
-                content: result.answer,
-                streamedText: undefined,
-                streamEvents: undefined,
-                followUps: result.follow_ups
-              }
+              ...m,
+              isStreaming: false,
+              content: result.answer,
+              streamedText: undefined,
+              streamEvents: undefined,
+              followUps: result.follow_ups
+            }
             : m
         )
       );
@@ -123,9 +123,9 @@ export function SupportChatPanel({ onClose }: { onClose: () => void }) {
         )
       );
     }
-  };
+  }, [sessionId, guestId, startStream, isStreaming, setMessages, setInput, stopStream]);
 
-  const handleRegenerate = (question: string) => {
+  const handleRegenerate = useCallback((question: string) => {
     // Remove the last assistant message and re-send the question
     setMessages((prev) => {
       let lastAssistantIdForQuestion: string | undefined;
@@ -148,13 +148,17 @@ export function SupportChatPanel({ onClose }: { onClose: () => void }) {
       );
     });
     void sendMessage(question);
-  };
+  }, [sendMessage, setMessages]);
 
-  const handleNewChat = () => {
+  const handleNewChat = useCallback(() => {
     setMessages([]);
     setSessionId(newSession());
     localStorage.removeItem(STORAGE_KEY);
-  };
+  }, [setMessages, setSessionId]);
+
+  const handleFollowUp = useCallback((question: string) => {
+    void sendMessage(question);
+  }, [sendMessage]);
 
   return (
     <div className="flex flex-col h-full bg-[#111217] text-white">
@@ -215,7 +219,7 @@ export function SupportChatPanel({ onClose }: { onClose: () => void }) {
           <SupportChatMessage
             key={msg.id}
             message={msg}
-            onFollowUp={(q) => void sendMessage(q)}
+            onFollowUp={handleFollowUp}
             onRegenerate={handleRegenerate}
           />
         ))}
