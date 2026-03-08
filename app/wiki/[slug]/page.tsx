@@ -14,7 +14,8 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Separator } from '@/components/ui/separator';
 import { TocNav } from '@/components/toc-nav';
 import { toArticleDetailResponse, toArticleListResponse } from '@/lib/content/transform';
-import { getArticleBySlug, listAllArticleSlugs, listArticles, listCategories, listTags } from '@/lib/db/queries';
+import { getArticleBySlug, listAllArticleSlugs, listArticles } from '@/lib/db/queries';
+import { getCachedCategories, getCachedTags } from '@/lib/db/cached-queries';
 import { addHeadingIdsAndBuildToc, formatContentLabel } from '@/lib/utils/content';
 import { formatDate } from '@/lib/utils/date';
 
@@ -54,7 +55,7 @@ export async function generateMetadata({ params }: DetailPageProps): Promise<Met
 
 export default async function WikiDetailPage({ params }: DetailPageProps) {
   const { slug } = await params;
-  const [article, categories, tags] = await Promise.all([getCachedArticle(slug), listCategories(), listTags()]);
+  const [article, categories, tags] = await Promise.all([getCachedArticle(slug), getCachedCategories(), getCachedTags()]);
 
   if (!article) {
     notFound();

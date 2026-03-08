@@ -25,6 +25,8 @@ import {
   type WpTermResponse
 } from '@/lib/wp/client';
 import { invalidateApiCache } from '@/lib/internal/api-cache';
+import { revalidateTag } from 'next/cache';
+import { WIKI_CACHE_TAG, POSTS_CACHE_TAG } from '@/lib/db/cached-queries';
 import { decodeFetchedHtml } from '@/lib/sync/entities';
 
 const ADVISORY_LOCK_KEY = 773_081;
@@ -607,6 +609,8 @@ export async function runFullSync(trigger: SyncTrigger): Promise<SyncRunResult> 
       });
 
       await invalidateApiCache();
+      revalidateTag(WIKI_CACHE_TAG, 'default');
+      revalidateTag(POSTS_CACHE_TAG, 'default');
 
       return {
         status: 'success',

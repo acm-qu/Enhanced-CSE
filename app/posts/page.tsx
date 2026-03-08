@@ -20,7 +20,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { PostsFilterSidebar } from '@/components/posts-filter-sidebar';
 import { toPostListResponse } from '@/lib/content/transform';
-import { listPostArchives, listPostCategories, listPosts, type PostSort } from '@/lib/db/posts-queries';
+import { type PostSort } from '@/lib/db/posts-queries';
+import { getCachedPostArchives, getCachedPostCategories, getCachedPosts } from '@/lib/db/cached-queries';
 import { formatContentLabel } from '@/lib/utils/content';
 import { formatDate } from '@/lib/utils/date';
 import { buildPaginationTokens } from '@/lib/utils/pagination';
@@ -139,7 +140,7 @@ export default async function PostsPage({ searchParams }: SearchParamProps) {
   const monthRange = month ? monthToRange(month) : undefined;
 
   const [postData, categories, archives] = await Promise.all([
-    listPosts({
+    getCachedPosts({
       page,
       pageSize: PAGE_SIZE,
       categorySlug: category,
@@ -147,8 +148,8 @@ export default async function PostsPage({ searchParams }: SearchParamProps) {
       before: monthRange?.before,
       sort
     }),
-    listPostCategories(),
-    listPostArchives({ categorySlug: category })
+    getCachedPostCategories(),
+    getCachedPostArchives({ categorySlug: category })
   ]);
 
   const transformedItems = postData.items.map(toPostListResponse);

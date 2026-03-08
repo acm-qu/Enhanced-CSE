@@ -19,7 +19,8 @@ import { Separator } from '@/components/ui/separator';
 import { ContentCardPreview } from '@/components/content-card-preview';
 import { WikiFilterSidebar } from '@/components/wiki-filter-sidebar';
 import { toArticleListResponse } from '@/lib/content/transform';
-import { listArticles, listCategories, listTags, type ArticleSort } from '@/lib/db/queries';
+import { type ArticleSort } from '@/lib/db/queries';
+import { getCachedArticles, getCachedCategories, getCachedTags } from '@/lib/db/cached-queries';
 import { formatContentLabel } from '@/lib/utils/content';
 import { formatDate } from '@/lib/utils/date';
 import { buildPaginationTokens } from '@/lib/utils/pagination';
@@ -107,15 +108,15 @@ export default async function WikiPage({ searchParams }: SearchParamProps) {
   const tag = getFirstParam(params?.tag)?.trim() || undefined;
 
   const [articleData, categories, tags] = await Promise.all([
-    listArticles({
+    getCachedArticles({
       page,
       pageSize: PAGE_SIZE,
       sort,
       categorySlug: category,
       tagSlug: tag
     }),
-    listCategories(),
-    listTags()
+    getCachedCategories(),
+    getCachedTags()
   ]);
 
   const transformedItems = articleData.items.map(toArticleListResponse);

@@ -1,7 +1,8 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useTransition, useState } from 'react';
+import { LoaderCircleIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Combobox, type ComboboxOption } from '@/components/ui/combobox';
@@ -24,6 +25,7 @@ export function PostsFilterSidebar({
   currentMonth
 }: PostsFilterSidebarProps) {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const [sort, setSort] = useState(currentSort);
   const [category, setCategory] = useState(currentCategory ?? '');
   const [month, setMonth] = useState(currentMonth ?? '');
@@ -49,19 +51,19 @@ export function PostsFilterSidebar({
 
   const handleSortChange = (value: string) => {
     setSort(value as PostSort);
-    router.push(buildHref(value, category, month));
+    startTransition(() => router.push(buildHref(value, category, month)));
   };
 
   const handleCategoryChange = (value: string) => {
     setCategory(value);
-    router.push(buildHref(sort, value, month));
+    startTransition(() => router.push(buildHref(sort, value, month)));
   };
 
   const handleReset = () => {
     setSort('published_desc');
     setCategory('');
     setMonth('');
-    router.push('/posts');
+    startTransition(() => router.push('/posts'));
   };
 
   const sortComboboxOptions: ComboboxOption[] = sortOptions.map((option) => ({
@@ -79,6 +81,13 @@ export function PostsFilterSidebar({
 
   return (
     <div className="grid gap-3">
+      <div className="flex items-center justify-between">
+        <label className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
+          Filters
+        </label>
+        {isPending && <LoaderCircleIcon className="h-3.5 w-3.5 animate-spin text-muted-foreground" />}
+      </div>
+
       <label className="grid gap-1 text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
         Sort
       </label>
@@ -87,6 +96,7 @@ export function PostsFilterSidebar({
         value={sort}
         onValueChange={handleSortChange}
         placeholder="Select sort..."
+        disabled={isPending}
       />
 
       <label className="mt-2 grid gap-1 text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
@@ -97,10 +107,11 @@ export function PostsFilterSidebar({
         value={category}
         onValueChange={handleCategoryChange}
         placeholder="Select category..."
+        disabled={isPending}
       />
 
       <div className="mt-3 flex gap-2">
-        <Button onClick={handleReset} variant="outline" size="sm" className="flex-1">
+        <Button onClick={handleReset} variant="outline" size="sm" className="flex-1" disabled={isPending}>
           Reset
         </Button>
       </div>
