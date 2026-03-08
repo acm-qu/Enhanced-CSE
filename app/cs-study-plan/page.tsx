@@ -18,6 +18,60 @@ const STUDY_PLAN_NOTE_POINTS = [
 
 const STUDY_PLAN_NOTE_CLOSING = `I think I'm decently pragmatic in thinking that, you are here, doing this bachelors degree, to make money in some way shape or form. So why not make that your goal from the very beginning? And actively plan for it and update your plan with new input as you learn more.`;
 
+const ELECTIVE_SPECIALIZATIONS = [
+  {
+    name: 'AI & Data Science',
+    description: 'Data-driven intelligence, prediction, search, and perception.',
+    courses: [
+      'CMPS 360,Data Science Fundamentals',
+      'CMPS 403,Artificial Intelligence',
+      'CMPS 453,Data Mining',
+      'CMPS 460,Machine Learning',
+      'CMPE 480,Computer Vision'
+    ]
+  },
+  {
+    name: 'Game Development & Graphics',
+    description: 'Visual systems, interactive media, and game production.',
+    courses: [
+      'CMPS 373,Computer Graphics',
+      'CMPS 433,Multimedia Systems',
+      'CMPS 434,Game Design and Development'
+    ]
+  },
+  {
+    name: 'Software Engineering & Product',
+    description: 'Application design and implementation for modern products.',
+    courses: [
+      'CMPS 312,Mobile Application Development',
+      'CMPS 356,Web Applications Design and Development'
+    ]
+  },
+  {
+    name: 'Databases & Information Systems',
+    description: 'Storage, retrieval, and organization of large information systems.',
+    courses: ['CMPS 451,Database Management Systems', 'CMPS 466,Information Retrieval']
+  },
+  {
+    name: 'Systems, Security & Networks',
+    description: 'Secure, scalable, and high-performance computing infrastructure.',
+    courses: [
+      'CMPS 381,Applied Cryptography',
+      'CMPS 465,Parallel Computing',
+      'CMPE 488,Wireless Networks and Applications'
+    ]
+  },
+  {
+    name: 'Simulation & Professional Practice',
+    description: 'Applied modeling, industry exposure, and advanced topics.',
+    courses: [
+      'CMPS 393,Modeling and Simulation',
+      'CMPS 399,Practical Training',
+      'CMPS 497,Special Topics in Computing'
+    ]
+  }
+] as const;
+
 export type Connection = { from: string; to: string; type: 'prereq' | 'concurrent' };
 
 interface ParsedReq {
@@ -135,10 +189,39 @@ export default function CsStudyPlanPage() {
       <StudyPlanBoard terms={terms} courses={courses} connections={connections} />
 
       <section className="px-4 pt-8 sm:px-6">
+        <div className="mb-4">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">Elective tracks</p>
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+            Elective Courses by Specialization
+          </h2>
+          <p className="mt-2 max-w-3xl text-sm text-muted-foreground sm:text-base">
+            Suggested grouping of your elective options into common CS specializations.
+          </p>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {ELECTIVE_SPECIALIZATIONS.map((specialization) => (
+            <article key={specialization.name} className="panel-muted p-5 sm:p-6">
+              <h3 className="text-lg font-semibold text-foreground">{specialization.name}</h3>
+              <p className="mt-1 text-sm text-muted-foreground">{specialization.description}</p>
+
+              <ul className="mt-4 space-y-2 text-sm leading-6 text-foreground/85">
+                {specialization.courses.map((course) => (
+                  <li key={course} className="rounded-md border border-border/70 bg-card/60 px-3 py-2">
+                    <span className='text-[#78f0e2]'>{course.split(',')[0]}</span>&nbsp;-&nbsp;{course.split(',')[1]}
+                  </li>
+                ))}
+              </ul>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="px-4 pt-8 sm:px-6">
         <article className="panel-muted p-6 sm:p-8">
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#78f0e2]">Why this order</p>
           <h2 className="mt-3 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-            Why I believe this is the study plan fresh CS students should take.
+            Why we believe this is the study plan fresh CS students should take.
           </h2>
 
           <ol className="mt-6 space-y-5">
