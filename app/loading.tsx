@@ -4,7 +4,7 @@ const LINES = [
   'Booting Enhanced CSE portal',
   'Syncing homepage modules',
   'Preparing navigation surface',
-  'Rendering content index'
+  'Rendering content indecies'
 ];
 
 export default function Loading() {
