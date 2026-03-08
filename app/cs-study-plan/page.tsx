@@ -3,6 +3,10 @@ import { join } from 'path';
 import type { Metadata } from 'next';
 
 import { StudyPlanBoard } from '@/components/study-plan-board';
+import {
+  StudyPlanElectives,
+  type StudyPlanElectiveSpecialization
+} from '@/components/study-plan-electives';
 
 export const metadata: Metadata = { title: 'CS Study Plan' };
 
@@ -207,6 +211,23 @@ export default function CsStudyPlanPage() {
     }
   }
 
+  const electiveSpecializations: StudyPlanElectiveSpecialization[] = ELECTIVE_SPECIALIZATIONS.map((specialization) => ({
+    name: specialization.name,
+    description: specialization.description,
+    courses: specialization.courses.map((courseValue) => {
+      const { id, title } = parseSpecializationCourse(courseValue);
+      const url =
+        courses[id]?.sources?.mybanner_url ??
+        buildMyBannerCourseUrl(id, program.source_documents?.mybanner_course_detail_template);
+
+      return {
+        id,
+        title,
+        url
+      };
+    })
+  }));
+
   return (
     <main className="relative z-[1] pb-10">
       <div className="px-4 pb-4 pt-8 sm:px-6">
@@ -221,54 +242,7 @@ export default function CsStudyPlanPage() {
 
       <StudyPlanBoard terms={terms} courses={courses} connections={connections} />
 
-      <section className="px-4 pt-6 sm:px-6">
-        <div className="mb-3">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">Elective tracks</p>
-          <h2 className="mt-1.5 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
-            Elective Courses by Specialization
-          </h2>
-          <p className="mt-1 max-w-3xl text-xs text-muted-foreground sm:text-sm">
-            Suggested grouping of your elective options into common CS specializations.
-          </p>
-        </div>
-
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-          {ELECTIVE_SPECIALIZATIONS.map((specialization) => (
-            <article key={specialization.name} className="panel-muted border-x-0 p-4">
-              <h3 className="text-base font-semibold text-foreground">{specialization.name}</h3>
-              <p className="mt-0.5 text-xs text-muted-foreground">{specialization.description}</p>
-
-              <ul className="mt-3 space-y-1.5 text-xs leading-5 text-foreground/85">
-                {specialization.courses.map((courseValue) => {
-                  const { id, title } = parseSpecializationCourse(courseValue);
-                  const url =
-                    courses[id]?.sources?.mybanner_url ??
-                    buildMyBannerCourseUrl(id, program.source_documents?.mybanner_course_detail_template);
-
-                  return (
-                    <li key={courseValue}>
-                      {url ? (
-                        <a
-                          href={url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="block rounded-md border border-border/70 bg-card/60 px-3 py-1.5 transition-colors hover:border-[#2CAD9E]/40 hover:bg-card/85"
-                        >
-                          <span className="text-[#78f0e2]">{id}</span>&nbsp;-&nbsp;{title}
-                        </a>
-                      ) : (
-                        <div className="rounded-md border border-border/70 bg-card/60 px-3 py-1.5">
-                          <span className="text-[#78f0e2]">{id}</span>&nbsp;-&nbsp;{title}
-                        </div>
-                      )}
-                    </li>
-                  );
-                })}
-              </ul>
-            </article>
-          ))}
-        </div>
-      </section>
+      <StudyPlanElectives specializations={electiveSpecializations} />
 
       <section className="px-4 pt-8 sm:px-6">
         <article className="panel-muted border-x-0 p-6 sm:p-8">
