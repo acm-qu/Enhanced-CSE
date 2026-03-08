@@ -195,6 +195,10 @@
     @apply h-auto max-w-full rounded-md border border-foreground/10;
   }
 
+  .article-html img.svg {
+    @apply max-w-56;
+  }
+
   .article-html iframe {
     @apply my-6 aspect-video w-full max-w-full rounded-md border border-foreground/20;
   }
