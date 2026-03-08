@@ -2,6 +2,9 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkBreaks from 'remark-breaks';
+import remarkGfm from 'remark-gfm';
 
 export interface Message {
   id: string;
@@ -22,6 +25,7 @@ interface Props {
 
 function extractAnswer(raw: string): { text: string; extractedFollowUps?: string[] } {
   const trimmed = raw.trimStart();
+  console.log(trimmed)
   if (!trimmed.startsWith('{')) return { text: raw };
   try {
     const parsed = JSON.parse(trimmed) as Record<string, unknown>;
@@ -31,26 +35,61 @@ function extractAnswer(raw: string): { text: string; extractedFollowUps?: string
         extractedFollowUps: Array.isArray(parsed.follow_ups) ? (parsed.follow_ups as string[]) : undefined
       };
     }
-  } catch {
-    /* not JSON */
+  } catch(e) {
+    console.log('Failed to parse answer JSON', e);
   }
   return { text: raw };
 }
 
 function MessageText({ text }: { text: string }) {
-  const paragraphs = text.split(/\n\n+/);
   return (
-    <div className="flex flex-col gap-2">
-      {paragraphs.map((para, i) => (
-        <p key={i} className="leading-relaxed">
-          {para.split('\n').map((line, j, arr) => (
-            <span key={j}>
-              {line}
-              {j < arr.length - 1 && <br />}
-            </span>
-          ))}
-        </p>
-      ))}
+    <div className="flex flex-col gap-2 [&_hr]:my-2 [&_hr]:border-zinc-700/60">
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm, remarkBreaks]}
+        components={{
+          p: ({ children }) => <p className="leading-relaxed">{children}</p>,
+          a: ({ children, href }) => (
+            <a
+              href={href}
+              target="_blank"
+              rel="noreferrer"
+              className="text-amber-300 underline decoration-amber-300/50 underline-offset-2 hover:text-amber-200"
+            >
+              {children}
+            </a>
+          ),
+          ul: ({ children }) => <ul className="list-disc space-y-1 pl-5">{children}</ul>,
+          ol: ({ children }) => <ol className="list-decimal space-y-1 pl-5">{children}</ol>,
+          li: ({ children }) => <li className="leading-relaxed">{children}</li>,
+          blockquote: ({ children }) => (
+            <blockquote className="border-l-2 border-zinc-700 pl-3 text-zinc-300">{children}</blockquote>
+          ),
+          pre: ({ children }) => (
+            <pre className="overflow-x-auto rounded-md border border-zinc-800 bg-zinc-900/70 p-3 text-xs leading-relaxed">
+              {children}
+            </pre>
+          ),
+          code: ({ children, className }) => {
+            const isInlineCode = !className;
+            if (isInlineCode) {
+              return (
+                <code className="rounded bg-zinc-800/80 px-1.5 py-0.5 text-[0.85em] text-zinc-100">{children}</code>
+              );
+            }
+
+            return <code className={className}>{children}</code>;
+          },
+          table: ({ children }) => (
+            <div className="w-full overflow-x-auto">
+              <table className="min-w-full border-collapse text-left text-xs">{children}</table>
+            </div>
+          ),
+          th: ({ children }) => <th className="border border-zinc-700/70 bg-zinc-900/60 px-2 py-1">{children}</th>,
+          td: ({ children }) => <td className="border border-zinc-700/50 px-2 py-1 align-top">{children}</td>
+        }}
+      >
+        {text}
+      </ReactMarkdown>
     </div>
   );
 }
