@@ -328,6 +328,15 @@ export async function getSyncMeta(): Promise<SyncMeta> {
   };
 }
 
+export async function listAllArticleSlugs(): Promise<string[]> {
+  const db = getDb();
+  const rows = await db
+    .select({ slug: wikiArticles.slug })
+    .from(wikiArticles)
+    .where(eq(wikiArticles.status, 'publish'));
+  return rows.map((r) => r.slug);
+}
+
 export async function getSyncStatus(): Promise<SyncStatus> {
   const db = getDb();
   const [stateRow] = await db
