@@ -5,12 +5,13 @@ import type { ArticleDetailItem, ArticleListItem } from '@/lib/db/queries';
 import { sanitizeContentHtml, sanitizeWikiHtml } from '@/lib/content/html';
 import { extractContentMediaPreviews } from '@/lib/content/media-preview';
 import { buildContentSummary } from '@/lib/content/summary';
+import { decodeFetchedHtml } from '../sync/entities';
 
 function sanitizeTitle(title: string): string {
-  return sanitizeHtml(title, {
+  return decodeFetchedHtml(sanitizeHtml(title, {
     allowedTags: [],
     allowedAttributes: {}
-  }).trim();
+  }).trim());
 }
 
 export function toArticleListResponse(article: ArticleListItem) {
@@ -22,11 +23,11 @@ export function toArticleListResponse(article: ArticleListItem) {
     title,
     summary: buildContentSummary({
       title,
-      contentHtml: article.contentHtmlRaw,
-      excerptHtml: article.excerptHtmlRaw
+      contentHtml: decodeFetchedHtml(article.contentHtmlRaw),
+      excerptHtml: decodeFetchedHtml(article.excerptHtmlRaw)
     }),
-    excerptHtml: sanitizeWikiHtml(article.excerptHtmlRaw),
-    mediaPreviews: extractContentMediaPreviews(article.contentHtmlRaw || article.excerptHtmlRaw),
+    excerptHtml: sanitizeWikiHtml(decodeFetchedHtml(article.excerptHtmlRaw)),
+    mediaPreviews: extractContentMediaPreviews(decodeFetchedHtml(article.contentHtmlRaw) || article.excerptHtmlRaw),
     sourceLink: article.sourceLink,
     publishedAtGmt: article.publishedAtGmt?.toISOString() ?? null,
     modifiedAtGmt: article.modifiedAtGmt?.toISOString() ?? null,
@@ -61,11 +62,11 @@ export function toPostListResponse(post: PostListItem) {
     title,
     summary: buildContentSummary({
       title,
-      contentHtml: post.contentHtmlRaw,
-      excerptHtml: post.excerptHtmlRaw
+      contentHtml: decodeFetchedHtml(post.contentHtmlRaw),
+      excerptHtml: decodeFetchedHtml(post.excerptHtmlRaw)
     }),
-    excerptHtml: sanitizeContentHtml(post.excerptHtmlRaw),
-    mediaPreviews: extractContentMediaPreviews(post.contentHtmlRaw || post.excerptHtmlRaw),
+    excerptHtml: sanitizeContentHtml(decodeFetchedHtml(post.excerptHtmlRaw)),
+    mediaPreviews: extractContentMediaPreviews(decodeFetchedHtml(post.contentHtmlRaw) || decodeFetchedHtml(post.excerptHtmlRaw)),
     sourceLink: post.sourceLink,
     publishedAtGmt: post.publishedAtGmt?.toISOString() ?? null,
     modifiedAtGmt: post.modifiedAtGmt?.toISOString() ?? null,
@@ -80,8 +81,8 @@ export function toPostDetailResponse(post: PostDetailItem) {
     id: post.id,
     slug: post.slug,
     title,
-    contentHtml: sanitizeContentHtml(post.contentHtmlRaw),
-    excerptHtml: sanitizeContentHtml(post.excerptHtmlRaw),
+    contentHtml: sanitizeContentHtml(decodeFetchedHtml(post.contentHtmlRaw)),
+    excerptHtml: sanitizeContentHtml(decodeFetchedHtml(post.excerptHtmlRaw)),
     sourceLink: post.sourceLink,
     publishedAtGmt: post.publishedAtGmt?.toISOString() ?? null,
     modifiedAtGmt: post.modifiedAtGmt?.toISOString() ?? null,

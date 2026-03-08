@@ -1,6 +1,7 @@
 import sanitizeHtml from 'sanitize-html';
 
 import { rewriteImageSource, rewriteImageSrcSet } from '@/lib/content/asset-proxy';
+import { decodeFetchedHtml } from '../sync/entities';
 
 const SOURCE_HOST = 'blogs.qu.edu.qa';
 const SOURCE_PATH_PREFIX = '/cse/wiki';
@@ -264,7 +265,7 @@ export function sanitizeWikiHtml(html: string): string {
   const legacyTrimmed = stripLegacyFeedbackAndMeta(extractLegacyKbBody(html));
   const htmlWithEmbeds = materializeElementorYoutubeEmbeds(legacyTrimmed);
 
-  return sanitizeHtml(htmlWithEmbeds, {
+  return decodeFetchedHtml(sanitizeHtml(htmlWithEmbeds, {
     allowedTags: sanitizeHtml.defaults.allowedTags.concat([
       'img',
       'h1',
@@ -335,7 +336,7 @@ export function sanitizeWikiHtml(html: string): string {
         };
       }
     }
-  });
+  }));
 }
 
 export const sanitizeContentHtml = sanitizeWikiHtml;
