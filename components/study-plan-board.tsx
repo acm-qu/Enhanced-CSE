@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import type { Connection, CourseData, StudyPlanTerm } from '@/app/cs-study-plan/page';
+import { CourseInfoDialog } from '@/components/course-info-dialog';
+import { isCourseInfoUrl } from '@/lib/utils/course-info-url';
 
 // â”€â”€â”€ Internal types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 interface ComputedArrow extends Connection {
@@ -137,11 +139,12 @@ function CourseTooltip({ courseId, course, x, y }: { courseId: string; course: C
 // â”€â”€â”€ Main component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export function StudyPlanBoard({ terms, courses, connections }: Props) {
   const contentRef = useRef<HTMLDivElement>(null);
-  const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+  const cardRefs = useRef<Map<string, HTMLElement>>(new Map());
   const [arrows, setArrows] = useState<ComputedArrow[]>([]);
   const [svgSize, setSvgSize] = useState({ w: 0, h: 0 });
   const [hovered, setHovered] = useState<string | null>(null);
   const [tooltip, setTooltip] = useState<{ id: string; x: number; y: number } | null>(null);
+  const [selectedCourse, setSelectedCourse] = useState<{ id: string; title: string; url: string } | null>(null);
 
   const courseTermIdx = useMemo(() => {
     const map: Record<string, number> = {};
@@ -306,6 +309,7 @@ export function StudyPlanBoard({ terms, courses, connections }: Props) {
                             const isPackage = course.type === 'package' || courseId.endsWith('_PKG');
                             const url = course.sources?.mybanner_url
                               ?? (isPackage ? 'https://www.qu.edu.qa/en-us/core/student-information/Pages/packages.aspx' : undefined);
+                            const shouldOpenModal = isCourseInfoUrl(url);
                             const cardClassName = [
                               'rounded-lg border px-3 py-2.5 transition-all duration-150',
                               url ? 'cursor-pointer' : 'cursor-default',
@@ -343,24 +347,44 @@ export function StudyPlanBoard({ terms, courses, connections }: Props) {
                             );
 
                             return url ? (
-                              <Link
-                                key={courseId}
-                                href={url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                ref={(element) => {
-                                  if (element) {
-                                    cardRefs.current.set(courseId, element as unknown as HTMLDivElement);
-                                  } else {
-                                    cardRefs.current.delete(courseId);
-                                  }
-                                }}
-                                className={cardClassName}
-                                style={cardStyle}
-                                {...cardHandlers}
-                              >
-                                {cardInner}
-                              </Link>
+                              shouldOpenModal ? (
+                                <button
+                                  key={courseId}
+                                  type="button"
+                                  ref={(element) => {
+                                    if (element) {
+                                      cardRefs.current.set(courseId, element);
+                                    } else {
+                                      cardRefs.current.delete(courseId);
+                                    }
+                                  }}
+                                  className={cardClassName}
+                                  style={cardStyle}
+                                  onClick={() => setSelectedCourse({ id: courseId, title: course.title, url })}
+                                  {...cardHandlers}
+                                >
+                                  {cardInner}
+                                </button>
+                              ) : (
+                                <Link
+                                  key={courseId}
+                                  href={url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  ref={(element) => {
+                                    if (element) {
+                                      cardRefs.current.set(courseId, element as unknown as HTMLElement);
+                                    } else {
+                                      cardRefs.current.delete(courseId);
+                                    }
+                                  }}
+                                  className={cardClassName}
+                                  style={cardStyle}
+                                  {...cardHandlers}
+                                >
+                                  {cardInner}
+                                </Link>
+                              )
                             ) : (
                               <div
                                 key={courseId}
@@ -405,6 +429,18 @@ export function StudyPlanBoard({ terms, courses, connections }: Props) {
       {tooltip && courses[tooltip.id] && (
         <CourseTooltip courseId={tooltip.id} course={courses[tooltip.id]} x={tooltip.x} y={tooltip.y} />
       )}
+
+      <CourseInfoDialog
+        open={Boolean(selectedCourse)}
+        onOpenChange={(open) => {
+          if (!open) {
+            setSelectedCourse(null);
+          }
+        }}
+        sourceUrl={selectedCourse?.url}
+        fallbackCourseId={selectedCourse?.id}
+        fallbackTitle={selectedCourse?.title}
+      />
     </div>
   );
 }
