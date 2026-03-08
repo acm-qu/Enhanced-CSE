@@ -10,8 +10,8 @@ import {
 import { badRequest, internalError, jsonCached, notFound } from '@/lib/internal/http';
 import { applyRateLimitHeaders, enforcePublicApiRateLimit } from '@/lib/internal/rate-limit';
 
-const CACHE_CONTROL = 'public, s-maxage=60, stale-while-revalidate=300';
-const CACHE_TTL_SECONDS = 60;
+const CACHE_CONTROL = 'public, s-maxage=28800, stale-while-revalidate=86400';
+const CACHE_TTL_SECONDS = 28800;
 const CACHE_SCOPE = 'posts-detail';
 const RATE_LIMIT_SCOPE = 'posts-detail';
 

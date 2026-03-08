@@ -9,8 +9,8 @@ import {
 import { internalError, jsonCached } from '@/lib/internal/http';
 import { applyRateLimitHeaders, enforcePublicApiRateLimit } from '@/lib/internal/rate-limit';
 
-const CACHE_CONTROL = 'public, s-maxage=300, stale-while-revalidate=600';
-const CACHE_TTL_SECONDS = 300;
+const CACHE_CONTROL = 'public, s-maxage=28800, stale-while-revalidate=86400';
+const CACHE_TTL_SECONDS = 28800;
 const CACHE_SCOPE = 'posts-categories';
 const RATE_LIMIT_SCOPE = 'posts-categories';
 

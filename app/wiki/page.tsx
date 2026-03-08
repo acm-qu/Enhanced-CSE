@@ -24,7 +24,7 @@ import { formatContentLabel } from '@/lib/utils/content';
 import { formatDate } from '@/lib/utils/date';
 import { buildPaginationTokens } from '@/lib/utils/pagination';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 28800;
 
 const PAGE_SIZE = 8;
 const DEFAULT_SORT: ArticleSort = 'modified_desc';

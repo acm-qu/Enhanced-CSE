@@ -5,6 +5,16 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db/client';
 import { blogPostTerms, blogPosts, blogTerms, wikiArticleTerms, wikiArticles, wikiTerms } from '@/lib/db/schema';
 import { formatContentLabel } from '@/lib/utils/content';
+import {
+  getCachedApiJsonResponse,
+  markApiCacheMiss,
+  setCachedApiJsonResponse
+} from '@/lib/internal/api-cache';
+import { jsonCached } from '@/lib/internal/http';
+
+const CACHE_CONTROL = 'public, s-maxage=60, stale-while-revalidate=300';
+const CACHE_TTL_SECONDS = 60;
+const CACHE_SCOPE = 'search';
 
 function sanitizeTitle(title: string): string {
   return sanitizeHtml(title, {
@@ -70,6 +80,11 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ wiki: [], posts: [] });
   }
 
+  const cachedResponse = await getCachedApiJsonResponse(request, CACHE_SCOPE, CACHE_CONTROL);
+  if (cachedResponse) {
+    return cachedResponse;
+  }
+
   const db = getDb();
   const pattern = `%${q}%`;
 
@@ -101,7 +116,7 @@ export async function GET(request: NextRequest) {
     loadPostCategoryNames(postRows.map((row) => row.id))
   ]);
 
-  return NextResponse.json({
+  const payload = {
     wiki: wikiRows.map((row) => ({
       id: row.id,
       slug: row.slug,
@@ -116,5 +131,10 @@ export async function GET(request: NextRequest) {
       publishedAtGmt: row.publishedAtGmt?.toISOString() ?? null,
       category: postCategories.get(row.id) ?? null
     }))
-  });
+  };
+
+  const response = jsonCached(payload, CACHE_CONTROL);
+  markApiCacheMiss(response);
+  await setCachedApiJsonResponse(request, CACHE_SCOPE, payload, CACHE_TTL_SECONDS);
+  return response;
 }

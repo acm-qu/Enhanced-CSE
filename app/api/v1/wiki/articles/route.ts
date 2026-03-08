@@ -12,8 +12,8 @@ import { badRequest, internalError, jsonCached } from '@/lib/internal/http';
 import { applyRateLimitHeaders, enforcePublicApiRateLimit } from '@/lib/internal/rate-limit';
 
 const ALLOWED_SORTS: ArticleSort[] = ['modified_desc', 'modified_asc', 'published_desc', 'published_asc'];
-const CACHE_CONTROL = 'public, s-maxage=60, stale-while-revalidate=300';
-const CACHE_TTL_SECONDS = 60;
+const CACHE_CONTROL = 'public, s-maxage=28800, stale-while-revalidate=86400';
+const CACHE_TTL_SECONDS = 28800;
 const CACHE_SCOPE = 'wiki-articles-list';
 const RATE_LIMIT_SCOPE = 'wiki-articles-list';
 

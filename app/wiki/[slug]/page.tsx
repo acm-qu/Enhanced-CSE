@@ -17,7 +17,7 @@ import { getArticleBySlug, listArticles, listCategories, listTags } from '@/lib/
 import { addHeadingIdsAndBuildToc, formatContentLabel } from '@/lib/utils/content';
 import { formatDate } from '@/lib/utils/date';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 28800;
 
 interface DetailPageProps {
   params: Promise<{
