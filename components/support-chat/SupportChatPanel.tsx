@@ -225,7 +225,7 @@ export function SupportChatPanel({ onClose }: { onClose: () => void }) {
       {/* Input */}
       <div className="px-5 pb-4 pt-2 border-t border-white/8">
         <div className="flex items-end gap-2 rounded-xl border border-white/10 bg-[#0d0e14] px-3 py-2">
-          <textarea
+          <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => {
@@ -235,7 +235,6 @@ export function SupportChatPanel({ onClose }: { onClose: () => void }) {
               }
             }}
             placeholder="Ask a question..."
-            rows={1}
             className="flex-1 resize-none bg-transparent text-sm outline-none text-zinc-100 placeholder:text-zinc-600 max-h-24"
           />
           {isStreaming ? (
