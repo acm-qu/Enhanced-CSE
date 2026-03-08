@@ -390,7 +390,7 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="mx-auto w-full max-w-[420px] rounded-3xl border border-[#2CAD9E]/25 bg-black p-6 shadow-[0_20px_45px_rgba(0,0,0,0.35)]">
+            <Link href={"https://qu.acm.org"} target='_blank' className="w-full max-w-[420px] rounded-3xl border border-[#2CAD9E]/25 bg-black p-6 shadow-[0_20px_45px_rgba(0,0,0,0.35)]">
               <Image
                 src="/about-us-logo.png"
                 alt="ACM Qatar University logo"
@@ -399,7 +399,7 @@ export default function HomePage() {
                 className="h-auto w-full"
                 priority
               />
-            </div>
+            </Link>
           </div>
         </div>
       </section>
