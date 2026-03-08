@@ -8,7 +8,7 @@ import { toArticleListResponse, toPostListResponse } from '@/lib/content/transfo
 import { listPosts } from '@/lib/db/posts-queries';
 import { listArticles, listCategories, type TermWithCount } from '@/lib/db/queries';
 
-export const revalidate = 300;
+export const revalidate = 28800;
 
 const FEATURED_CATEGORY_RULES = [
   {
