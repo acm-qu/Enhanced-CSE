@@ -23,10 +23,92 @@ interface Props {
   onRegenerate?: (question: string) => void;
 }
 
-function extractAnswer(raw: string): { text: string; extractedFollowUps?: string[] } {
+const ANSWER_FIELD_PATTERN = /"answer"\s*:\s*"/;
+
+function extractPartialAnswer(raw: string): string | undefined {
+  const match = ANSWER_FIELD_PATTERN.exec(raw);
+  if (!match) return undefined;
+
+  let index = match.index + match[0].length;
+  let output = '';
+
+  while (index < raw.length) {
+    const char = raw[index];
+
+    if (char === '"') {
+      return output;
+    }
+
+    if (char !== '\\') {
+      output += char;
+      index += 1;
+      continue;
+    }
+
+    index += 1;
+    if (index >= raw.length) {
+      return output;
+    }
+
+    const escaped = raw[index];
+    if (escaped === '"' || escaped === '\\' || escaped === '/') {
+      output += escaped;
+      index += 1;
+      continue;
+    }
+
+    if (escaped === 'b') {
+      output += '\b';
+      index += 1;
+      continue;
+    }
+
+    if (escaped === 'f') {
+      output += '\f';
+      index += 1;
+      continue;
+    }
+
+    if (escaped === 'n') {
+      output += '\n';
+      index += 1;
+      continue;
+    }
+
+    if (escaped === 'r') {
+      output += '\r';
+      index += 1;
+      continue;
+    }
+
+    if (escaped === 't') {
+      output += '\t';
+      index += 1;
+      continue;
+    }
+
+    if (escaped === 'u') {
+      const hex = raw.slice(index + 1, index + 5);
+      if (/^[0-9a-fA-F]{4}$/.test(hex)) {
+        output += String.fromCharCode(Number.parseInt(hex, 16));
+        index += 5;
+        continue;
+      }
+
+      return output;
+    }
+
+    output += escaped;
+    index += 1;
+  }
+
+  return output;
+}
+
+function extractAnswer(raw: string, isStreaming: boolean): { text: string; extractedFollowUps?: string[] } {
   const trimmed = raw.trimStart();
-  console.log(trimmed)
   if (!trimmed.startsWith('{')) return { text: raw };
+
   try {
     const parsed = JSON.parse(trimmed) as Record<string, unknown>;
     if (typeof parsed.answer === 'string') {
@@ -36,8 +118,16 @@ function extractAnswer(raw: string): { text: string; extractedFollowUps?: string
       };
     }
   } catch {
-    /* not JSON */
+    const partial = extractPartialAnswer(trimmed);
+    if (typeof partial === 'string') {
+      return { text: partial };
+    }
+
+    if (isStreaming) {
+      return { text: '' };
+    }
   }
+
   return { text: raw };
 }
 
@@ -102,7 +192,7 @@ function SupportChatMessageComponent({ message, onFollowUp, onRegenerate }: Prop
   const rawText = message.isStreaming ? (message.streamedText ?? '') : message.content;
 
   const { text: displayText, extractedFollowUps } = useMemo(
-    () => (isAssistant && !message.isStreaming ? extractAnswer(rawText) : { text: rawText }),
+    () => (isAssistant ? extractAnswer(rawText, Boolean(message.isStreaming)) : { text: rawText }),
     [isAssistant, message.isStreaming, rawText]
   );
 
