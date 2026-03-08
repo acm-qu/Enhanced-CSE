@@ -7,6 +7,12 @@ import { extractContentMediaPreviews } from '@/lib/content/media-preview';
 import { buildContentSummary } from '@/lib/content/summary';
 import { decodeFetchedHtml } from '../sync/entities';
 
+function toIsoString(value: Date | string | null | undefined): string | null {
+  if (!value) return null;
+  if (value instanceof Date) return value.toISOString();
+  return String(value);
+}
+
 function sanitizeTitle(title: string): string {
   return decodeFetchedHtml(sanitizeHtml(title, {
     allowedTags: [],
@@ -29,8 +35,8 @@ export function toArticleListResponse(article: ArticleListItem) {
     excerptHtml: sanitizeWikiHtml(decodeFetchedHtml(article.excerptHtmlRaw)),
     mediaPreviews: extractContentMediaPreviews(decodeFetchedHtml(article.contentHtmlRaw) || article.excerptHtmlRaw),
     sourceLink: article.sourceLink,
-    publishedAtGmt: article.publishedAtGmt?.toISOString() ?? null,
-    modifiedAtGmt: article.modifiedAtGmt?.toISOString() ?? null,
+    publishedAtGmt: toIsoString(article.publishedAtGmt),
+    modifiedAtGmt: toIsoString(article.modifiedAtGmt),
     categories: article.categories,
     tags: article.tags
   };
@@ -46,8 +52,8 @@ export function toArticleDetailResponse(article: ArticleDetailItem) {
     contentHtml: sanitizeWikiHtml(article.contentHtmlRaw),
     excerptHtml: sanitizeWikiHtml(article.excerptHtmlRaw),
     sourceLink: article.sourceLink,
-    publishedAtGmt: article.publishedAtGmt?.toISOString() ?? null,
-    modifiedAtGmt: article.modifiedAtGmt?.toISOString() ?? null,
+    publishedAtGmt: toIsoString(article.publishedAtGmt),
+    modifiedAtGmt: toIsoString(article.modifiedAtGmt),
     categories: article.categories,
     tags: article.tags
   };
@@ -68,8 +74,8 @@ export function toPostListResponse(post: PostListItem) {
     excerptHtml: sanitizeContentHtml(decodeFetchedHtml(post.excerptHtmlRaw)),
     mediaPreviews: extractContentMediaPreviews(decodeFetchedHtml(post.contentHtmlRaw) || decodeFetchedHtml(post.excerptHtmlRaw)),
     sourceLink: post.sourceLink,
-    publishedAtGmt: post.publishedAtGmt?.toISOString() ?? null,
-    modifiedAtGmt: post.modifiedAtGmt?.toISOString() ?? null,
+    publishedAtGmt: toIsoString(post.publishedAtGmt),
+    modifiedAtGmt: toIsoString(post.modifiedAtGmt),
     categories: post.categories
   };
 }
@@ -84,8 +90,8 @@ export function toPostDetailResponse(post: PostDetailItem) {
     contentHtml: sanitizeContentHtml(decodeFetchedHtml(post.contentHtmlRaw)),
     excerptHtml: sanitizeContentHtml(decodeFetchedHtml(post.excerptHtmlRaw)),
     sourceLink: post.sourceLink,
-    publishedAtGmt: post.publishedAtGmt?.toISOString() ?? null,
-    modifiedAtGmt: post.modifiedAtGmt?.toISOString() ?? null,
+    publishedAtGmt: toIsoString(post.publishedAtGmt),
+    modifiedAtGmt: toIsoString(post.modifiedAtGmt),
     categories: post.categories
   };
 }

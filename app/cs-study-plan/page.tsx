@@ -106,9 +106,45 @@ export interface StudyPlanTerm {
 }
 
 interface StudyPlanJson {
-  program: { name: string; institution: string; total_credit_hours_required: number };
+  program: {
+    name: string;
+    institution: string;
+    total_credit_hours_required: number;
+    source_documents?: {
+      mybanner_course_detail_template?: string;
+    };
+  };
   courses: Record<string, CourseData>;
   study_plan_terms: StudyPlanTerm[];
+}
+
+function parseSpecializationCourse(value: string): { id: string; title: string } {
+  const separatorIndex = value.indexOf(',');
+  if (separatorIndex === -1) {
+    return { id: value.trim(), title: value.trim() };
+  }
+
+  return {
+    id: value.slice(0, separatorIndex).trim(),
+    title: value.slice(separatorIndex + 1).trim()
+  };
+}
+
+function buildMyBannerCourseUrl(courseId: string, template?: string): string | undefined {
+  const match = courseId.match(/^([A-Z]+)\s+(\d{3})$/);
+  if (!match) {
+    return undefined;
+  }
+
+  const [, subject, number] = match;
+  const normalizedTemplate =
+    template ??
+    'https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in={TERM}&subj_code_in={SUBJECT}&crse_numb_in={NUMBER}';
+
+  return normalizedTemplate
+    .replace('{TERM}', '202410')
+    .replace('{SUBJECT}', subject)
+    .replace('{NUMBER}', number);
 }
 
 function extractIds(parsed: ParsedReq | null | undefined): string[] {
@@ -174,9 +210,6 @@ export default function CsStudyPlanPage() {
   return (
     <main className="relative z-[1] pb-10">
       <div className="px-4 pb-4 pt-8 sm:px-6">
-        <p className="mb-3 inline-flex rounded-full border border-[#2CAD9E]/30 bg-[#2CAD9E]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#78f0e2]">
-          Custom roadmap
-        </p>
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{program.name} Study Plan</h1>
         <p className="mt-2 max-w-3xl text-sm font-medium leading-6 text-foreground/85 sm:text-base">
           {STUDY_PLAN_HEADER_COPY}
@@ -188,29 +221,49 @@ export default function CsStudyPlanPage() {
 
       <StudyPlanBoard terms={terms} courses={courses} connections={connections} />
 
-      <section className="px-4 pt-8 sm:px-6">
-        <div className="mb-4">
+      <section className="px-4 pt-6 sm:px-6">
+        <div className="mb-3">
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">Elective tracks</p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+          <h2 className="mt-1.5 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
             Elective Courses by Specialization
           </h2>
-          <p className="mt-2 max-w-3xl text-sm text-muted-foreground sm:text-base">
+          <p className="mt-1 max-w-3xl text-xs text-muted-foreground sm:text-sm">
             Suggested grouping of your elective options into common CS specializations.
           </p>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {ELECTIVE_SPECIALIZATIONS.map((specialization) => (
-            <article key={specialization.name} className="panel-muted p-5 sm:p-6">
-              <h3 className="text-lg font-semibold text-foreground">{specialization.name}</h3>
-              <p className="mt-1 text-sm text-muted-foreground">{specialization.description}</p>
+            <article key={specialization.name} className="panel-muted border-x-0 p-4">
+              <h3 className="text-base font-semibold text-foreground">{specialization.name}</h3>
+              <p className="mt-0.5 text-xs text-muted-foreground">{specialization.description}</p>
 
-              <ul className="mt-4 space-y-2 text-sm leading-6 text-foreground/85">
-                {specialization.courses.map((course) => (
-                  <li key={course} className="rounded-md border border-border/70 bg-card/60 px-3 py-2">
-                    <span className='text-[#78f0e2]'>{course.split(',')[0]}</span>&nbsp;-&nbsp;{course.split(',')[1]}
-                  </li>
-                ))}
+              <ul className="mt-3 space-y-1.5 text-xs leading-5 text-foreground/85">
+                {specialization.courses.map((courseValue) => {
+                  const { id, title } = parseSpecializationCourse(courseValue);
+                  const url =
+                    courses[id]?.sources?.mybanner_url ??
+                    buildMyBannerCourseUrl(id, program.source_documents?.mybanner_course_detail_template);
+
+                  return (
+                    <li key={courseValue}>
+                      {url ? (
+                        <a
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block rounded-md border border-border/70 bg-card/60 px-3 py-1.5 transition-colors hover:border-[#2CAD9E]/40 hover:bg-card/85"
+                        >
+                          <span className="text-[#78f0e2]">{id}</span>&nbsp;-&nbsp;{title}
+                        </a>
+                      ) : (
+                        <div className="rounded-md border border-border/70 bg-card/60 px-3 py-1.5">
+                          <span className="text-[#78f0e2]">{id}</span>&nbsp;-&nbsp;{title}
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
               </ul>
             </article>
           ))}
@@ -218,7 +271,7 @@ export default function CsStudyPlanPage() {
       </section>
 
       <section className="px-4 pt-8 sm:px-6">
-        <article className="panel-muted p-6 sm:p-8">
+        <article className="panel-muted border-x-0 p-6 sm:p-8">
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#78f0e2]">Why this order</p>
           <h2 className="mt-3 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
             Why we believe this is the study plan fresh CS students should take.

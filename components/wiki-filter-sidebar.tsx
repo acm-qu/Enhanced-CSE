@@ -1,7 +1,8 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useTransition, useState } from 'react';
+import { LoaderCircleIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Combobox, type ComboboxOption } from '@/components/ui/combobox';
@@ -26,6 +27,7 @@ export function WikiFilterSidebar({
   currentTag
 }: WikiFilterSidebarProps) {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const [sort, setSort] = useState(currentSort);
   const [category, setCategory] = useState(currentCategory ?? '');
   const [tag, setTag] = useState(currentTag ?? '');
@@ -51,24 +53,24 @@ export function WikiFilterSidebar({
 
   const handleSortChange = (value: string) => {
     setSort(value as ArticleSort);
-    router.push(buildHref(value, category, tag));
+    startTransition(() => router.push(buildHref(value, category, tag)));
   };
 
   const handleCategoryChange = (value: string) => {
     setCategory(value);
-    router.push(buildHref(sort, value, tag));
+    startTransition(() => router.push(buildHref(sort, value, tag)));
   };
 
   const handleTagChange = (value: string) => {
     setTag(value);
-    router.push(buildHref(sort, category, value));
+    startTransition(() => router.push(buildHref(sort, category, value)));
   };
 
   const handleReset = () => {
     setSort('modified_desc');
     setCategory('');
     setTag('');
-    router.push('/wiki');
+    startTransition(() => router.push('/wiki'));
   };
 
   const sortComboboxOptions: ComboboxOption[] = sortOptions.map((option) => ({
@@ -94,6 +96,13 @@ export function WikiFilterSidebar({
 
   return (
     <div className="grid gap-3">
+      <div className="flex items-center justify-between">
+        <label className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
+          Filters
+        </label>
+        {isPending && <LoaderCircleIcon className="h-3.5 w-3.5 animate-spin text-muted-foreground" />}
+      </div>
+
       <label className="grid gap-1 text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
         Sort
       </label>
@@ -102,6 +111,7 @@ export function WikiFilterSidebar({
         value={sort}
         onValueChange={handleSortChange}
         placeholder="Select sort..."
+        disabled={isPending}
       />
 
       <label className="mt-2 grid gap-1 text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
@@ -112,6 +122,7 @@ export function WikiFilterSidebar({
         value={category}
         onValueChange={handleCategoryChange}
         placeholder="Select category..."
+        disabled={isPending}
       />
 
       <label className="mt-2 grid gap-1 text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
@@ -122,10 +133,11 @@ export function WikiFilterSidebar({
         value={tag}
         onValueChange={handleTagChange}
         placeholder="Select tag..."
+        disabled={isPending}
       />
 
       <div className="mt-3 flex gap-2">
-        <Button onClick={handleReset} variant="outline" size="sm" className="flex-1">
+        <Button onClick={handleReset} variant="outline" size="sm" className="flex-1" disabled={isPending}>
           Reset
         </Button>
       </div>

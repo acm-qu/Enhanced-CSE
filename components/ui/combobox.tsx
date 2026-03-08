@@ -19,6 +19,7 @@ interface ComboboxProps {
   onValueChange: (value: string) => void;
   placeholder?: string;
   emptyText?: string;
+  disabled?: boolean;
 }
 
 export function Combobox({
@@ -26,7 +27,8 @@ export function Combobox({
   value,
   onValueChange,
   placeholder = 'Select option...',
-  emptyText = 'No options found.'
+  emptyText = 'No options found.',
+  disabled = false
 }: ComboboxProps) {
   const [open, setOpen] = React.useState(false);
 
@@ -40,6 +42,7 @@ export function Combobox({
           role="combobox"
           aria-expanded={open}
           className="w-full justify-between"
+          disabled={disabled}
         >
           {selectedOption?.label || placeholder}
           <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
