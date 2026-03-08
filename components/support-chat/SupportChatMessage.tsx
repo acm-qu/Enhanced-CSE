@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
@@ -35,13 +35,13 @@ function extractAnswer(raw: string): { text: string; extractedFollowUps?: string
         extractedFollowUps: Array.isArray(parsed.follow_ups) ? (parsed.follow_ups as string[]) : undefined
       };
     }
-  } catch(e) {
-    console.log('Failed to parse answer JSON', e);
+  } catch {
+    /* not JSON */
   }
   return { text: raw };
 }
 
-function MessageText({ text }: { text: string }) {
+const MessageText = memo(function MessageText({ text }: { text: string }) {
   return (
     <div className="flex flex-col gap-2 [&_hr]:my-2 [&_hr]:border-zinc-700/60">
       <ReactMarkdown
@@ -92,15 +92,19 @@ function MessageText({ text }: { text: string }) {
       </ReactMarkdown>
     </div>
   );
-}
+});
 
-export function SupportChatMessage({ message, onFollowUp, onRegenerate }: Props) {
+MessageText.displayName = 'MessageText';
+
+function SupportChatMessageComponent({ message, onFollowUp, onRegenerate }: Props) {
   const [copied, setCopied] = useState(false);
   const isAssistant = message.role === 'assistant';
   const rawText = message.isStreaming ? (message.streamedText ?? '') : message.content;
 
-  const { text: displayText, extractedFollowUps } =
-    isAssistant && !message.isStreaming ? extractAnswer(rawText) : { text: rawText };
+  const { text: displayText, extractedFollowUps } = useMemo(
+    () => (isAssistant && !message.isStreaming ? extractAnswer(rawText) : { text: rawText }),
+    [isAssistant, message.isStreaming, rawText]
+  );
 
   const followUps = message.followUps?.length ? message.followUps : (extractedFollowUps ?? []);
 
@@ -235,3 +239,6 @@ export function SupportChatMessage({ message, onFollowUp, onRegenerate }: Props)
     </div>
   );
 }
+
+export const SupportChatMessage = memo(SupportChatMessageComponent);
+SupportChatMessage.displayName = 'SupportChatMessage';
