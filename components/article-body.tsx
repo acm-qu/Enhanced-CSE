@@ -36,6 +36,75 @@ interface InlineCarouselMount {
 
 const STACK_IMAGE_WRAPPER_TAGS = new Set(['IMG', 'P', 'FIGURE', 'DIV', 'A']);
 
+function hasSvgSuffix(value: string): boolean {
+  const normalized = value.trim().toLowerCase();
+  if (!normalized) {
+    return false;
+  }
+
+  if (normalized.startsWith('data:image/svg+xml')) {
+    return true;
+  }
+
+  const withoutHash = normalized.split('#')[0] ?? normalized;
+  const withoutQuery = withoutHash.split('?')[0] ?? withoutHash;
+  return withoutQuery.endsWith('.svg');
+}
+
+function decodeMaybeURIComponent(value: string): string {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
+
+function isSvgImageSrc(src: string): boolean {
+  if (!src) {
+    return false;
+  }
+
+  if (hasSvgSuffix(src) || hasSvgSuffix(decodeMaybeURIComponent(src))) {
+    return true;
+  }
+
+  try {
+    const parsed = new URL(src, 'https://placeholder.local');
+    if (hasSvgSuffix(parsed.pathname)) {
+      return true;
+    }
+
+    for (const key of ['url', 'src', 'image']) {
+      const value = parsed.searchParams.get(key);
+      if (!value) {
+        continue;
+      }
+
+      if (hasSvgSuffix(value) || hasSvgSuffix(decodeMaybeURIComponent(value))) {
+        return true;
+      }
+    }
+  } catch {
+    return false;
+  }
+
+  return false;
+}
+
+function addSvgClassToContentImages(container: HTMLElement) {
+  const images = Array.from(container.querySelectorAll('img'));
+
+  images.forEach((image) => {
+    const source = image.getAttribute('src') ?? image.currentSrc ?? image.src ?? '';
+    if (isSvgImageSrc(source)) {
+      image.classList.add('svg');
+      return;
+    }
+
+    image.classList.remove('svg');
+  });
+}
+
 function toInlineImage(image: HTMLImageElement): InlineImage {
   const figure = image.closest('figure');
   const caption = figure?.querySelector('figcaption')?.textContent?.trim() || undefined;
@@ -194,7 +263,7 @@ function InlineImageCarousel({ images }: { images: InlineImage[] }) {
                 srcSet={image.srcSet}
                 alt={image.alt || `Image ${index + 1}`}
                 title={image.title}
-                className="h-auto max-h-[70vh] w-auto max-w-full rounded-md border border-foreground/10 object-contain"
+                className={`h-auto max-h-[70vh] w-auto max-w-full rounded-md border border-foreground/10 object-contain ${isSvgImageSrc(image.src) ? 'svg' : ''}`}
               />
             </CarouselItem>
           ))}
@@ -245,6 +314,8 @@ export function ArticleBody({ html }: { html: string }) {
     if (!container) {
       return;
     }
+
+    addSvgClassToContentImages(container);
 
     const mounts: InlineCarouselMount[] = [];
     mountInlineCarouselForImageStacks(container, mounts);
@@ -315,7 +386,7 @@ export function ArticleBody({ html }: { html: string }) {
                         <img
                           src={src}
                           alt={`Image ${i + 1} of ${lightbox.images.length}`}
-                          className="max-h-[80vh] w-auto max-w-full rounded-lg object-contain shadow-2xl"
+                          className={`max-h-[80vh] w-auto max-w-full rounded-lg object-contain shadow-2xl ${isSvgImageSrc(src) ? 'svg' : ''}`}
                         />
                       </CarouselItem>
                     ))}
