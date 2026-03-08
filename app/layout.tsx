@@ -4,8 +4,6 @@ import { GeistSans } from 'geist/font/sans';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { MenuIcon } from 'lucide-react';
-import { Analytics } from '@vercel/analytics/next';
-import { SpeedInsights } from '@vercel/speed-insights/next';
 
 import { NavigationProgress } from '@/components/navigation-progress';
 import { SearchCommand, SearchTrigger } from '@/components/search-command';
@@ -129,8 +127,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <SearchCommand />
           <SupportChatBubble />
         </ThemeProvider>
-        <Analytics />
-        <SpeedInsights />
+
       </body>
     </html>
   );

@@ -248,6 +248,15 @@ function getMonthBounds(year: number, monthNumber: number): { after: Date; befor
   return { after, before };
 }
 
+export async function listAllPostSlugs(): Promise<string[]> {
+  const db = getDb();
+  const rows = await db
+    .select({ slug: blogPosts.slug })
+    .from(blogPosts)
+    .where(eq(blogPosts.status, 'publish'));
+  return rows.map((r) => r.slug);
+}
+
 export async function listPostArchives(input?: { categorySlug?: string }): Promise<PostArchiveBucket[]> {
   const db = getDb();
 

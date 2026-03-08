@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -13,11 +14,19 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Separator } from '@/components/ui/separator';
 import { TocNav } from '@/components/toc-nav';
 import { toPostDetailResponse, toPostListResponse } from '@/lib/content/transform';
-import { getPostBySlug, listPostCategories, listPosts } from '@/lib/db/posts-queries';
+import { getPostBySlug, listAllPostSlugs, listPostCategories, listPosts } from '@/lib/db/posts-queries';
 import { addHeadingIdsAndBuildToc, formatContentLabel } from '@/lib/utils/content';
 import { formatDate } from '@/lib/utils/date';
 
 export const revalidate = 28800;
+export const dynamicParams = true;
+
+const getCachedPost = cache(getPostBySlug);
+
+export async function generateStaticParams() {
+  const slugs = await listAllPostSlugs();
+  return slugs.map((slug) => ({ slug }));
+}
 
 interface DetailPageProps {
   params: Promise<{
@@ -27,7 +36,7 @@ interface DetailPageProps {
 
 export async function generateMetadata({ params }: DetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const post = await getCachedPost(slug);
 
   if (!post) {
     return {
@@ -45,7 +54,7 @@ export async function generateMetadata({ params }: DetailPageProps): Promise<Met
 
 export default async function PostDetailPage({ params }: DetailPageProps) {
   const { slug } = await params;
-  const [post, categories] = await Promise.all([getPostBySlug(slug), listPostCategories()]);
+  const [post, categories] = await Promise.all([getCachedPost(slug), listPostCategories()]);
 
   if (!post) {
     notFound();

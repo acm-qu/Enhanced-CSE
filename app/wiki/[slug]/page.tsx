@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
@@ -13,11 +14,19 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Separator } from '@/components/ui/separator';
 import { TocNav } from '@/components/toc-nav';
 import { toArticleDetailResponse, toArticleListResponse } from '@/lib/content/transform';
-import { getArticleBySlug, listArticles, listCategories, listTags } from '@/lib/db/queries';
+import { getArticleBySlug, listAllArticleSlugs, listArticles, listCategories, listTags } from '@/lib/db/queries';
 import { addHeadingIdsAndBuildToc, formatContentLabel } from '@/lib/utils/content';
 import { formatDate } from '@/lib/utils/date';
 
 export const revalidate = 28800;
+export const dynamicParams = true;
+
+const getCachedArticle = cache(getArticleBySlug);
+
+export async function generateStaticParams() {
+  const slugs = await listAllArticleSlugs();
+  return slugs.map((slug) => ({ slug }));
+}
 
 interface DetailPageProps {
   params: Promise<{
@@ -27,7 +36,7 @@ interface DetailPageProps {
 
 export async function generateMetadata({ params }: DetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const article = await getArticleBySlug(slug);
+  const article = await getCachedArticle(slug);
 
   if (!article) {
     return {
@@ -45,7 +54,7 @@ export async function generateMetadata({ params }: DetailPageProps): Promise<Met
 
 export default async function WikiDetailPage({ params }: DetailPageProps) {
   const { slug } = await params;
-  const [article, categories, tags] = await Promise.all([getArticleBySlug(slug), listCategories(), listTags()]);
+  const [article, categories, tags] = await Promise.all([getCachedArticle(slug), listCategories(), listTags()]);
 
   if (!article) {
     notFound();
