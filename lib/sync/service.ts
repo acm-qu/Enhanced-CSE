@@ -25,6 +25,7 @@ import {
   type WpTermResponse
 } from '@/lib/wp/client';
 import { invalidateApiCache } from '@/lib/internal/api-cache';
+import { decodeFetchedHtml } from '@/lib/sync/entities';
 
 const ADVISORY_LOCK_KEY = 773_081;
 
@@ -102,9 +103,9 @@ function normalizeWpArticle(article: WpArticleResponse) {
   return {
     wpId: article.id,
     slug: article.slug,
-    title: article.title?.rendered ?? article.slug,
-    contentHtmlRaw: article.content?.rendered ?? '',
-    excerptHtmlRaw: article.excerpt?.rendered ?? '',
+    title: decodeFetchedHtml(article.title?.rendered ?? article.slug),
+    contentHtmlRaw: decodeFetchedHtml(article.content?.rendered ?? ''),
+    excerptHtmlRaw: decodeFetchedHtml(article.excerpt?.rendered ?? ''),
     sourceLink: article.link,
     publishedAtGmt: parseDateOrNull(article.date_gmt),
     modifiedAtGmt: parseDateOrNull(article.modified_gmt),
@@ -129,9 +130,9 @@ function normalizeWpPost(post: WpBlogPostResponse) {
   return {
     wpId: post.id,
     slug: post.slug,
-    title: post.title?.rendered ?? post.slug,
-    contentHtmlRaw: post.content?.rendered ?? '',
-    excerptHtmlRaw: post.excerpt?.rendered ?? '',
+    title: decodeFetchedHtml(post.title?.rendered ?? post.slug),
+    contentHtmlRaw: decodeFetchedHtml(post.content?.rendered ?? ''),
+    excerptHtmlRaw: decodeFetchedHtml(post.excerpt?.rendered ?? ''),
     sourceLink: post.link,
     publishedAtGmt: parseDateOrNull(post.date_gmt),
     modifiedAtGmt: parseDateOrNull(post.modified_gmt),
