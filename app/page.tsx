@@ -7,6 +7,7 @@ import { Separator } from '@/components/ui/separator';
 import { toArticleListResponse, toPostListResponse } from '@/lib/content/transform';
 import { listPosts } from '@/lib/db/posts-queries';
 import { listArticles, listCategories, type TermWithCount } from '@/lib/db/queries';
+import HomepageButtons from '@/components/homepage-buttons';
 
 export const revalidate = 28800;
 
@@ -316,7 +317,7 @@ function ExploreSection() {
             <p className="mt-0.5 text-sm text-foreground/60">Add your MyQu courses and turn them into a schedule</p>
           </div>
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-foreground/30 transition-colors group-hover:text-[#2CAD9E]" aria-hidden="true">
-            <path d="M7 7h10v10"/><path d="M7 17 17 7"/>
+            <path d="M7 7h10v10" /><path d="M7 17 17 7" />
           </svg>
         </a>
 
@@ -370,24 +371,14 @@ export default function HomePage() {
               <p className="mb-4 inline-flex rounded-md border border-[#373637]/20 px-3 py-1 text-xs font-semibold tracking-[0.03em] text-[#373637]/80 dark:border-white/15 dark:text-white/85">
                 Qatar University - College of Engineering
               </p>
-              <h1 className="max-w-2xl text-5xl font-semibold leading-tight tracking-tight sm:text-6xl">
+              <h1 className="max-w-2xl text-3xl font-semibold leading-tight tracking-tight sm:text-6xl">
                 Computer Science and Engineering Portal
               </h1>
               <p className="mt-5 max-w-2xl text-lg leading-relaxed text-[#373637]/80 dark:text-white/70">
                 Access departmental services, policies, advisement resources, and senior project archives in one
                 unified platform.
               </p>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <Button asChild size="lg" className="h-11 min-w-[170px] rounded-md border border-[#373637]/20 bg-[#111217] text-white hover:bg-[#23252d] dark:border-white/15 dark:bg-[#111217]">
-                  <Link href="/wiki">Browse Wiki</Link>
-                </Button>
-                <Button asChild size="lg" className="h-11 min-w-[170px] rounded-md bg-[#2CAD9E] text-white hover:bg-[#26998d]">
-                  <Link href="/posts">Browse Articles</Link>
-                </Button>
-                <Button asChild variant="outline" size="lg" className="h-11 min-w-[170px] rounded-md border-[#2CAD9E]/50 bg-transparent text-[#111217] hover:bg-[#2CAD9E]/12 hover:text-[#111217] dark:border-[#2CAD9E]/60 dark:text-white dark:hover:bg-[#2CAD9E]/15 dark:hover:text-white">
-                  <Link href="/wiki?sort=modified_desc">Latest Updates</Link>
-                </Button>
-              </div>
+              <HomepageButtons />
             </div>
 
             <Link href={"https://qu.acm.org"} target='_blank' className="w-full max-w-[420px] rounded-3xl border border-[#2CAD9E]/25 bg-black p-6 shadow-[0_20px_45px_rgba(0,0,0,0.35)]">
