@@ -36,6 +36,7 @@ function resolveImageContentType(sourceUrl: URL, headerValue: string | null): st
 }
 
 export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const rawUrl = request.nextUrl.searchParams.get('url');
@@ -52,7 +53,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       headers: {
         Accept: 'image/*,*/*;q=0.8'
       },
-      redirect: 'follow'
+      redirect: 'follow',
+      cache: 'no-store'
     });
   } catch {
     return notFound('Media asset not reachable');
@@ -81,6 +83,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   });
 
   response.headers.set('Cache-Control', MEDIA_CACHE_CONTROL);
+  response.headers.set('Netlify-Vary', 'query=url');
   response.headers.set('Content-Type', contentType);
   response.headers.set('Content-Length', String(body.byteLength));
   response.headers.set('Content-Disposition', 'inline');
