@@ -255,7 +255,7 @@ export default async function WikiPage({ searchParams }: SearchParamProps) {
           ) : (
             <div className="mt-3 grid gap-3">
               {transformedItems.map((item) => (
-                <Card key={item.id} className="panel-muted w-[96vw] sm:w-auto">
+                <Card key={item.id} className="panel-muted w-[96vw] sm:w-auto min-w-0">
                   <CardHeader className="space-y-2 pb-3">
                     <Badge variant="outline" className="w-fit">
                       Updated {formatDate(item.modifiedAtGmt)}
