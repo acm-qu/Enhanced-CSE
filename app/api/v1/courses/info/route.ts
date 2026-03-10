@@ -16,31 +16,37 @@ const CACHE_TTL_SECONDS = 43200;
 const CACHE_SCOPE = 'courses-info';
 const RATE_LIMIT_SCOPE = 'courses-info';
 
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
+function finalizeResponse(response: Response, rateLimitHeaders: Record<string, string>): Response {
+  applyRateLimitHeaders(response, rateLimitHeaders);
+  response.headers.set('Netlify-Vary', 'query=url');
+  return response;
+}
+
 export async function GET(request: NextRequest): Promise<Response> {
   try {
     const rateLimit = await enforcePublicApiRateLimit(request, RATE_LIMIT_SCOPE);
     if (rateLimit.blockedResponse) {
-      return rateLimit.blockedResponse;
+      return finalizeResponse(rateLimit.blockedResponse, rateLimit.headers);
     }
 
     const rawUrl = request.nextUrl.searchParams.get('url')?.trim();
     if (!rawUrl) {
       const response = badRequest('url query parameter is required');
-      applyRateLimitHeaders(response, rateLimit.headers);
-      return response;
+      return finalizeResponse(response, rateLimit.headers);
     }
 
     const sourceUrl = normalizeCourseInfoUrl(rawUrl);
     if (!sourceUrl) {
       const response = badRequest('Invalid course info URL');
-      applyRateLimitHeaders(response, rateLimit.headers);
-      return response;
+      return finalizeResponse(response, rateLimit.headers);
     }
 
     const cachedResponse = await getCachedApiJsonResponse(request, CACHE_SCOPE, CACHE_CONTROL);
     if (cachedResponse) {
-      applyRateLimitHeaders(cachedResponse, rateLimit.headers);
-      return cachedResponse;
+      return finalizeResponse(cachedResponse, rateLimit.headers);
     }
 
     const upstreamResponse = await fetch(sourceUrl, {
@@ -48,13 +54,13 @@ export async function GET(request: NextRequest): Promise<Response> {
         Accept: 'text/html,application/xhtml+xml',
         'User-Agent': 'Enhanced-CSE/1.0 (+https://github.com)'
       },
-      redirect: 'follow'
+      redirect: 'follow',
+      cache: 'no-store'
     });
 
     if (upstreamResponse.status === 404) {
       const response = notFound('Course not found');
-      applyRateLimitHeaders(response, rateLimit.headers);
-      return response;
+      return finalizeResponse(response, rateLimit.headers);
     }
 
     if (!upstreamResponse.ok) {
@@ -65,8 +71,7 @@ export async function GET(request: NextRequest): Promise<Response> {
       });
 
       const response = NextResponse.json({ error: 'Failed to fetch course info' }, { status: 502 });
-      applyRateLimitHeaders(response, rateLimit.headers);
-      return response;
+      return finalizeResponse(response, rateLimit.headers);
     }
 
     const html = await upstreamResponse.text();
@@ -78,7 +83,7 @@ export async function GET(request: NextRequest): Promise<Response> {
 
     const response = jsonCached(payload, CACHE_CONTROL);
     markApiCacheMiss(response);
-    applyRateLimitHeaders(response, rateLimit.headers);
+    finalizeResponse(response, rateLimit.headers);
     await setCachedApiJsonResponse(request, CACHE_SCOPE, payload, CACHE_TTL_SECONDS);
 
     return response;

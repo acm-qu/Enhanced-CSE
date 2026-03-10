@@ -49,17 +49,23 @@ function getPublicApiRateLimiter(): Ratelimit | null {
 }
 
 function getRequestClientIp(request: NextRequest): string {
-  const forwardedFor = request.headers.get('x-forwarded-for');
-  if (forwardedFor) {
-    const ip = forwardedFor.split(',')[0]?.trim();
-    if (ip) {
-      return ip;
-    }
-  }
+  const candidates = [
+    request.headers.get('x-forwarded-for'),
+    request.headers.get('x-real-ip'),
+    request.headers.get('x-nf-client-connection-ip'),
+    request.headers.get('cf-connecting-ip'),
+    request.headers.get('x-client-ip')
+  ];
 
-  const realIp = request.headers.get('x-real-ip')?.trim();
-  if (realIp) {
-    return realIp;
+  for (const candidate of candidates) {
+    if (!candidate) {
+      continue;
+    }
+
+    const firstIp = candidate.split(',')[0]?.trim();
+    if (firstIp) {
+      return firstIp;
+    }
   }
 
   return 'unknown';
