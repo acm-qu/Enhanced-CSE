@@ -239,8 +239,9 @@ export default function CsStudyPlanPage() {
           {program.institution} | {program.total_credit_hours_required} Credit Hours | 2024 Roadmap
         </p>
       </div>
-
-      <StudyPlanBoard terms={terms} courses={courses} connections={connections} />
+      <div className='mx-4 overflow-scroll'>
+        <StudyPlanBoard terms={terms} courses={courses} connections={connections} />
+      </div>
 
       <StudyPlanElectives specializations={electiveSpecializations} />
 

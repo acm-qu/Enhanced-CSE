@@ -227,7 +227,7 @@ export function StudyPlanBoard({ terms, courses, connections }: Props) {
   }, [hovered, connections]);
 
   return (
-    <div className="px-4 sm:px-6">
+    <div className="px-4 sm:px-6 min-w-[1200px]">
       <div className="overflow-hidden rounded-2xl border border-white/[0.06] bg-zinc-950">
         <div className="w-full overflow-x-auto overflow-y-hidden">
           <div className="relative min-w-full">
