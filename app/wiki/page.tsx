@@ -168,7 +168,7 @@ export default async function WikiPage({ searchParams }: SearchParamProps) {
             </BreadcrumbList>
           </Breadcrumb>
           <Badge variant="outline" className="mb-2">Wiki</Badge>
-          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Articles</h1>
+          <h1 className="text-2xl sm:text-4xl font-semibold tracking-tight">Articles</h1>
           <p className="mt-2 text-sm text-muted-foreground">Refined internal guides and technical documentation.</p>
         </div>
       </section>
@@ -255,7 +255,7 @@ export default async function WikiPage({ searchParams }: SearchParamProps) {
           ) : (
             <div className="mt-3 grid gap-3">
               {transformedItems.map((item) => (
-                <Card key={item.id} className="panel-muted">
+                <Card key={item.id} className="panel-muted w-[96vw] sm:w-auto">
                   <CardHeader className="space-y-2 pb-3">
                     <Badge variant="outline" className="w-fit">
                       Updated {formatDate(item.modifiedAtGmt)}

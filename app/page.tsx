@@ -371,7 +371,7 @@ export default function HomePage() {
               <p className="mb-4 inline-flex rounded-md border border-[#373637]/20 px-3 py-1 text-xs font-semibold tracking-[0.03em] text-[#373637]/80 dark:border-white/15 dark:text-white/85">
                 Qatar University - College of Engineering
               </p>
-              <h1 className="max-w-2xl text-3xl font-semibold leading-tight tracking-tight sm:text-6xl">
+              <h1 className="max-w-2xl text-3xl sm:text-6xl font-semibold leading-tight tracking-tight">
                 Computer Science and Engineering Portal
               </h1>
               <p className="mt-5 max-w-2xl text-lg leading-relaxed text-[#373637]/80 dark:text-white/70">
