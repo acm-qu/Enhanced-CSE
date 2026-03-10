@@ -62,6 +62,7 @@ export function SearchCommand() {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResults>({ wiki: [], posts: [] });
   const [loading, setLoading] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -88,22 +89,57 @@ export function SearchCommand() {
     if (trimmed.length < 2) {
       setResults({ wiki: [], posts: [] });
       setLoading(false);
+      setHasSearched(false);
       return;
     }
 
+    const controller = new AbortController();
+    let isMounted = true;
+
+    setLoading(true);
+    setHasSearched(false);
+
     const timeout = setTimeout(async () => {
-      setLoading(true);
       try {
-        const response = await fetch(`/api/v1/search?q=${encodeURIComponent(trimmed)}`);
-        if (response.ok) {
-          setResults(await response.json());
+        const response = await fetch(`/api/v1/search?q=${encodeURIComponent(trimmed)}`, {
+          signal: controller.signal,
+          cache: 'no-store'
+        });
+
+        if (!isMounted || controller.signal.aborted) {
+          return;
         }
+
+        if (!response.ok) {
+          setResults({ wiki: [], posts: [] });
+          return;
+        }
+
+        const payload = (await response.json()) as Partial<SearchResults>;
+        setResults({
+          wiki: Array.isArray(payload.wiki) ? payload.wiki : [],
+          posts: Array.isArray(payload.posts) ? payload.posts : []
+        });
+      } catch (error) {
+        if (!isMounted || controller.signal.aborted) {
+          return;
+        }
+
+        console.error('search.fetch_failed', error);
+        setResults({ wiki: [], posts: [] });
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+          setHasSearched(true);
+        }
       }
     }, 250);
 
-    return () => clearTimeout(timeout);
+    return () => {
+      isMounted = false;
+      controller.abort();
+      clearTimeout(timeout);
+    };
   }, [query]);
 
   const handleOpenChange = (value: boolean) => {
@@ -111,6 +147,8 @@ export function SearchCommand() {
     if (!value) {
       setQuery('');
       setResults({ wiki: [], posts: [] });
+      setLoading(false);
+      setHasSearched(false);
     }
   };
 
@@ -119,6 +157,8 @@ export function SearchCommand() {
       setOpen(false);
       setQuery('');
       setResults({ wiki: [], posts: [] });
+      setLoading(false);
+      setHasSearched(false);
       router.push(href);
     },
     [router]
@@ -126,6 +166,7 @@ export function SearchCommand() {
 
   const trimmedQuery = query.trim();
   const hasResults = results.wiki.length > 0 || results.posts.length > 0;
+  const isSearching = trimmedQuery.length >= 2 && loading;
 
   return (
     <CommandDialog
@@ -136,17 +177,17 @@ export function SearchCommand() {
     >
       <CommandInput placeholder="Search wiki and posts..." value={query} onValueChange={setQuery} />
       <CommandList className="max-h-[460px]">
-        {loading && <div className="px-4 py-6 text-center text-sm text-muted-foreground">Searching...</div>}
+        {isSearching && <div className="px-4 py-6 text-center text-sm text-muted-foreground">Searching...</div>}
 
-        {!loading && trimmedQuery.length < 2 && (
+        {!isSearching && trimmedQuery.length < 2 && (
           <div className="px-4 py-6 text-center text-sm text-muted-foreground">Type at least 2 characters to search.</div>
         )}
 
-        {!loading && trimmedQuery.length >= 2 && !hasResults && (
+        {!isSearching && trimmedQuery.length >= 2 && hasSearched && !hasResults && (
           <CommandEmpty>No results found for "{trimmedQuery}".</CommandEmpty>
         )}
 
-        {!loading && results.wiki.length > 0 && (
+        {!isSearching && results.wiki.length > 0 && (
           <CommandGroup heading="Wiki Articles">
             {results.wiki.map((item) => (
               <CommandItem
@@ -171,9 +212,9 @@ export function SearchCommand() {
           </CommandGroup>
         )}
 
-        {!loading && results.wiki.length > 0 && results.posts.length > 0 && <CommandSeparator />}
+        {!isSearching && results.wiki.length > 0 && results.posts.length > 0 && <CommandSeparator />}
 
-        {!loading && results.posts.length > 0 && (
+        {!isSearching && results.posts.length > 0 && (
           <CommandGroup heading="Blog Posts">
             {results.posts.map((item) => (
               <CommandItem

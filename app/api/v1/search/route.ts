@@ -10,11 +10,20 @@ import {
   markApiCacheMiss,
   setCachedApiJsonResponse
 } from '@/lib/internal/api-cache';
-import { jsonCached } from '@/lib/internal/http';
+import { internalError, jsonCached } from '@/lib/internal/http';
+import { log } from '@/lib/internal/log';
 
 const CACHE_CONTROL = 'public, s-maxage=60, stale-while-revalidate=300';
 const CACHE_TTL_SECONDS = 60;
 const CACHE_SCOPE = 'search';
+
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
+function finalizeResponse(response: Response): Response {
+  response.headers.set('Netlify-Vary', 'query=q');
+  return response;
+}
 
 function sanitizeTitle(title: string): string {
   return sanitizeHtml(title, {
@@ -73,68 +82,77 @@ async function loadPostCategoryNames(postIds: number[]): Promise<Map<number, str
   return result;
 }
 
-export async function GET(request: NextRequest) {
-  const q = request.nextUrl.searchParams.get('q')?.trim();
+export async function GET(request: NextRequest): Promise<Response> {
+  try {
+    const q = request.nextUrl.searchParams.get('q')?.trim();
 
-  if (!q || q.length < 2) {
-    return NextResponse.json({ wiki: [], posts: [] });
+    if (!q || q.length < 2) {
+      return finalizeResponse(NextResponse.json({ wiki: [], posts: [] }));
+    }
+
+    const cachedResponse = await getCachedApiJsonResponse(request, CACHE_SCOPE, CACHE_CONTROL);
+    if (cachedResponse) {
+      return finalizeResponse(cachedResponse);
+    }
+
+    const db = getDb();
+    const pattern = `%${q}%`;
+
+    const [wikiRows, postRows] = await Promise.all([
+      db
+        .select({
+          id: wikiArticles.id,
+          slug: wikiArticles.slug,
+          title: wikiArticles.title,
+          modifiedAtGmt: wikiArticles.modifiedAtGmt
+        })
+        .from(wikiArticles)
+        .where(and(eq(wikiArticles.status, 'publish'), ilike(wikiArticles.title, pattern)))
+        .limit(6),
+      db
+        .select({
+          id: blogPosts.id,
+          slug: blogPosts.slug,
+          title: blogPosts.title,
+          publishedAtGmt: blogPosts.publishedAtGmt
+        })
+        .from(blogPosts)
+        .where(and(eq(blogPosts.status, 'publish'), ilike(blogPosts.title, pattern)))
+        .limit(6)
+    ]);
+
+    const [wikiCategories, postCategories] = await Promise.all([
+      loadWikiCategoryNames(wikiRows.map((row) => row.id)),
+      loadPostCategoryNames(postRows.map((row) => row.id))
+    ]);
+
+    const payload = {
+      wiki: wikiRows.map((row) => ({
+        id: row.id,
+        slug: row.slug,
+        title: sanitizeTitle(row.title),
+        modifiedAtGmt: row.modifiedAtGmt?.toISOString() ?? null,
+        category: wikiCategories.get(row.id) ?? null
+      })),
+      posts: postRows.map((row) => ({
+        id: row.id,
+        slug: row.slug,
+        title: sanitizeTitle(row.title),
+        publishedAtGmt: row.publishedAtGmt?.toISOString() ?? null,
+        category: postCategories.get(row.id) ?? null
+      }))
+    };
+
+    const response = jsonCached(payload, CACHE_CONTROL);
+    markApiCacheMiss(response);
+    await setCachedApiJsonResponse(request, CACHE_SCOPE, payload, CACHE_TTL_SECONDS);
+    return finalizeResponse(response);
+  } catch (error) {
+    log('error', 'search.unhandled_error', {
+      error: error instanceof Error ? error.message : String(error),
+      path: request.nextUrl.pathname
+    });
+
+    return finalizeResponse(internalError('Failed to search content'));
   }
-
-  const cachedResponse = await getCachedApiJsonResponse(request, CACHE_SCOPE, CACHE_CONTROL);
-  if (cachedResponse) {
-    return cachedResponse;
-  }
-
-  const db = getDb();
-  const pattern = `%${q}%`;
-
-  const [wikiRows, postRows] = await Promise.all([
-    db
-      .select({
-        id: wikiArticles.id,
-        slug: wikiArticles.slug,
-        title: wikiArticles.title,
-        modifiedAtGmt: wikiArticles.modifiedAtGmt
-      })
-      .from(wikiArticles)
-      .where(and(eq(wikiArticles.status, 'publish'), ilike(wikiArticles.title, pattern)))
-      .limit(6),
-    db
-      .select({
-        id: blogPosts.id,
-        slug: blogPosts.slug,
-        title: blogPosts.title,
-        publishedAtGmt: blogPosts.publishedAtGmt
-      })
-      .from(blogPosts)
-      .where(and(eq(blogPosts.status, 'publish'), ilike(blogPosts.title, pattern)))
-      .limit(6)
-  ]);
-
-  const [wikiCategories, postCategories] = await Promise.all([
-    loadWikiCategoryNames(wikiRows.map((row) => row.id)),
-    loadPostCategoryNames(postRows.map((row) => row.id))
-  ]);
-
-  const payload = {
-    wiki: wikiRows.map((row) => ({
-      id: row.id,
-      slug: row.slug,
-      title: sanitizeTitle(row.title),
-      modifiedAtGmt: row.modifiedAtGmt?.toISOString() ?? null,
-      category: wikiCategories.get(row.id) ?? null
-    })),
-    posts: postRows.map((row) => ({
-      id: row.id,
-      slug: row.slug,
-      title: sanitizeTitle(row.title),
-      publishedAtGmt: row.publishedAtGmt?.toISOString() ?? null,
-      category: postCategories.get(row.id) ?? null
-    }))
-  };
-
-  const response = jsonCached(payload, CACHE_CONTROL);
-  markApiCacheMiss(response);
-  await setCachedApiJsonResponse(request, CACHE_SCOPE, payload, CACHE_TTL_SECONDS);
-  return response;
 }
