@@ -1,0 +1,119 @@
+{
+  "plans": [
+    {
+      "id": "accelerated-swe-plan",
+      "title": "Accelerated SWE Plan",
+      "proposerName": "Abdulahi Hassen",
+      "proposerStatus": "BSc 4th Year",
+      "proposerLinkedIn": "https://www.linkedin.com/in/abdulahi-hassen/",
+      "planSource": [
+        {
+          "year": 1,
+          "term": "Fall",
+          "total_credit_hours": 16,
+          "courses": [
+            "CMPS 151",
+            "CHEM 101",
+            "CHEM 103",
+            "MATH 101",
+            "ENGL 202",
+            "HIST 121"
+          ]
+        },
+        {
+          "year": 1,
+          "term": "Spring",
+          "total_credit_hours": 17,
+          "courses": [
+            "CMPS 251",
+            "PHYS 191",
+            "PHYS 192",
+            "MATH 231",
+            "MATH 102",
+            "ENGL 203"
+          ]
+        },
+        {
+          "year": 2,
+          "term": "Fall",
+          "total_credit_hours": 18,
+          "courses": [
+            "CMPS 310",
+            "CMPS 205",
+            "CMPS 303",
+            "MAJOR_ELECTIVE_I",
+            "PHYS 193",
+            "PHYS 194"
+          ]
+        },
+        {
+          "year": 2,
+          "term": "Spring",
+          "total_credit_hours": 16,
+          "courses": [
+            "CMPS 323",
+            "CMPS 351",
+            "CMPE 263",
+            "GENG 200",
+            "CMPS 350"
+          ]
+        },
+        {
+          "year": 3,
+          "term": "Fall",
+          "total_credit_hours": 15,
+          "courses": [
+            "CMPS 200",
+            "CMPE 355",
+            "CMPS 380",
+            "CMPS 405",
+            "MAJOR_ELECTIVE_II"
+          ]
+        },
+        {
+          "year": 3,
+          "term": "Spring",
+          "total_credit_hours": 15,
+          "courses": [
+            "GENG 300",
+            "CORE_KNOWLEDGE_SKILLS_PKG",
+            "MAJOR_ELECTIVE_III",
+            "NAT_SCI_MATH_PKG",
+            "MAJOR_ELECTIVE_IV"
+          ]
+        },
+        {
+          "year": 4,
+          "term": "Fall",
+          "total_credit_hours": 11,
+          "courses": [
+            "CMPS 493",
+            "ARAB 100",
+            "CMPS 307",
+            "HUM_FINE_ARTS_PKG"
+          ]
+        },
+        {
+          "year": 4,
+          "term": "Spring",
+          "total_credit_hours": 12,
+          "courses": [
+            "CMPS 499",
+            "DAWA 111",
+            "MAGT 101",
+            "SOC_BEHAV_PKG"
+          ]
+        }
+      ],
+      "why": [
+        "This ordering pushes the core CS courses earlier so students spend the first half building strong technical fundamentals and the second half applying them to projects, internships, and market-facing work.",
+        "Software Engineering and Web Development are intentionally moved earlier because they shape practical engineering mindset and help students structure personal work sooner.",
+        "Electives are shifted later to preserve flexibility and avoid missing topics that may only be offered in specific terms.",
+        "General requirements are pushed back where possible to free higher-focus semesters for deeper technical and practical growth.",
+        "Challenging sequencing is viewed as a positive signal of discipline and follow-through, which compounds beyond university.",
+        "The plan is career-oriented: optimize early decisions around employability and iterate as new opportunities appear."
+      ],
+      "closing": "I think I'm decently pragmatic in thinking that, you are here, doing this bachelors degree, to make money in some way shape or form. So why not make that your goal from the very beginning? And actively plan for it and update your plan with new input as you learn more."
+    }
+  ]
+}
