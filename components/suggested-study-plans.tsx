@@ -29,6 +29,7 @@ interface ProposedStudyPlan {
   proposerStatus: string;
   proposerLinkedIn: string;
   planSource: StudyPlanTerm[];
+  major: string;
   why: string[];
   closing?: string;
 }
@@ -172,7 +173,7 @@ export function SuggestedStudyPlans({ terms, courses, connections }: SuggestedSt
                         </a>{' '}
                         · {plan.proposerStatus}
                       </p>
-                      <p className="mt-1 text-[11px] uppercase tracking-[0.12em] text-foreground/55">Opens in modal</p>
+                      <p className="mt-1 text-[11px] uppercase tracking-[0.12em] text-foreground/55">{plan.major}</p>
                     </li>
                   );
                 })}
