@@ -118,7 +118,7 @@ export function SuggestedStudyPlans({ terms, courses, connections }: SuggestedSt
         <button
           type="button"
           onClick={togglePlans}
-          className="panel-muted group flex w-full items-center justify-between border-x-0 px-6 py-7 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-[#2CAD9E]/45 hover:bg-card/80 hover:shadow-[0_14px_30px_rgba(44,173,158,0.14)]"
+          className="panel-muted group flex w-full items-center justify-between px-6 py-7 text-left transition-all duration-300 hover:border-[#2CAD9E]/45 hover:bg-card/80"
         >
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#78f0e2]">Suggested area</p>
@@ -151,12 +151,12 @@ export function SuggestedStudyPlans({ terms, courses, connections }: SuggestedSt
                     <li
                       key={plan.id}
                       style={{ animationDelay: `${index * 60}ms` }}
-                      className={`animate-in fade-in-0 slide-in-from-bottom-1 rounded-lg border px-4 py-3 transition-all duration-300 hover:-translate-y-0.5 hover:border-[#2CAD9E]/45 hover:shadow-[0_10px_24px_rgba(44,173,158,0.14)] ${isActive ? 'border-[#2CAD9E]/55 bg-[#2CAD9E]/10' : 'border-border/65 bg-card/55'
+                      onClick={() => openPlanModal(plan.id)}
+                      className={`animate-in fade-in-0 cursor-pointer slide-in-from-bottom-1 rounded-lg border px-4 py-3 transition-all duration-300 hover:border-[#2CAD9E]/45 hover:shadow-[0_10px_24px_rgba(44,173,158,0.05)] ${isActive ? 'border-[#2CAD9E]/55 bg-[#2CAD9E]/10' : 'border-border/65 bg-card/55'
                         }`}
                     >
                       <button
                         type="button"
-                        onClick={() => openPlanModal(plan.id)}
                         className="text-left text-base font-semibold text-foreground underline-offset-4 transition-colors hover:text-[#78f0e2] hover:underline"
                       >
                         {plan.title}
@@ -167,6 +167,7 @@ export function SuggestedStudyPlans({ terms, courses, connections }: SuggestedSt
                           href={plan.proposerLinkedIn}
                           target="_blank"
                           rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
                           className="font-medium text-[#78f0e2] underline-offset-4 hover:underline"
                         >
                           {plan.proposerName}
