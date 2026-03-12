@@ -185,9 +185,9 @@ export function SuggestedStudyPlans({ terms, courses, connections }: SuggestedSt
       </section>
 
       <Dialog open={isModalOpen && Boolean(selectedPlan)} onOpenChange={setIsModalOpen}>
-        <DialogContent className="h-[92vh] max-h-[92vh] w-[96vw] max-w-[1450px] overflow-scroll border-border/70 bg-card/95 p-0 backdrop-blur">
+        <DialogContent className="h-[92vh] max-h-[92vh] w-[min(90vw,1450px)] overflow-scroll border-border/70 bg-card/95 p-0 backdrop-blur">
           {selectedPlan && (
-            <div className="flex h-full flex-col">
+            <div className="flex h-full flex-col w-[min(85vw,1400px)] m-auto">
               <DialogHeader className="border-b border-border/70 bg-card/80 px-6 py-5">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#78f0e2]">Suggested study plan</p>
                 <DialogTitle className="mt-2 text-2xl tracking-tight sm:text-3xl">{selectedPlan.title}</DialogTitle>
