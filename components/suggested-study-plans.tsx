@@ -215,7 +215,7 @@ export function SuggestedStudyPlans({ terms, courses, connections }: SuggestedSt
                   <article className="panel-muted border-x-0 p-6 sm:p-8">
                     <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#78f0e2]">Why this order</p>
                     <h2 className="mt-3 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-                      Why we believe this is the study plan fresh CS students should take.
+                      Reasoning
                     </h2>
 
                     <ol className="mt-6 space-y-5">
