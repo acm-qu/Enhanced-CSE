@@ -16,7 +16,7 @@ const HomepageButtons = () => {
         <Link href="/posts">Browse Articles</Link>
       </Button>
       <Button asChild variant="outline" size={isMobile ? "sm" : "lg"} className="h-11 flex-1 md:flex-auto px-4 sm:max-w-[170px] rounded-md border-[#2CAD9E]/50 bg-transparent text-[#111217] hover:bg-[#2CAD9E]/12 hover:text-[#111217] dark:border-[#2CAD9E]/60 dark:text-white dark:hover:bg-[#2CAD9E]/15 dark:hover:text-white">
-        <Link href="/wiki?sort=modified_desc">Latest Updates</Link>
+        <Link href="/cs-study-plan">Courses Info</Link>
       </Button>
     </div>
   )
