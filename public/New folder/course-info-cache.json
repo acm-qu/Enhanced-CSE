@@ -1,0 +1,1346 @@
+{
+  "CMPS 151": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=151&subj_code_in=CMPS",
+    "heading": "CMPS 151 - Programming Concepts",
+    "courseId": "CMPS 151",
+    "title": "Programming Concepts",
+    "description": "Problem solving techniques such as pseudo-code of flowcharts, algorithmic thinking. Basic prigramming concepts including: variables, arithmetic and logical operations, input/ output, conditional statements, loops, arrays, functions, and file processing. The laboratory provides a practical programming experience.",
+    "creditHours": {
+      "min": 0,
+      "max": 3,
+      "text": "0.000 TO 3.000 Credit hours"
+    },
+    "lectureHours": "2.000 Lecture hours",
+    "labHours": "3.000 Lab hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lab",
+      "Lecture Computer Science & Engineering Department"
+    ],
+    "department": "Computer Science & Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate Must be enrolled in one of the following Colleges: Engineering Must be enrolled in one of the following Fields of Study (Major, Minor, or Concentration): Computer Engineering Computer Science General Engineering"
+  },
+  "CHEM 101": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=101&subj_code_in=CHEM",
+    "heading": "CHEM 101 - General Chemistry I",
+    "courseId": "CHEM 101",
+    "title": "General Chemistry I",
+    "description": "This course is digitally enriched, uses learner-centered teaching approach via inculcating critical thinking, problem solving and adaptive leaning strategies. . Topics covered include measurements, significant figures, atomic structure, nomenclature, stoichiometry and chemical calculations, chemical reactions, thermochemistry and enthalpy changes, quantum theory of the atom and electron configuration, chemical bonding and molecular geometry. The above topics are presented using experiential learning strategy in which the students will gain a strong foundation in chemical principles and their applications in different fields.",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "3.000 Lecture hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lecture Chemistry and Earth Sciences Department"
+    ],
+    "department": "Chemistry and Earth Sciences Department",
+    "courseAttributes": [
+      "Natural Sci/Math Pkg-COR13",
+      "Natural Sci/Math Pkg-COR11",
+      "Natural Sci/Math Pkg-COR21",
+      "Science Course (TUI)",
+      "Scie & Math for Hum Pkg-COR08"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate",
+    "prerequisites": "( (Foundation level ENGL C002 Minimum Grade of D or Total for Integrated Core 400) and (Foundation level ENGL R002 Minimum Grade of D or ESL Reading Skills 100) and (Foundation level ENGL W002 Minimum Grade of D or APL for Writing Workshop 225) ) or ( Total for Integrated Core 400 and ESL Reading Skills 100 and ESL Language Use 100) or TOEFL Internet-based Test 061 or Int Eng Lang Test Syst-IELTS 5.5 or ( English Placement IC 2 and English Placement Reading 2 and English Placement Writing 2) or Undergraduate level ENGL 250 Minimum Grade of D or Undergraduate level ENGL 201 Minimum Grade of D or Undergraduate level ENGL 111 Minimum Grade of D or Undergraduate level ENGL 202 Minimum Grade of D"
+  },
+  "CHEM 103": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=103&subj_code_in=CHEM",
+    "heading": "CHEM 103 - Experimental General Chemistry I",
+    "courseId": "CHEM 103",
+    "title": "Experimental General Chemistry I",
+    "description": "Safety in the Lab. Measurement of mass, volume and density. Identification of an unknown compound. Qualitative analysis of anions. Empirical formula of a compound. Thermal decomposition of hydrates. Stoichiometric determination. Acid-base and redox titrations. Enthalpy of reactions.",
+    "creditHours": {
+      "min": 1,
+      "max": 1,
+      "text": "1.000 Credit hours"
+    },
+    "lectureHours": "0.000 Lecture hours",
+    "labHours": "3.000 Lab hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lab Chemistry and Earth Sciences Department"
+    ],
+    "department": "Chemistry and Earth Sciences Department",
+    "courseAttributes": [
+      "Science Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate",
+    "prerequisites": "Undergraduate level CHEM 101 Minimum Grade of D"
+  },
+  "MATH 101": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=101&subj_code_in=MATH",
+    "heading": "MATH 101 - Calculus I",
+    "courseId": "MATH 101",
+    "title": "Calculus I",
+    "description": "Limits and continuity. Differentiation. Applications of derivatives. Integration. Inverse functions. Transcendental functions.",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "3.000 Lecture hours",
+    "labHours": "1.000 Lab hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lab",
+      "Lecture Maths",
+      "Stats and Physics Department"
+    ],
+    "department": "Maths, Stats and Physics Department",
+    "courseAttributes": [
+      "Natural Sci/Math Pkg-COR13",
+      "Natural Sci/Math Pkg-COR11",
+      "Natural Sci/Math Pkg-COR21",
+      "Science Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate",
+    "prerequisites": "(Undergraduate level MATH P100 Minimum Grade of D or Scholastic Aptitude Test-SAT 550 or Scholastic Aptitude SAT New 570 or American College Testing-ACT 24 or QU Placer Math 235 or Math Placement 2 or ( Elementary Algebra 082 and College Level Math 095) ) and ( ( (Foundation level ENGL C002 Minimum Grade of D or Total for Integrated Core 400) and (Foundation level ENGL R002 Minimum Grade of D or ESL Reading Skills 100) and (Foundation level ENGL W002 Minimum Grade of D or APL for Writing Workshop 225) ) or ( Total for Integrated Core 400 and ESL Reading Skills 100 and ESL Language Use 100) or TOEFL Internet-based Test 061 or Int Eng Lang Test Syst-IELTS 5.5 or Undergraduate level ENGL 250 Minimum Grade of D or Undergraduate level ENGL 201 Minimum Grade of D or Undergraduate level ENGL 111 Minimum Grade of D or Undergraduate level ENGL 202 Minimum Grade of D)"
+  },
+  "ENGL 202": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=202&subj_code_in=ENGL",
+    "heading": "ENGL 202 - English Language I Post Foundation",
+    "courseId": "ENGL 202",
+    "title": "English Language I Post Foundation",
+    "description": "This course is designed to help students improve their academic writing ability, and to ensure that they are prepared for the more advanced writing and research skills introduced in English 2. Emphasis is placed on understanding information from authentic texts. Academic vocabulary is taught through inference and context. A collaborative community environment is encouraged, whereby students learn to provide and accept relevant, focused feedback to and from their peers. Throughout the semester, students create and develop an e-portfolio.",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "3.000 Lecture hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lecture English For Foundation Department"
+    ],
+    "department": "English For Foundation Department",
+    "courseAttributes": [
+      "Common Pkg-COR08",
+      "Common Pkg-COR13",
+      "Common Pkg-COR11",
+      "Foundation Course (TUI)",
+      "Identity and Comm. Pkg-COR21"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate Foundation",
+    "prerequisites": "(Foundation level ENGL C002 Minimum Grade of D or Total for Integrated Core 400 or English Placement IC 2) and (Foundation level ENGL R002 Minimum Grade of D or ESL Reading Skills 100 or English Placement Reading 2) and (Foundation level ENGL W002 Minimum Grade of D or APL for Writing Workshop 225 or English Placement Writing 2) or Int Eng Lang Test Syst-IELTS 5.5 or TOEFL Internet-based Test 061 or ( Total for Integrated Core 400 and ESL Language Use 100 and ESL Reading Skills 100) or ( English Placement IC 2 and English Placement Reading 2 and English Placement Writing 2)"
+  },
+  "HIST 121": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=121&subj_code_in=HIST",
+    "heading": "HIST 121 - History of Qatar",
+    "courseId": "HIST 121",
+    "title": "History of Qatar",
+    "description": "This course aims to familiarize students with the history of Qatar through different historical eras, with particular emphasis on the emergence and development of the Emirate of Qatar during the Ottoman-British rivalry in the Gulf. The course also deals with social, economic, and political life during the pre and post-oil and Gas era. It examines the socio-political and economic developments that took place in the country until the end of the reign of His Highness Sheikh Hamad bin Khalifa Al Thani in 2013. Students are guided to gain more knowledge about national history through digital sources to provide an interactive learning environment centered around the student and employing self-learning skills. Additionally, students present ideas and design applied entrepreneurial projects by highlighting the national achievements accomplished in Qatar",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "3.000 Lecture hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lecture Humanities Department"
+    ],
+    "department": "Humanities Department",
+    "courseAttributes": [
+      "Art Course (TUI)",
+      "History Pkg-COR08",
+      "Identity and Comm. Pkg-COR21",
+      "Qatar&Gulf Hist Pkg-COR13",
+      "Qatar&Gulf Hist Pkg-COR11"
+    ]
+  },
+  "CMPS 251": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=251&subj_code_in=CMPS",
+    "heading": "CMPS 251 - Objec-Oriented Programming",
+    "courseId": "CMPS 251",
+    "title": "Objec-Oriented Programming",
+    "description": "Fundamentals of object-oriented programming, object-oriented design, apply object oriented concepts such as abstraction, encapsulation, composition, inheritance, polymorphism, and interfaces. Graphical user interface and event-driven programming; exception handling; additional object-oriented features. The laboratory provides practical object-oriented programming experience.",
+    "creditHours": {
+      "min": 0,
+      "max": 4,
+      "text": "0.000 TO 4.000 Credit hours"
+    },
+    "lectureHours": "3.000 Lecture hours",
+    "labHours": "3.000 Lab hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lab",
+      "Lecture Computer Science & Engineering Department"
+    ],
+    "department": "Computer Science & Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate",
+    "prerequisites": "Undergraduate level CMPS 151 Minimum Grade of D or Undergraduate level GENG 106 Minimum Grade of D"
+  },
+  "PHYS 191": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=191&subj_code_in=PHYS",
+    "heading": "PHYS 191 - General Physics For Engineering I",
+    "courseId": "PHYS 191",
+    "title": "General Physics For Engineering I",
+    "description": "•Physics and Measurements: Units and Physical Quantities- Vectors- Motion in One Dimension- Motion in Tow Dimension- Horizontal Motion- Vertical Motion- Projectile Motion- Kinematic Equations. •The Laws of Motion: Newton’s First Law- Newton’s Second Law- Some Applications of Newton’s Laws- Circular Motion and its Application. •Work and Energy: Kinetic Energy- Work Done by Constant Force- Work Energy Theorem- Potential Energy- Conservation of Energy- Quantization of Energy. •Linear Momentum and Collision: Linear Momentum- Impulse of Momentum- Collisions- Elastic and Inelastic Collision- The Center of Mass- Motion of a System of Particles. •Rotational Motion: Angular Position, Velocity and Acceleration- Rotational Kinematic Motion Equations- Angular and Linear Quantities- Rotational Kinetic Energy- Calculations of Moments of Inertia- Torque- Work, Power and Energy in Rotational Motion- Rolling Motion of a Rigid Objects. •Angular Momentum: Angular Moment- Angular Moment of a Rotational Objects – Conservation of Angular Moment- The Motion of Gyroscopes and Tops. •Elasticity: Elastic Properties of Solids- Type of Elasticity- The Center of Gravity and Static Equilibrium. •Universal Gravitation: Newton’s Law of Gravitation, Measuring the Gravitational Constant – Free-Fall Acceleration and the Gravitational Force- Kepler’s Law and Motion of Planets- Energy Considerations in Planetary and Satellite. •Waves: Definitions of Waves, Pulse on a Rope, Transverse Wave, Longitudinal Wave, Complex Waves, Earthquake Waves, Amplitude of Waves, Wavelength of Waves, Frequency of Waves. •Temperature: Definition of Temperature, Thermal Equilibrium, Zeroth Law of Thermodynamics, Celsius Scale, Kelvin Scale, Fahrenheit Scale, Thermal Expansion, The Mole, The Ideal Gas Law. •Heat: Definition of Heat, Heat Capacity, Specific Heat, Calorimetry, Phase Change, Energy Transfer Mechanism, First Law of Thermodynamics, Thermal Processes.",
+    "creditHours": {
+      "min": 0,
+      "max": 3,
+      "text": "0.000 TO 3.000 Credit hours"
+    },
+    "lectureHours": "0.000 TO 3.000 Lecture hours",
+    "labHours": "0.000 TO 3.000 Lab hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lab",
+      "Lecture Maths",
+      "Stats and Physics Department"
+    ],
+    "department": "Maths, Stats and Physics Department",
+    "courseAttributes": [
+      "Science Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate",
+    "prerequisites": "Undergraduate level MATH 101 Minimum Grade of D"
+  },
+  "PHYS 192": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=192&subj_code_in=PHYS",
+    "heading": "PHYS 192 - Experimental General Physics For Engineering I",
+    "courseId": "PHYS 192",
+    "title": "Experimental General Physics For Engineering I",
+    "description": "This is the Lab-based course covering the subject matter of PHYS 191.The course presents an introduction to the methods of experimental physics Emphasis is on developing student’s skills in experimental techniques, data analysis, and scientific reporting of lab work. During the course students execute a series of experiments on Kinematics of motion, kinetic and potential energy, Oscillatory motion, Thermal properties of matter, and Viscosity. The course includes computer based experiments Classical Mechanics.",
+    "creditHours": {
+      "min": 1,
+      "max": 1,
+      "text": "1.000 Credit hours"
+    },
+    "labHours": "3.000 Lab hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lab Maths",
+      "Stats and Physics Department"
+    ],
+    "department": "Maths, Stats and Physics Department",
+    "courseAttributes": [
+      "Science Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate",
+    "prerequisites": "Undergraduate level PHYS 191 Minimum Grade of D"
+  },
+  "MATH 231": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=231&subj_code_in=MATH",
+    "heading": "MATH 231 - Linear Algebra",
+    "courseId": "MATH 231",
+    "title": "Linear Algebra",
+    "description": "This course introduces the basic concepts of linear algebra, including elementary matrices, solutions of linear systems, vector spaces and subspaces, determinants, eigenvalues and eigenvectors, linear transformations.",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "3.000 Lecture hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lecture Maths",
+      "Stats and Physics Department"
+    ],
+    "department": "Maths, Stats and Physics Department",
+    "courseAttributes": [
+      "Science Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate",
+    "prerequisites": "Undergraduate level MATH 101 Minimum Grade of D"
+  },
+  "MATH 102": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=102&subj_code_in=MATH",
+    "heading": "MATH 102 - Calculus II",
+    "courseId": "MATH 102",
+    "title": "Calculus II",
+    "description": "Applications of the integral. Techniques of integration. Sequences and infinite series. Power series. Taylor series. Parametric equations and polar coordinates.",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "3.000 Lecture hours",
+    "labHours": "1.000 Lab hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lab",
+      "Lecture Maths",
+      "Stats and Physics Department"
+    ],
+    "department": "Maths, Stats and Physics Department",
+    "courseAttributes": [
+      "Science Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate",
+    "prerequisites": "Undergraduate level MATH 101 Minimum Grade of D"
+  },
+  "ENGL 203": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202120&crse_numb_in=203&subj_code_in=ENGL",
+    "heading": "ENGL 203 - English Language II Post Foundation",
+    "courseId": "ENGL 203",
+    "title": "English Language II Post Foundation",
+    "description": "English 203 is an advanced academic writing course which provides an opportunity for students to learn and practice the skills needed for a guided university-level academic paper related to their field of study. The course emphasizes the development of academic writing skills as well as the ability to read and think critically. Students will learn to use the library and appropriate online resources to find and evaluate sources to inform, develop and support their ideas in term paper writing.",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "3.000 Lecture hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lecture English For Foundation Department"
+    ],
+    "department": "English For Foundation Department",
+    "courseAttributes": [
+      "Common Pkg-COR08",
+      "Common Pkg-COR13",
+      "Common Pkg-COR11",
+      "Foundation Course (TUI)",
+      "Identity and Comm. Pkg-COR21"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate Foundation",
+    "prerequisites": "Undergraduate level ENGL 202 Minimum Grade of D"
+  },
+  "CMPS 200": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=200&subj_code_in=CMPS",
+    "heading": "CMPS 200 - Computer Ethics",
+    "courseId": "CMPS 200",
+    "title": "Computer Ethics",
+    "description": "Legal and ethical issues involving computer technology. Emphasis on ethical decision-making with application to case studies, professional codes of ethics, legal and ethical responsibilities of computer science professionals, accountability, whistleblowing, cybercrimes, ethical aspects of information security and privacy, and intellectual property rights.",
+    "creditHours": {
+      "min": 1,
+      "max": 1,
+      "text": "1.000 Credit hours"
+    },
+    "lectureHours": "1.000 Lecture hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lecture Computer Science & Engineering Department"
+    ],
+    "department": "Computer Science & Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate Must be enrolled in one of the following Colleges: Engineering Must be enrolled in one of the following Majors: Computer Science"
+  },
+  "CMPS 205": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=205&subj_code_in=CMPS",
+    "heading": "CMPS 205 - Discrete Structures for Computing",
+    "courseId": "CMPS 205",
+    "title": "Discrete Structures for Computing",
+    "description": "Introduction to the elements of mathematics applicable to the computing field. Logic and methods of proof; logic gates; Boolean algebra and minimization; set theory; relations and functions; sequences and sums; induction; numbering systems and combinatorics.",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "3.000 Lecture hours",
+    "labHours": "0.000 Lab hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lecture Computer Science & Engineering Department"
+    ],
+    "department": "Computer Science & Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate"
+  },
+  "CMPS 303": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=303&subj_code_in=CMPS",
+    "heading": "CMPS 303 - Data Structures",
+    "courseId": "CMPS 303",
+    "title": "Data Structures",
+    "description": "Fundamental data structures and algorithms and their efficient implementation and application to problem solving. Linked lists, stacks, queues, hash tables, trees and graphs. Develop and analyze iterative and recursive algorithms such as searching and storing algorithms. The laboratory provides practical experience with data structures and algorithms.",
+    "creditHours": {
+      "min": 0,
+      "max": 4,
+      "text": "0.000 TO 4.000 Credit hours"
+    },
+    "lectureHours": "0.000 TO 3.000 Lecture hours",
+    "labHours": "0.000 TO 3.000 Lab hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lab",
+      "Lecture Computer Science & Engineering Department"
+    ],
+    "department": "Computer Science & Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate",
+    "prerequisites": "Undergraduate level CMPS 251 Minimum Grade of D or Undergraduate level CMPE 265 Minimum Grade of D"
+  },
+  "PHYS 193": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=201910&crse_numb_in=193&subj_code_in=PHYS",
+    "heading": "PHYS 193 - General Physics For Engineering II",
+    "courseId": "PHYS 193",
+    "title": "General Physics For Engineering II",
+    "description": "Electrostatics: Electric charges, atomic structure, charging and induction, Coulomb’s law, the electric field and lines of force, Gauss’s law, potential and potential energy, capacitors, stored energy in capacitors. The Electric Current: Resistors, electromotive force. Magnetic Properties of Matter: Magnetic material, molecular theory of magnetism, magnetization and magnetic intensity, ferromagnetic, hysteresis. Magnetic Fields and Magnetic Forces: Magnetism and magnetic fields, magnetic flux, motion of charged particles in magnetic fields, force on a conductor, torques on current loops, Biot-Savart law, force between parallel conductors, Ampere’s law, motional electromotive force, Faraday’s law, Lenz’s law, self and mutual inductance, energy associated with inductors. Light: Nature of light, sources of light, light waves and their speed, the laws of reflection and refraction of light, absorption and illumination. Wave Phenomena: Interference, diffraction, polarization of light.",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "4.000 Lecture hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lecture Maths",
+      "Stats and Physics Department"
+    ],
+    "department": "Maths, Stats and Physics Department",
+    "courseAttributes": [
+      "Science Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate",
+    "prerequisites": "(Undergraduate level PHYS 191 Minimum Grade of D or Undergraduate level PHYS 180 Minimum Grade of D or Undergraduate level PHYS 181 Minimum Grade of D or Undergraduate level PHYS 101 Minimum Grade of D) and (Undergraduate level PHYS 192 Minimum Grade of D or Undergraduate level PHYS 103 Minimum Grade of D)"
+  },
+  "PHYS 194": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=194&subj_code_in=PHYS",
+    "heading": "PHYS 194 - Experimental General Physics for Engineering II",
+    "courseId": "PHYS 194",
+    "title": "Experimental General Physics for Engineering II",
+    "description": "This is the Lab course covering the subject matter of PHYS 193. The course presents an introduction to the methods of experimental physics. Emphasis is on experimental, data analysis, and written presentation skills of lab work. During the course students execute a series of experiments on electrostatic fields, Magnetic fields, Induction, DC circuits, and AC circuits.",
+    "creditHours": {
+      "min": 1,
+      "max": 1,
+      "text": "1.000 Credit hours"
+    },
+    "labHours": "3.000 Lab hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lab Maths",
+      "Stats and Physics Department"
+    ],
+    "department": "Maths, Stats and Physics Department",
+    "courseAttributes": [
+      "Science Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate",
+    "prerequisites": "Undergraduate level PHYS 193 Minimum Grade of D and Undergraduate level PHYS 192 Minimum Grade of D and Undergraduate level PHYS 191 Minimum Grade of D"
+  },
+  "ARAB 100": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=100&subj_code_in=ARAB",
+    "heading": "ARAB 100 - Arabic Language I",
+    "courseId": "ARAB 100",
+    "title": "Arabic Language I",
+    "description": "The course aims to provide students the important skills to communicate in Arabic; listening, speaking and reading, with attention to writing skills in relation to each. This is done through content that includes a variety of topics related to Contemporary Arabic, through deep analysis of linguistics and literary texts. The course has been introduced in an interactive learning environment based on: 1) student activities, 2) Developing student skills, 3) learning and collaborative methods, 4) Communication skills for self-expression and ideas in different ways, 5) Solving problems through critical thinking skills and creativity, and 6) The absorption of ideas in different contexts. The assessment process uses a variety of tools to measure the attainment of student learning outcomes.",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "3.000 Lecture hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lecture Arabic Department"
+    ],
+    "department": "Arabic Department",
+    "courseAttributes": [
+      "Art Course (TUI)",
+      "Common Pkg-COR08",
+      "Common Pkg-COR13",
+      "Common Pkg-COR11",
+      "Identity and Comm. Pkg-COR21"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate Foundation May not be enrolled in one of the following Majors: Arab Lang-Arabic Literature Arabic Language"
+  },
+  "CMPS 323": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=323&subj_code_in=CMPS",
+    "heading": "CMPS 323 - Design and Analysis of Algorithms",
+    "courseId": "CMPS 323",
+    "title": "Design and Analysis of Algorithms",
+    "description": "Analysis, design, and efficiency of algorithms illustrated by a comprehensive exposure to fundamental algorithms and various adopted techniques to solve different types of problems. Analysis of sorting, searching, and other algorithms; designing algorithms using techniques for problem-solving such as greedy methods, divide-and-conquer, backtracking, dynamic programming, and branch-and-bound techniques; complexity of algorithms.",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "3.000 Lecture hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lecture Computer Science & Engineering Department"
+    ],
+    "department": "Computer Science & Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate",
+    "prerequisites": "Undergraduate level CMPS 303 Minimum Grade of D and Undergraduate level CMPS 205 Minimum Grade of D"
+  },
+  "CMPS 351": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=351&subj_code_in=CMPS",
+    "heading": "CMPS 351 - Fundamentals of Database Systems",
+    "courseId": "CMPS 351",
+    "title": "Fundamentals of Database Systems",
+    "description": "Fundamentals database concepts, architectures, principles and techniques. Data modeling, relational database design and normalization. Query notations and languages including relational algebra, relational calculus and SQL. Database security. Hands-on Labs in modeling and implementing database applications using modern technologies.",
+    "creditHours": {
+      "min": 0,
+      "max": 4,
+      "text": "0.000 TO 4.000 Credit hours"
+    },
+    "lectureHours": "0.000 TO 3.000 Lecture hours",
+    "labHours": "0.000 TO 3.000 Lab hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lab",
+      "Lecture Computer Science & Engineering Department"
+    ],
+    "department": "Computer Science & Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate",
+    "prerequisites": "Undergraduate level CMPS 251 Minimum Grade of D"
+  },
+  "CMPE 263": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=263&subj_code_in=CMPE",
+    "heading": "CMPE 263 - Computer Architecture and Organization I",
+    "courseId": "CMPE 263",
+    "title": "Computer Architecture and Organization I",
+    "description": "Higher-level concepts in computer architecture. Data representation; classic components of a computer; performance measures for computers; CPU types, design, organization, instruction-level description; processor programming, register transfer languages, addressing modes, assembly language; main and cache memory, caching techniques.",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "3.000 Lecture hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lecture Computer Science & Engineering Department"
+    ],
+    "department": "Computer Science & Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate",
+    "prerequisites": "Undergraduate level CMPS 205 Minimum Grade of D and (Undergraduate level CMPS 151 Minimum Grade of D or Undergraduate level GENG 106 Minimum Grade of D)"
+  },
+  "GENG 200": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202310&crse_numb_in=200&subj_code_in=GENG",
+    "heading": "GENG 200 - Probability and Statistics for Engineers",
+    "courseId": "GENG 200",
+    "title": "Probability and Statistics for Engineers",
+    "description": "Classification of Data. Graphical representation. Arithmetical description. Probability theory, probability of an event and composite events. Addition rule and multiplication rule, independent events. Counting techniques. Random variables and probability distributions. Expected values. Continuous and discrete random variables. Normal distribution. Binomial distribution. Poisson distribution. Joint and marginal probability distributions. Independence of random variables. Covariance and correlation. Random sampling. Unbiased estimates. Statistical intervals and test of hypothesis for a single sample.",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "3.000 Lecture hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lecture General Engineering Department"
+    ],
+    "department": "General Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate",
+    "prerequisites": "Undergraduate level MATH 102 Minimum Grade of D"
+  },
+  "CMPS 310": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=310&subj_code_in=CMPS",
+    "heading": "CMPS 310 - Software Engineering",
+    "courseId": "CMPS 310",
+    "title": "Software Engineering",
+    "description": "Fundamental concepts, principles and techniques for cost-effective engineering of quality software. Software process models, requirements specification, domain analysis, software design and modeling of structural and behavioral aspects of a software system using a common modeling language, implementation, testing and software project management. The laboratory provides practical experience with software engineering and supporting tools.",
+    "creditHours": {
+      "min": 4,
+      "max": 4,
+      "text": "4.000 Credit hours"
+    },
+    "lectureHours": "3.000 Lecture hours",
+    "labHours": "3.000 Lab hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lab",
+      "Lecture Computer Science & Engineering Department"
+    ],
+    "department": "Computer Science & Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "prerequisites": "Undergraduate level CMPS 251 Minimum Grade of D"
+  },
+  "CMPE 355": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=355&subj_code_in=CMPE",
+    "heading": "CMPE 355 - Data Communi & Comp.Network I",
+    "courseId": "CMPE 355",
+    "title": "Data Communi & Comp.Network I",
+    "description": "Concepts and principles underlying data communication networks including TCP/IP protocol suite and OSI model, digital and analog conversions, multiplexing and spread spectrum. Transmission impairments, Ethernet, network layer protocols, IP addressing and submitting, UDP and TCP transport protocols, and application layer protocols. The laboratory provides hands-on experience in designing, simulating, configuring, and troubleshooting small-to-medium size networks",
+    "creditHours": {
+      "min": 0,
+      "max": 4,
+      "text": "0.000 TO 4.000 Credit hours"
+    },
+    "lectureHours": "0.000 TO 3.000 Lecture hours",
+    "labHours": "0.000 TO 3.000 Lab hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lab",
+      "Lecture Computer Science & Engineering Department"
+    ],
+    "department": "Computer Science & Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate Must be enrolled in one of the following Colleges: Engineering Must be enrolled in one of the following Majors: Computer Engineering Computer Science",
+    "prerequisites": "Undergraduate level CMPS 303 Minimum Grade of D and Undergraduate level CMPE 263 Minimum Grade of D"
+  },
+  "CMPS 380": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=380&subj_code_in=CMPS",
+    "heading": "CMPS 380 - Cybersecurity Fundamentals",
+    "courseId": "CMPS 380",
+    "title": "Cybersecurity Fundamentals",
+    "description": "Cybersecurity fundamentals; security goals and terminology; cybersecurity threats and risks; basics of cryptography; authentication; access control; security in networks; privacy and data protection; security standards and policies; legal and ethical issues in cybersecurity.",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "3.000 Lecture hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lecture Computer Science & Engineering Department"
+    ],
+    "department": "Computer Science & Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate",
+    "prerequisites": "Undergraduate level CMPS 303 Minimum Grade of D"
+  },
+  "GENG 300": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=300&subj_code_in=GENG",
+    "heading": "GENG 300 - Numerical Methods",
+    "courseId": "GENG 300",
+    "title": "Numerical Methods",
+    "description": "The numerical methods course involves solving engineering problems drawn from all fields of engineering. The numerical methods include: error analysis, roots of nonlinear algebraic equations, solution of linear and transcendental simultaneous equations, matrix and vector manipulation, curve fitting and interpolation, numerical integration and differentiation, solution of ordinary and partial differential equations.",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "2.000 Lecture hours",
+    "labHours": "3.000 Lab hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lab",
+      "Lecture",
+      "Lecture/Lab General Engineering Department"
+    ],
+    "department": "General Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate",
+    "prerequisites": "(Undergraduate level GENG 106 Minimum Grade of D or Undergraduate level CMPS 151 Minimum Grade of D) and (Undergraduate level MATH 211 Minimum Grade of D or (Undergraduate level MATH 102 Minimum Grade of D and Undergraduate level MATH 231 Minimum Grade of D) )"
+  },
+  "CMPS 405": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=405&subj_code_in=CMPS",
+    "heading": "CMPS 405 - Operating Systems",
+    "courseId": "CMPS 405",
+    "title": "Operating Systems",
+    "description": "Fundamental concepts of operating system design and implementation. Operating system components, concurrency, process management and inter-process communication, process synchronization, deadlock, scheduling algorithms, memory management, input/output and file systems, protection and security. The laboratory provides practical experience on major operating system concepts.",
+    "creditHours": {
+      "min": 0,
+      "max": 4,
+      "text": "0.000 TO 4.000 Credit hours"
+    },
+    "lectureHours": "0.000 TO 3.000 Lecture hours",
+    "labHours": "0.000 TO 3.000 Lab hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lab",
+      "Lecture Computer Science & Engineering Department"
+    ],
+    "department": "Computer Science & Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate",
+    "prerequisites": "Undergraduate level CMPS 303 Minimum Grade of D and Undergraduate level CMPE 263 Minimum Grade of D"
+  },
+  "CMPS 350": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=350&subj_code_in=CMPS",
+    "heading": "CMPS 350 - Web development Fundamentals",
+    "courseId": "CMPS 350",
+    "title": "Web development Fundamentals",
+    "description": "Concepts, protocols and enabling technologies related to the development of modern web applications. Fundamentals of designing and developing dynamic and interactive web applications using HTML and related standards, scripting languages, client-side and server-side programming. Hands-on Lab to design and develop Web applications.",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "2.000 Lecture hours",
+    "labHours": "3.000 Lab hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lab",
+      "Lecture Computer Science & Engineering Department"
+    ],
+    "department": "Computer Science & Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate",
+    "prerequisites": "Undergraduate level CMPS 251 Minimum Grade of D"
+  },
+  "DAWA 111": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=201920&crse_numb_in=111&subj_code_in=DAWA",
+    "heading": "DAWA 111 - Islamic Culture",
+    "courseId": "DAWA 111",
+    "title": "Islamic Culture",
+    "description": "This course seeks to strengthen the unifying identity to which all students subscribe, regardless of their academic specialties. The Course adopts a particular educational philosophy that suits its particular nature. All topics are arranged in a unifying, integrative structure that begins with defining key concepts related to culture, science and civilization. Following these preliminary clarifications, an intensive analytical material on issues related to the message of Islam, creation of man, role of the Islamic ummah, and the relationship with the other, will be presented.",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "3.000 Lecture hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lecture Dawa and Islamic Culture Department"
+    ],
+    "department": "Dawa and Islamic Culture Department",
+    "courseAttributes": [
+      "Common Pkg-COR08",
+      "Common Pkg-COR13",
+      "Common Pkg-COR11",
+      "Shariaa Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate Foundation"
+  },
+  "CMPS 493": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=493&subj_code_in=CMPS",
+    "heading": "CMPS 493 - Senior Project I",
+    "courseId": "CMPS 493",
+    "title": "Senior Project I",
+    "description": "The first phase of the computer science capstone project that involves number of students tackling different aspects of applied-research and/or development project requiring significant effort for planning and completion. Team members experience different roles and gain range of diverse technical skills in all phases of the project development. This first part focuses on problem definition, requirements gathering and analysis, defining a high level architecture of the proposed solution, preparation of a project plan for implementing and completing the project, compiling all in a well-formulated interim report and orally presenting it to the examining committee.",
+    "creditHours": {
+      "min": 1,
+      "max": 3,
+      "text": "1.000 TO 3.000 Credit hours"
+    },
+    "lectureHours": "2.000 Lecture hours",
+    "labHours": "4.000 Lab hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lecture",
+      "Senior Project Computer Science & Engineering Department"
+    ],
+    "department": "Computer Science & Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate",
+    "prerequisites": "Undergraduate level CMPS 310 Minimum Grade of D"
+  },
+  "CMPS 307": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=307&subj_code_in=CMPS",
+    "heading": "CMPS 307 - Intro. to Proj. Manag. & Entr.",
+    "courseId": "CMPS 307",
+    "title": "Intro. to Proj. Manag. & Entr.",
+    "description": "Introduction to entrepreneurship, and elements of business management with emphasis on managing software and information and communication technologies projects. Concepts of project management; project plan development, progress tracking, staffing, leadership, conflict resolution; organization, costs, risks, control; entrepreneurship, basics of owning and operating a business, business plan development for starting and financing a small business.",
+    "creditHours": {
+      "min": 2,
+      "max": 2,
+      "text": "2.000 Credit hours"
+    },
+    "lectureHours": "2.000 Lecture hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lecture Computer Science & Engineering Department"
+    ],
+    "department": "Computer Science & Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Classifications: Junior 60-74 Earned 105-119 cr Senior Earned 90-104 cr Junior Junior 75-89"
+  },
+  "CMPS 499": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=499&subj_code_in=CMPS",
+    "heading": "CMPS 499 - Senior Project II",
+    "courseId": "CMPS 499",
+    "title": "Senior Project II",
+    "description": "Continuation of the capstone senior project started in CMPS 493 course. It includes detailed design, implementation and testing following a systematic development process while incorporating appropriate design and development principles and standards. This culminates in producing a working solution and a formal final report, and presenting the project achievements including a demo.",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "3.000 Lecture hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Senior Project Computer Science & Engineering Department"
+    ],
+    "department": "Computer Science & Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate",
+    "prerequisites": "Undergraduate level CMPS 493 Minimum Grade of D"
+  },
+  "MAGT 101": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202110&crse_numb_in=101&subj_code_in=MAGT",
+    "heading": "MAGT 101 - Principles of Management",
+    "courseId": "MAGT 101",
+    "title": "Principles of Management",
+    "description": "This course focuses on the fundamental concepts of management including its characteristics, evolution and importance. Topics include the functions performed by managers, such as planning, organizing, directing and controlling. Current issues facing managers will also be discussed to provide students with the necessary skills they can build upon to succeed as future managers.",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "3.000 Lecture hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lecture Management and Marketing Department"
+    ],
+    "department": "Management and Marketing Department",
+    "courseAttributes": [
+      "Business Course (TUI)",
+      "Communication Skills Pkg-COR08",
+      "General Skills Pkg-COR13",
+      "General Skills Pkg-COR11",
+      "Knowledge and Skill Pkg-COR21"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate Foundation",
+    "prerequisites": "Undergraduate level ARAB 100 Minimum Grade of D or Undergraduate level ENGL 202 Minimum Grade of D or TOEFL Internet-based Test 061 or Int Eng Lang Test Syst-IELTS 5.5 or ( Total for Integrated Core 400 and ESL Reading Skills 100 and ESL Language Use 100)"
+  },
+  "CMPS 360": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=360&subj_code_in=CMPS",
+    "heading": "CMPS 360 - Data Science Fundamentals",
+    "courseId": "CMPS 360",
+    "title": "Data Science Fundamentals",
+    "description": "Fundamental data science algorithms, methods and tools for analyzing data to effectively solve a broad set of data analysis problems and derive valuable insights from data. Including data collection and integration, data cleaning, various analytical approaches including exploratory data analysis, prediction models, statistical analytics, and data visualization. Acquiring a working knowledge of data science through hands-on projects on real datasets using common Data Science application development tools.",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "3.000 Lecture hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lecture Computer Science & Engineering Department"
+    ],
+    "department": "Computer Science & Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate",
+    "prerequisites": "Undergraduate level CMPS 351 Minimum Grade of D"
+  },
+  "CMPS 403": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=403&subj_code_in=CMPS",
+    "heading": "CMPS 403 - Artificial Intelligence",
+    "courseId": "CMPS 403",
+    "title": "Artificial Intelligence",
+    "description": "Fundamental concepts of artificial intelligence, logic and knowledge representation, associated algorithms and techniques supported with logic programming applications. Reasons for logic and knowledge representation by horn clauses; logic and propositional equivalencies, predicates and quantifiers; matching; backtracking, forward and backward chaining; logic programming applications. Lab session: Hands-on experience with a logic programming language, techniques, and algorithms applied to artificial intelligence applications.",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "3.000 Lecture hours",
+    "labHours": "2.000 Lab hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lab",
+      "Lecture Computer Science & Engineering Department"
+    ],
+    "department": "Computer Science & Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate",
+    "prerequisites": "Undergraduate level CMPS 303 Minimum Grade of D"
+  },
+  "CMPS 453": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=453&subj_code_in=CMPS",
+    "heading": "CMPS 453 - Data mining",
+    "courseId": "CMPS 453",
+    "title": "Data mining",
+    "description": "Principles concepts of data mining techniques and their practical application in pattern recognition and knowledge discovery from large data sets. Fundamental strategies and methodologies of various classification, clustering, association rules extraction algorithms applied on tabular data sets. Hands-on experience with a variety of different data mining tools.",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "3.000 Lecture hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lecture Computer Science & Engineering Department"
+    ],
+    "department": "Computer Science & Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "prerequisites": "Undergraduate level GENG 200 Minimum Grade of D and Undergraduate level CMPS 351 Minimum Grade of D"
+  },
+  "CMPS 460": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=460&subj_code_in=CMPS",
+    "heading": "CMPS 460 - Machine Learning",
+    "courseId": "CMPS 460",
+    "title": "Machine Learning",
+    "description": "Fundamental principles of machine learning, supervised learning, unsupervised learning, instance-based learning, decision tree induction, Bayesian inference, support vector machines, multi-layer neural networks, and performance evaluation of machine learning algorithms. Hands-on experience with implementing machine learning applications.",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "3.000 Lecture hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lecture Computer Science & Engineering Department"
+    ],
+    "department": "Computer Science & Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate",
+    "prerequisites": "Undergraduate level GENG 200 Minimum Grade of D and Undergraduate level CMPS 303 Minimum Grade of D"
+  },
+  "CMPE 480": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=480&subj_code_in=CMPE",
+    "heading": "CMPE 480 - Computer Vision",
+    "courseId": "CMPE 480",
+    "title": "Computer Vision",
+    "description": "Introduction to the basic concepts and techniques of computer vision focusing on reconstruction of 3D models from 2D still images and video. Image formation, segmentation; camera calibration, motion and object recognition; use of image processing tools.",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "2.000 Lecture hours",
+    "labHours": "3.000 Lab hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lab",
+      "Lecture Computer Science & Engineering Department"
+    ],
+    "department": "Computer Science & Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate",
+    "prerequisites": "Undergraduate level CMPS 251 Minimum Grade of D"
+  },
+  "CMPS 373": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=373&subj_code_in=CMPS",
+    "heading": "CMPS 373 - Computer Graphics",
+    "courseId": "CMPS 373",
+    "title": "Computer Graphics",
+    "description": "Fundamental concepts of computer graphics illustrated with programming applications using a graphics package or tool. Graphics systems types, architectures and graphical objects; applications of computer graphics; graphics programmer’s interface; designing and rendering 2D and 3D graphical objects (geometric transformations, viewing, shading, discrete techniques, buffers and mappings).",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "3.000 Lecture hours",
+    "labHours": "2.000 Lab hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lab",
+      "Lecture Computer Science & Engineering Department"
+    ],
+    "department": "Computer Science & Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate",
+    "prerequisites": "Undergraduate level CMPS 303 Minimum Grade of D"
+  },
+  "CMPS 433": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=433&subj_code_in=CMPS",
+    "heading": "CMPS 433 - Multimedia Systems",
+    "courseId": "CMPS 433",
+    "title": "Multimedia Systems",
+    "description": "Learn of analog and digital representation of information and the concept of digitization. Study about various types of multimedia objects and their",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "3.000 Lecture hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lecture Computer Science & Engineering Department"
+    ],
+    "department": "Computer Science & Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate",
+    "prerequisites": "Undergraduate level CMPS 350 Minimum Grade of D"
+  },
+  "CMPS 434": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=434&subj_code_in=CMPS",
+    "heading": "CMPS 434 - Game Design and Development",
+    "courseId": "CMPS 434",
+    "title": "Game Design and Development",
+    "description": "Concepts, principles, design strategies and tools to design and develop digital games with interactivity, animation, sound and visual effects. Introduce and practice the game design process including core mechanics, storytelling, game play, game balancing and level design. In-class hands-on tutorials on game implementation fundamentals using a standard game engine, including creating game characters and objects, 3D modeling and animation, use of physics, interaction and interface design, basics of lighting, creating visual effects.",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "3.000 Lecture hours",
+    "labHours": "2.000 Lab hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lecture/Lab Computer Science & Engineering Department"
+    ],
+    "department": "Computer Science & Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate",
+    "prerequisites": "Undergraduate level CMPS 251 Minimum Grade of D"
+  },
+  "CMPS 312": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=312&subj_code_in=CMPS",
+    "heading": "CMPS 312 - Mobile Application Development",
+    "courseId": "CMPS 312",
+    "title": "Mobile Application Development",
+    "description": "Concepts, principles, design strategies, tools and frameworks to design and develop mobile applications on modern mobile platforms that make use of key mobile sensors and system services and connect to online data sources and Web services. Hands on experience in designing and constructing mobile apps using a mainstream development platform and framework such as Android or iOS.",
+    "creditHours": {
+      "min": 0,
+      "max": 3,
+      "text": "0.000 TO 3.000 Credit hours"
+    },
+    "lectureHours": "0.000 TO 2.000 Lecture hours",
+    "labHours": "0.000 TO 3.000 Lab hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lab",
+      "Lecture Computer Science & Engineering Department"
+    ],
+    "department": "Computer Science & Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate",
+    "prerequisites": "Undergraduate level CMPS 251 Minimum Grade of D"
+  },
+  "CMPS 356": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=356&subj_code_in=CMPS",
+    "heading": "CMPS 356 - Web Applications Design and Development",
+    "courseId": "CMPS 356",
+    "title": "Web Applications Design and Development",
+    "description": "This course focuses on the principles, architectures, and technologies for designing and developing modern web applications using client-side and server-side frameworks, web access to data sources and cloud services, development and integration of web services. It also includes Hands-on lab using latest web development frameworks and tools to design, implement, test, deploy, scale, and secure web applications.",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "2.000 Lecture hours",
+    "labHours": "3.000 Lab hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lab",
+      "Lecture Computer Science & Engineering Department"
+    ],
+    "department": "Computer Science & Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate",
+    "prerequisites": "Undergraduate level CMPS 350 Minimum Grade of D"
+  },
+  "CMPS 451": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=451&subj_code_in=CMPS",
+    "heading": "CMPS 451 - Database Management Systems",
+    "courseId": "CMPS 451",
+    "title": "Database Management Systems",
+    "description": "Database Management Systems features including hashing, indexing and physical database design. Query processing and optimization. Transaction management, concurrency control, and recovery. Non-relational, distributed, and big data management. Database programming techniques.",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "3.000 Lecture hours",
+    "labHours": "2.000 Lab hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lab",
+      "Lecture Computer Science & Engineering Department"
+    ],
+    "department": "Computer Science & Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate",
+    "prerequisites": "Undergraduate level CMPS 351 Minimum Grade of D"
+  },
+  "CMPS 466": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=466&subj_code_in=CMPS",
+    "heading": "CMPS 466 - Information Retrieval",
+    "courseId": "CMPS 466",
+    "title": "Information Retrieval",
+    "description": "Fundamental aspects of classical information retrieval techniques, strategies, and future trends. Web information storage and presentation schemes; web- based and online retrieval systems; search strategies; indexing, evaluation, ranking of search results; search engines, web crawling, meta-searchers; centralized and distributed architectures; semi-structured data models; merging technology; query languages for semi-structured data.",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "3.000 Lecture hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lecture Computer Science & Engineering Department"
+    ],
+    "department": "Computer Science & Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate",
+    "prerequisites": "Undergraduate level CMPS 303 Minimum Grade of D"
+  },
+  "CMPS 381": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=381&subj_code_in=CMPS",
+    "heading": "CMPS 381 - Applied Cryptography",
+    "courseId": "CMPS 381",
+    "title": "Applied Cryptography",
+    "description": "Introduction to cryptography, its mathematical foundations, and its applications to secure data and systems. Cryptographic primitives such as symmetric encryption, asymmetric encryption, hashing, message authentication codes, digital signatures and cryptographic protocols. Modern applications of cryptography.",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "3.000 Lecture hours",
+    "labHours": "2.000 Lab hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lab",
+      "Lecture Computer Science & Engineering Department"
+    ],
+    "department": "Computer Science & Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate Must be enrolled in one of the following Colleges: Engineering",
+    "prerequisites": "Undergraduate level CMPS 380 Minimum Grade of D or Undergraduate level CMPS 385 Minimum Grade of D"
+  },
+  "CMPS 465": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=465&subj_code_in=CMPS",
+    "heading": "CMPS 465 - Parallel Computing",
+    "courseId": "CMPS 465",
+    "title": "Parallel Computing",
+    "description": "Fundamental concepts and practical aspects underlying the design and engineering of modern parallel computing systems including system models and enabling technologies, parallel architectures, parallelization strategies, parallel algorithms and their applications, optimization and performance, implementation frameworks and languages, programming models and design principles for parallel and distributed computing. Students acquire hands-on experience in the design and development of parallel and distributed computing systems.",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "3.000 Lecture hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lecture Computer Science & Engineering Department"
+    ],
+    "department": "Computer Science & Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate",
+    "prerequisites": "Undergraduate level CMPS 405 Minimum Grade of D"
+  },
+  "CMPE 488": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=488&subj_code_in=CMPE",
+    "heading": "CMPE 488 - Wireless Network &Applications",
+    "courseId": "CMPE 488",
+    "title": "Wireless Network &Applications",
+    "description": "Fundamentals of radio transmission including an overview of wireless networks, cellular networks, wireless LANs, Bluetooth, satellite systems, WiMAX, and LTE. Multiplexing, circuit and packet switching; fundamentals of evolution, medium access control, network architecture, protocols; mobile applications, handset platforms, service delivery platforms.",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "3.000 Lecture hours",
+    "labHours": "2.000 Lab hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lab",
+      "Lecture Computer Science & Engineering Department"
+    ],
+    "department": "Computer Science & Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "prerequisites": "Undergraduate level CMPE 455 Minimum Grade of D or Undergraduate level CMPE 355 Minimum Grade of D"
+  },
+  "CMPS 393": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=393&subj_code_in=CMPS",
+    "heading": "CMPS 393 - Modeling and Simulation",
+    "courseId": "CMPS 393",
+    "title": "Modeling and Simulation",
+    "description": "Fundamentals of studying systems by modeling and simulation focusing on developing discrete-event simulations. Reasons for simulation, basic simulation modeling; systems modeling; developing discrete-event simulations; queuing models; random number generators, generating random varieties; analysis of simulation data; verification and validation of simulation models",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "3.000 Lecture hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lecture Computer Science & Engineering Department"
+    ],
+    "department": "Computer Science & Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate",
+    "prerequisites": "Undergraduate level CMPS 303 Minimum Grade of D and Undergraduate level GENG 200 Minimum Grade of D"
+  },
+  "CMPS 399": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=399&subj_code_in=CMPS",
+    "heading": "CMPS 399 - Practical Training",
+    "courseId": "CMPS 399",
+    "title": "Practical Training",
+    "description": "Supervised eight week training period at an institution (Business, industrial, government), intended to provide students with hands-on experience at the workplace. Evaluation is based on: Daily performance, supervisor’s input, student’s report, and a short presentation.",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "3.000 Lecture hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Internship Computer Science & Engineering Department"
+    ],
+    "department": "Computer Science & Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ]
+  },
+  "CMPS 497": {
+    "sourceUrl": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=497&subj_code_in=CMPS",
+    "heading": "CMPS 497 - Special Topics in Computing",
+    "courseId": "CMPS 497",
+    "title": "Special Topics in Computing",
+    "description": "Selected topics in computing concerning content not normally covered in the formal curriculum. Topics vary",
+    "creditHours": {
+      "min": 3,
+      "max": 3,
+      "text": "3.000 Credit hours"
+    },
+    "lectureHours": "3.000 Lecture hours",
+    "levels": [
+      "Undergraduate"
+    ],
+    "scheduleTypes": [
+      "Lecture Computer Science & Engineering Department"
+    ],
+    "department": "Computer Science & Engineering Department",
+    "courseAttributes": [
+      "Engineering Course (TUI)"
+    ],
+    "restrictions": "Must be enrolled in one of the following Levels: Undergraduate"
+  }
+}
