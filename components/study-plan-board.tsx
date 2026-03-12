@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { useEffect, useMemo, useRef, useState }from 'react';
 
 import type { Connection, CourseData, StudyPlanTerm } from '@/app/cs-study-plan/page';
 import { CourseInfoDialog } from '@/components/course-info-dialog';
@@ -101,8 +102,25 @@ function LegendSwatch({ cls, label }: { cls: string; label: string }) {
 function CourseTooltip({ courseId, course, x, y }: { courseId: string; course: CourseData; x: number; y: number }) {
   const prereqText = course.requisites?.prerequisites?.text;
   const coreqText = course.requisites?.corequisites?.text;
-  const safeX = Math.min(x + 14, (typeof window !== 'undefined' ? window.innerWidth : 1200) - 272);
-  const safeY = Math.min(y + 14, (typeof window !== 'undefined' ? window.innerHeight : 800) - 220);
+  const TOOLTIP_WIDTH = 272;
+  const TOOLTIP_HEIGHT = 220;
+  const CURSOR_OFFSET = 12;
+
+  const viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 1200;
+  const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
+
+  let safeX = x + CURSOR_OFFSET;
+  let safeY = y + CURSOR_OFFSET;
+
+  // Adjust if tooltip would go off-screen right
+  if (safeX + TOOLTIP_WIDTH > viewportWidth) {
+    safeX = x - TOOLTIP_WIDTH - CURSOR_OFFSET;
+  }
+
+  // Adjust if tooltip would go off-screen bottom
+  if (safeY + TOOLTIP_HEIGHT > viewportHeight) {
+    safeY = y - TOOLTIP_HEIGHT - CURSOR_OFFSET;
+  }
   return (
     <div
       style={{ position: 'fixed', left: safeX, top: safeY, zIndex: 9999 }}
@@ -426,9 +444,11 @@ export function StudyPlanBoard({ terms, courses, connections }: Props) {
         </div>
       </div>
 
-      {tooltip && courses[tooltip.id] && (
-        <CourseTooltip courseId={tooltip.id} course={courses[tooltip.id]} x={tooltip.x} y={tooltip.y} />
-      )}
+      {tooltip && courses[tooltip.id] &&
+        createPortal(
+          <CourseTooltip courseId={tooltip.id} course={courses[tooltip.id]} x={tooltip.x} y={tooltip.y} />,
+          document.body
+        )}
 
       <CourseInfoDialog
         open={Boolean(selectedCourse)}

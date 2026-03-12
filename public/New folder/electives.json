@@ -1,0 +1,186 @@
+{
+  "specializations": {
+    "AI & Data Science": {
+      "description": "Data-driven intelligence, prediction, search, and perception."
+    },
+    "Game Development & Graphics": {
+      "description": "Visual systems, interactive media, and game production."
+    },
+    "Software Engineering & Product": {
+      "description": "Application design and implementation for modern products."
+    },
+    "Databases & Information Systems": {
+      "description": "Storage, retrieval, and organization of large information systems."
+    },
+    "Systems, Security & Networks": {
+      "description": "Secure, scalable, and high-performance computing infrastructure."
+    },
+    "Simulation & Professional Practice": {
+      "description": "Applied modeling, industry exposure, and advanced topics."
+    }
+  },
+  "electives": [
+    {
+      "id": "CMPS 360",
+      "title": "Data Science Fundamentals",
+      "specialization": "AI & Data Science",
+      "sources": {
+        "catalog_term": "202410",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=360&subj_code_in=CMPS"
+      }
+    },
+    {
+      "id": "CMPS 403",
+      "title": "Artificial Intelligence",
+      "specialization": "AI & Data Science",
+      "sources": {
+        "catalog_term": "202410",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=403&subj_code_in=CMPS"
+      }
+    },
+    {
+      "id": "CMPS 453",
+      "title": "Data Mining",
+      "specialization": "AI & Data Science",
+      "sources": {
+        "catalog_term": "202410",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=453&subj_code_in=CMPS"
+      }
+    },
+    {
+      "id": "CMPS 460",
+      "title": "Machine Learning",
+      "specialization": "AI & Data Science",
+      "sources": {
+        "catalog_term": "202410",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=460&subj_code_in=CMPS"
+      }
+    },
+    {
+      "id": "CMPE 480",
+      "title": "Computer Vision",
+      "specialization": "AI & Data Science",
+      "sources": {
+        "catalog_term": "202410",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=480&subj_code_in=CMPE"
+      }
+    },
+    {
+      "id": "CMPS 373",
+      "title": "Computer Graphics",
+      "specialization": "Game Development & Graphics",
+      "sources": {
+        "catalog_term": "202410",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=373&subj_code_in=CMPS"
+      }
+    },
+    {
+      "id": "CMPS 433",
+      "title": "Multimedia Systems",
+      "specialization": "Game Development & Graphics",
+      "sources": {
+        "catalog_term": "202410",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=433&subj_code_in=CMPS"
+      }
+    },
+    {
+      "id": "CMPS 434",
+      "title": "Game Design and Development",
+      "specialization": "Game Development & Graphics",
+      "sources": {
+        "catalog_term": "202410",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=434&subj_code_in=CMPS"
+      }
+    },
+    {
+      "id": "CMPS 312",
+      "title": "Mobile Application Development",
+      "specialization": "Software Engineering & Product",
+      "sources": {
+        "catalog_term": "202410",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=312&subj_code_in=CMPS"
+      }
+    },
+    {
+      "id": "CMPS 356",
+      "title": "Web Applications Design and Development",
+      "specialization": "Software Engineering & Product",
+      "sources": {
+        "catalog_term": "202410",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=356&subj_code_in=CMPS"
+      }
+    },
+    {
+      "id": "CMPS 451",
+      "title": "Database Management Systems",
+      "specialization": "Databases & Information Systems",
+      "sources": {
+        "catalog_term": "202410",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=451&subj_code_in=CMPS"
+      }
+    },
+    {
+      "id": "CMPS 466",
+      "title": "Information Retrieval",
+      "specialization": "Databases & Information Systems",
+      "sources": {
+        "catalog_term": "202410",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=466&subj_code_in=CMPS"
+      }
+    },
+    {
+      "id": "CMPS 381",
+      "title": "Applied Cryptography",
+      "specialization": "Systems, Security & Networks",
+      "sources": {
+        "catalog_term": "202410",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=381&subj_code_in=CMPS"
+      }
+    },
+    {
+      "id": "CMPS 465",
+      "title": "Parallel Computing",
+      "specialization": "Systems, Security & Networks",
+      "sources": {
+        "catalog_term": "202410",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=465&subj_code_in=CMPS"
+      }
+    },
+    {
+      "id": "CMPE 488",
+      "title": "Wireless Networks and Applications",
+      "specialization": "Systems, Security & Networks",
+      "sources": {
+        "catalog_term": "202410",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=488&subj_code_in=CMPE"
+      }
+    },
+    {
+      "id": "CMPS 393",
+      "title": "Modeling and Simulation",
+      "specialization": "Simulation & Professional Practice",
+      "sources": {
+        "catalog_term": "202410",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=393&subj_code_in=CMPS"
+      }
+    },
+    {
+      "id": "CMPS 399",
+      "title": "Practical Training",
+      "specialization": "Simulation & Professional Practice",
+      "sources": {
+        "catalog_term": "202410",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=399&subj_code_in=CMPS"
+      }
+    },
+    {
+      "id": "CMPS 497",
+      "title": "Special Topics in Computing",
+      "specialization": "Simulation & Professional Practice",
+      "sources": {
+        "catalog_term": "202410",
+        "mybanner_url": "https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&crse_numb_in=497&subj_code_in=CMPS"
+      }
+    }
+  ]
+}

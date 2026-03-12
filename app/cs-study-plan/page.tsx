@@ -13,59 +13,17 @@ export const metadata: Metadata = { title: 'CS Study Plan' };
 
 const STUDY_PLAN_HEADER_COPY = 'Custom Made Ordering the of QU 2024 Roadmap optimized for you';
 
-const ELECTIVE_SPECIALIZATIONS = [
-  {
-    name: 'AI & Data Science',
-    description: 'Data-driven intelligence, prediction, search, and perception.',
-    courses: [
-      'CMPS 360,Data Science Fundamentals',
-      'CMPS 403,Artificial Intelligence',
-      'CMPS 453,Data Mining',
-      'CMPS 460,Machine Learning',
-      'CMPE 480,Computer Vision'
-    ]
-  },
-  {
-    name: 'Game Development & Graphics',
-    description: 'Visual systems, interactive media, and game production.',
-    courses: [
-      'CMPS 373,Computer Graphics',
-      'CMPS 433,Multimedia Systems',
-      'CMPS 434,Game Design and Development'
-    ]
-  },
-  {
-    name: 'Software Engineering & Product',
-    description: 'Application design and implementation for modern products.',
-    courses: [
-      'CMPS 312,Mobile Application Development',
-      'CMPS 356,Web Applications Design and Development'
-    ]
-  },
-  {
-    name: 'Databases & Information Systems',
-    description: 'Storage, retrieval, and organization of large information systems.',
-    courses: ['CMPS 451,Database Management Systems', 'CMPS 466,Information Retrieval']
-  },
-  {
-    name: 'Systems, Security & Networks',
-    description: 'Secure, scalable, and high-performance computing infrastructure.',
-    courses: [
-      'CMPS 381,Applied Cryptography',
-      'CMPS 465,Parallel Computing',
-      'CMPE 488,Wireless Networks and Applications'
-    ]
-  },
-  {
-    name: 'Simulation & Professional Practice',
-    description: 'Applied modeling, industry exposure, and advanced topics.',
-    courses: [
-      'CMPS 393,Modeling and Simulation',
-      'CMPS 399,Practical Training',
-      'CMPS 497,Special Topics in Computing'
-    ]
-  }
-] as const;
+interface ElectiveCourseData {
+  id: string;
+  title: string;
+  specialization: string;
+  sources?: { mybanner_url?: string };
+}
+
+interface ElectivesJson {
+  specializations: Record<string, { description: string }>;
+  electives: ElectiveCourseData[];
+}
 
 export type Connection = { from: string; to: string; type: 'prereq' | 'concurrent' };
 
@@ -113,18 +71,6 @@ interface StudyPlanJson {
   study_plan_terms: StudyPlanTerm[];
 }
 
-function parseSpecializationCourse(value: string): { id: string; title: string } {
-  const separatorIndex = value.indexOf(',');
-  if (separatorIndex === -1) {
-    return { id: value.trim(), title: value.trim() };
-  }
-
-  return {
-    id: value.slice(0, separatorIndex).trim(),
-    title: value.slice(separatorIndex + 1).trim()
-  };
-}
-
 function buildMyBannerCourseUrl(courseId: string, template?: string): string | undefined {
   const match = courseId.match(/^([A-Z]+)\s+(\d{3})$/);
   if (!match) {
@@ -168,6 +114,9 @@ export default function CsStudyPlanPage() {
   const data = JSON.parse(raw) as StudyPlanJson;
   const { courses, study_plan_terms: terms, program } = data;
 
+  const electivesRaw = readFileSync(join(process.cwd(), 'public', 'New folder', 'electives.json'), 'utf-8');
+  const electivesData = JSON.parse(electivesRaw) as ElectivesJson;
+
   const planIds = new Set(terms.flatMap((term) => term.courses));
   const seen = new Set<string>();
   const connections: Connection[] = [];
@@ -202,21 +151,28 @@ export default function CsStudyPlanPage() {
     }
   }
 
-  const electiveSpecializations: StudyPlanElectiveSpecialization[] = ELECTIVE_SPECIALIZATIONS.map((specialization) => ({
-    name: specialization.name,
-    description: specialization.description,
-    courses: specialization.courses.map((courseValue) => {
-      const { id, title } = parseSpecializationCourse(courseValue);
-      const url =
-        courses[id]?.sources?.mybanner_url ??
-        buildMyBannerCourseUrl(id, program.source_documents?.mybanner_course_detail_template);
+  // Group electives by specialization
+  const electivesBySpecialization = electivesData.electives.reduce(
+    (acc, elective) => {
+      if (!acc[elective.specialization]) {
+        acc[elective.specialization] = [];
+      }
+      acc[elective.specialization].push(elective);
+      return acc;
+    },
+    {} as Record<string, ElectiveCourseData[]>
+  );
 
-      return {
-        id,
-        title,
-        url
-      };
-    })
+  const electiveSpecializations: StudyPlanElectiveSpecialization[] = Object.entries(
+    electivesBySpecialization
+  ).map(([specialization, courseList]) => ({
+    name: specialization,
+    description: electivesData.specializations[specialization]?.description ?? '',
+    courses: courseList.map((elective) => ({
+      id: elective.id,
+      title: elective.title,
+      url: elective.sources?.mybanner_url ?? buildMyBannerCourseUrl(elective.id, program.source_documents?.mybanner_course_detail_template)
+    }))
   }));
 
   return (

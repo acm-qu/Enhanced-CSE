@@ -40,50 +40,54 @@ export function CourseInfoDialog({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!open || !sourceUrl) {
+    if (!open) {
       return;
     }
 
-    const cached = cacheRef.current.get(sourceUrl);
-    if (cached) {
-      setCourseInfo(cached);
-      setError(null);
-      setLoading(false);
-      return;
-    }
-
-    const controller = new AbortController();
     let isMounted = true;
 
-    setCourseInfo(null);
-    setError(null);
-    setLoading(true);
-
     const load = async () => {
+      setCourseInfo(null);
+      setError(null);
+      setLoading(true);
+
       try {
-        const response = await fetch(`/api/v1/courses/info?url=${encodeURIComponent(sourceUrl)}`, {
-          signal: controller.signal
-        });
-
-        const payload = (await response.json()) as CourseInfoApiResponse;
-        if (!response.ok || !payload.course) {
-          throw new Error(payload.error ?? 'Unable to load course information right now.');
-        }
-
-        cacheRef.current.set(sourceUrl, payload.course);
-        if (!isMounted) {
+        // First check memory cache
+        const cached = cacheRef.current.get(fallbackCourseId || '');
+        if (cached) {
+          if (isMounted) {
+            setCourseInfo(cached);
+            setError(null);
+            setLoading(false);
+          }
           return;
         }
 
-        setCourseInfo(payload.course);
+        // Fetch from static cache file
+        const response = await fetch('/New%20folder/course-info-cache.json');
+        if (!response.ok) {
+          throw new Error('Unable to load course information.');
+        }
+
+        const courseInfoCache = (await response.json()) as Record<string, ParsedCourseInfo>;
+        const courseInfo = fallbackCourseId ? courseInfoCache[fallbackCourseId] : null;
+
+        if (!courseInfo) {
+          throw new Error('Course information not available in database.');
+        }
+
+        cacheRef.current.set(fallbackCourseId || '', courseInfo);
+
+        if (isMounted) {
+          setCourseInfo(courseInfo);
+          setError(null);
+        }
       } catch (loadError) {
-        if (!isMounted || controller.signal.aborted) {
-          return;
+        if (isMounted) {
+          const message =
+            loadError instanceof Error ? loadError.message : 'Unable to load course information right now.';
+          setError(message);
         }
-
-        const message =
-          loadError instanceof Error ? loadError.message : 'Unable to load course information right now.';
-        setError(message);
       } finally {
         if (isMounted) {
           setLoading(false);
@@ -95,9 +99,8 @@ export function CourseInfoDialog({
 
     return () => {
       isMounted = false;
-      controller.abort();
     };
-  }, [open, sourceUrl]);
+  }, [open, fallbackCourseId]);
 
   const title = courseInfo?.title ?? fallbackTitle ?? 'Course information';
   const courseId = courseInfo?.courseId ?? fallbackCourseId;
