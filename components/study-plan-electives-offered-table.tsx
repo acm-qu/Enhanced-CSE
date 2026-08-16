@@ -8,88 +8,79 @@ interface OfferedCourse {
 
 interface OfferedTerm {
   term: string;
+  common: OfferedCourse[];
   cs: OfferedCourse[];
   ce: OfferedCourse[];
 }
 
 const CURRENT_ELECTIVES: OfferedTerm[] = [
+
   {
-    term: 'Fall 2025',
-    cs: [
+    term: 'Fall 2026',
+    common: [
       {
-        code: 'CMPS 312',
-        title: 'Mobile Application Development',
-        url: 'https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202420&subj_code_in=CMPS&crse_numb_in=312',
-        prerequisite: 'CMPS 251'
-      },
-      {
-        code: 'CMPS 381',
-        title: 'Applied Cryptography',
-        url: 'https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&subj_code_in=CMPS&crse_numb_in=381',
-        prerequisite: 'CMPS 380'
-      },
-      {
-        code: 'CMPS 403',
-        title: 'Artificial Intelligence',
-        url: 'https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&subj_code_in=CMPS&crse_numb_in=403',
-        prerequisite: 'CMPS 303'
-      },
-      {
-        code: 'CMPS 497',
-        title: 'Special Topics in Multimedia Networks',
-        url: 'https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202420&subj_code_in=CMPS&crse_numb_in=497',
-        prerequisite: 'CMPE 355',
-        coListedWith: 'CMPE 482'
-      }
-    ],
-    ce: [
-      {
-        code: 'CMPS 312',
-        title: 'Mobile Application Development',
-        url: 'https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&subj_code_in=CMPS&crse_numb_in=312',
+        code: 'CMAI 480',
+        title: 'Computer Vision',
+        url: 'https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202610&subj_code_in=CMAI&crse_numb_in=480',
         prerequisite: 'CMPS 251'
       },
       {
         code: 'CMPS 380',
         title: 'Cybersecurity Fundamentals',
-        url: 'https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&subj_code_in=CMPS&crse_numb_in=380',
+        url: 'https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202610&subj_code_in=CMPS&crse_numb_in=380',
         prerequisite: 'CMPS 303'
       },
       {
         code: 'CMPS 381',
         title: 'Applied Cryptography',
-        url: 'https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&subj_code_in=CMPS&crse_numb_in=381',
-        prerequisite: 'CMPS 380'
+        url: 'https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202610&subj_code_in=CMPS&crse_numb_in=381',
+        prerequisite: 'CMPS 380 or CMPS 385'
       },
       {
-        code: 'CMPE 471',
-        title: 'Selected Topics in Artificial Intelligence',
-        url: 'https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202420&subj_code_in=CMPE&crse_numb_in=471',
-        prerequisite: 'CMPS 303',
-        coListedWith: 'CMPS 403'
+        code: 'CMPS 481',
+        title: 'Enterprise Cybersecurity',
+        url: 'https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202610&subj_code_in=CMPS&crse_numb_in=481',
+        prerequisite: 'CMPS 380 or CMPS 385'
       },
       {
-        code: 'CMPE 482',
-        title: 'Multimedia Networks',
-        url: 'https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&subj_code_in=CMPE&crse_numb_in=482',
-        prerequisite: 'CMPE 355'
+        code: 'CMPE 488',
+        title: 'Wireless Networks and Applications',
+        url: 'https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202610&subj_code_in=CMPE&crse_numb_in=488',
+        prerequisite: 'CMPE 355 or CMPE 455'
       }
-    ]
+    ],
+    cs: [
+      {
+        code: 'CMPS 360',
+        title: 'Data Science Fundamentals',
+        url: 'https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202610&subj_code_in=CMPS&crse_numb_in=360',
+        prerequisite: 'CMPS 151'
+      },
+      {
+        code: 'CMAI 340',
+        title: 'Artificial Intelligence Fundamentals',
+        url: 'https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202610&subj_code_in=CMAI&crse_numb_in=340',
+        prerequisite: 'CMPS 303'
+      }
+    ],
+    ce: []
   },
   {
     term: 'Spring 2026',
+    common: [
+      {
+        code: 'CMPS 460',
+        title: 'Machine Learning',
+        url: 'https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&subj_code_in=CMPS&crse_numb_in=460',
+        prerequisite: 'CMPS 303 and GENG 200'
+      }
+    ],
     cs: [
       {
         code: 'CMPS 434',
         title: 'Game Design and Development',
         url: 'https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&subj_code_in=CMPS&crse_numb_in=434',
         prerequisite: 'CMPS 251'
-      },
-      {
-        code: 'CMPS 460',
-        title: 'Machine Learning',
-        url: 'https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&subj_code_in=CMPS&crse_numb_in=460',
-        prerequisite: 'CMPS 303 and GENG 200'
       },
       {
         code: 'CMPS 497',
@@ -100,12 +91,6 @@ const CURRENT_ELECTIVES: OfferedTerm[] = [
       }
     ],
     ce: [
-      {
-        code: 'CMPS 460',
-        title: 'Machine Learning',
-        url: 'https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&subj_code_in=CMPS&crse_numb_in=460',
-        prerequisite: 'CMPS 303 and GENG 200'
-      },
       {
         code: 'CMPE 471',
         title: 'Special Topics in Digital Forensics',
@@ -132,6 +117,59 @@ const CURRENT_ELECTIVES: OfferedTerm[] = [
         prerequisite: 'CMPE 355 and CMPS 380'
       }
     ]
+  },
+  {
+    term: 'Fall 2025',
+    common: [
+      {
+        code: 'CMPS 312',
+        title: 'Mobile Application Development',
+        url: 'https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&subj_code_in=CMPS&crse_numb_in=312',
+        prerequisite: 'CMPS 251'
+      },
+      {
+        code: 'CMPS 381',
+        title: 'Applied Cryptography',
+        url: 'https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&subj_code_in=CMPS&crse_numb_in=381',
+        prerequisite: 'CMPS 380 or CMPS 385'
+      }
+    ],
+    cs: [
+      {
+        code: 'CMPS 403',
+        title: 'Artificial Intelligence',
+        url: 'https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&subj_code_in=CMPS&crse_numb_in=403',
+        prerequisite: 'CMPS 303'
+      },
+      {
+        code: 'CMPS 497',
+        title: 'Special Topics in Multimedia Networks',
+        url: 'https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202420&subj_code_in=CMPS&crse_numb_in=497',
+        prerequisite: 'CMPE 355',
+        coListedWith: 'CMPE 482'
+      }
+    ],
+    ce: [
+      {
+        code: 'CMPS 380',
+        title: 'Cybersecurity Fundamentals',
+        url: 'https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&subj_code_in=CMPS&crse_numb_in=380',
+        prerequisite: 'CMPS 303'
+      },
+      {
+        code: 'CMPE 471',
+        title: 'Selected Topics in Artificial Intelligence',
+        url: 'https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202420&subj_code_in=CMPE&crse_numb_in=471',
+        prerequisite: 'CMPS 303',
+        coListedWith: 'CMPS 403'
+      },
+      {
+        code: 'CMPE 482',
+        title: 'Multimedia Networks',
+        url: 'https://mybanner.qu.edu.qa/PROD/bwckctlg.p_disp_course_detail?cat_term_in=202410&subj_code_in=CMPE&crse_numb_in=482',
+        prerequisite: 'CMPE 355'
+      }
+    ]
   }
 ];
 
@@ -144,6 +182,10 @@ const CYBERSECURITY_ELECTIVE = {
 };
 
 function OfferedCoursesList({ courses }: { courses: OfferedCourse[] }) {
+  if (courses.length === 0) {
+    return <p className="text-sm text-muted-foreground">—</p>;
+  }
+
   return (
     <ul className="space-y-2.5">
       {courses.map((course) => (
@@ -176,23 +218,27 @@ export function StudyPlanElectivesOfferedTable() {
           Current Electives Offered
         </h2>
         <p className="mt-1 max-w-3xl text-xs text-muted-foreground sm:text-sm">
-          Adapted from the official CSE Wiki electives-offered page (updated Jan 18, 2026).
+          Adapted from the official CSE Wiki electives-offered page (updated Jan 18, 2026). Fall 2026 offerings and
+          their prerequisites verified against the QU Banner catalog (Aug 2026).
         </p>
       </div>
 
       <div className="panel-muted border-x-0 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[880px] border-collapse text-sm">
+          <table className="w-full min-w-[1100px] border-collapse text-sm">
             <thead className="bg-card/80">
               <tr className="border-b border-border/70">
                 <th className="w-[150px] px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
                   Term
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-                  CS
+                  Common (CS &amp; CE)
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-                  CE
+                  CS only
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                  CE only
                 </th>
               </tr>
             </thead>
@@ -200,6 +246,9 @@ export function StudyPlanElectivesOfferedTable() {
               {CURRENT_ELECTIVES.map((term) => (
                 <tr key={term.term} className="align-top border-t border-border/60">
                   <td className="px-4 py-4 text-sm font-semibold text-foreground">{term.term}</td>
+                  <td className="px-4 py-4">
+                    <OfferedCoursesList courses={term.common} />
+                  </td>
                   <td className="px-4 py-4">
                     <OfferedCoursesList courses={term.cs} />
                   </td>
