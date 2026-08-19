@@ -216,6 +216,16 @@ npm run sync:now
 
 This calls the sync API, polls until it finishes, and prints a summary. Requires the app to be running and `.env.local` to have `SYNC_SECRET` and `SYNC_BASE_URL` set.
 
+Every run fetches the full catalogue from WordPress — the REST API has no cursor, and the complete list is needed to detect upstream deletions. Writes, however, are incremental: a row is only rewritten when its content actually differs, so unchanged articles keep their original `updated_at`. The summary reports the breakdown:
+
+```text
+[sync] 3 new, 1 updated, 172 unchanged, 0 removed
+[sync]   articles: 0 new, 1 updated, 18 unchanged, 0 removed
+[sync]   posts:    3 new, 0 updated, 154 unchanged, 0 removed
+```
+
+Images are incremental end to end — `mirror:media` only downloads URLs it has not already cached.
+
 ### Trigger via API directly
 
 ```bash
@@ -230,7 +240,49 @@ curl http://localhost:3000/api/internal/sync/status \
   -H "x-sync-secret: local-sync-secret"
 ```
 
-In production, schedule calls to `/api/internal/sync/cron` every 8 hours. This repo includes a GitHub Actions workflow for that schedule.
+On a host that can reach the WordPress source, schedule calls to `/api/internal/sync/cron` every 8 hours. This repo includes a GitHub Actions workflow for that schedule.
+
+### Syncing the cPanel deployment
+
+The cPanel server **cannot reach `blogs.qu.edu.qa`** — the WordPress host accepts connections from the QU network but resets them for the server's datacenter IP. Both the content sync and the article images fetch that host server-side, so neither can run on the server, and the scheduled cron above does not work for this deployment.
+
+Instead, run the sync from a machine on a network QU accepts (a laptop on campus / VPN). That machine is the only one that can talk to both sides: it pulls from WordPress and hands the results to the server.
+
+```bash
+./scripts/sync-content.sh --remote user@your-server.com
+```
+
+That performs three steps:
+
+1. **Sync** — pulls WordPress content into the database. Starts a local dev server first if one isn't running, since `sync:now` posts to a live app.
+2. **Mirror** — downloads any images not already in `.media-cache/`. Article images are served from this cache by `/api/media`, which is why the server never needs to reach WordPress.
+3. **Upload** — rsyncs only the new cache entries to the server.
+
+Set `DEPLOY_REMOTE` in your shell profile to skip the `--remote` flag.
+
+| Flag | Effect |
+| --- | --- |
+| `--remote user@host` | Upload target (or set `DEPLOY_REMOTE`) |
+| `--remote-path` | Remote cache path, defaults to `csewiki/.media-cache/` |
+| `--skip-sync` | Mirror and upload only, no WordPress pull |
+| `--skip-upload` | Build the cache locally without shipping it |
+| `--dry-run` | Show what rsync would transfer |
+| `--help` | Usage |
+
+**No restart or redeploy is needed.** Article routes set `dynamicParams = true`, so new slugs render from the database on first request; list pages refresh within the revalidate window (8 hours).
+
+Verify an image on the server afterwards:
+
+```bash
+curl -s -D - -o /dev/null \
+  'https://<your-domain>/api/media?url=<url-encoded-image-url>' | grep -i x-media-cache
+```
+
+`x-media-cache: HIT` means it was served from the local cache with no outbound request. A `MISS` means the image is not mirrored yet — re-run the script.
+
+> **The image cache must survive redeploys.** `.media-cache/` lives in the app root next to `node_modules`, `.next`, `server.js`, `public`, and `package.json`. Redeploy steps delete those five *by name* for exactly this reason. Never widen that to `rm -rf *` — the cached bytes exist nowhere the server can reach, and only a machine on the QU network can regenerate them.
+
+If QU ever whitelists the server's IP, none of this is required: `/api/media` falls back to fetching on a cache miss, so it starts working on its own and the courier step becomes optional.
 
 ---
 
@@ -250,6 +302,7 @@ In production, schedule calls to `/api/internal/sync/cron` every 8 hours. This r
 | `npm run db:migrate` | Apply pending database migrations |
 | `npm run db:generate` | Regenerate migration files from schema changes |
 | `npm run sync:now` | Trigger a full content sync and wait for completion |
+| `npm run mirror:media` | Download article images into `.media-cache/` for offline serving |
 | `npm test` | Run unit tests (Vitest) |
 | `npm run test:watch` | Run tests in watch mode |
 
@@ -346,7 +399,7 @@ Enhanced-CSE/
 │   ├── content/          # HTML sanitization and API response transforms
 │   └── internal/         # Auth helpers, env loader, HTTP utilities
 ├── drizzle/              # SQL migration files (auto-applied at startup)
-├── scripts/              # sync-now.mjs utility
+├── scripts/              # sync-now.mjs, mirror-media.mjs, sync-content.sh
 ├── tests/                # Vitest unit tests
 ├── public/               # Static assets (logos, images)
 ├── Dockerfile            # Multi-stage Docker build for the app
@@ -362,7 +415,7 @@ Enhanced-CSE/
 
 ## Deployment
 
-The app is designed for deployment on **Vercel**.
+The app is designed for deployment on **Vercel**. It also runs on cPanel/CloudLinux via Passenger using a Next.js standalone build — see [Syncing the cPanel deployment](#syncing-the-cpanel-deployment) for how content is published there, which differs from the scheduled cron below.
 
 1. Push to GitHub and import the repo in [Vercel](https://vercel.com)
 2. Set the following environment variables in the Vercel project settings:

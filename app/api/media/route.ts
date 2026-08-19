@@ -2,9 +2,11 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
 import { isImageContentType, resolveSourceAssetUrl } from '@/lib/content/asset-proxy';
+import { readCachedAsset, withUpstreamSlot, writeCachedAsset, type CachedAsset } from '@/lib/content/media-cache';
 import { badRequest, notFound } from '@/lib/internal/http';
 
 const MEDIA_CACHE_CONTROL = 'public, max-age=300, s-maxage=86400, stale-while-revalidate=604800';
+const UPSTREAM_TIMEOUT_MS = 15_000;
 const IMAGE_CONTENT_TYPES: Record<string, string> = {
   '.avif': 'image/avif',
   '.gif': 'image/gif',
@@ -38,14 +40,13 @@ function resolveImageContentType(sourceUrl: URL, headerValue: string | null): st
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-export async function GET(request: NextRequest): Promise<NextResponse> {
-  const rawUrl = request.nextUrl.searchParams.get('url');
-  const sourceUrl = rawUrl ? resolveSourceAssetUrl(rawUrl) : null;
-
-  if (!sourceUrl) {
-    return badRequest('Unsupported media URL');
+class UpstreamError extends Error {
+  constructor(readonly kind: 'unreachable' | 'not-found' | 'bad-gateway' | 'unsupported-type' | 'empty') {
+    super(kind);
   }
+}
 
+async function fetchUpstreamAsset(sourceUrl: URL): Promise<CachedAsset> {
   let upstreamResponse: Response;
 
   try {
@@ -54,49 +55,106 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         Accept: 'image/*,*/*;q=0.8'
       },
       redirect: 'follow',
-      cache: 'no-store'
+      cache: 'no-store',
+      signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS)
     });
   } catch {
-    return notFound('Media asset not reachable');
+    throw new UpstreamError('unreachable');
   }
 
   if (!upstreamResponse.ok) {
-    if (upstreamResponse.status === 404) {
-      return notFound('Media asset not found');
-    }
-
-    return NextResponse.json({ error: 'Failed to fetch media asset' }, { status: 502 });
+    throw new UpstreamError(upstreamResponse.status === 404 ? 'not-found' : 'bad-gateway');
   }
 
   const contentType = resolveImageContentType(sourceUrl, upstreamResponse.headers.get('content-type'));
   if (!contentType) {
-    return badRequest('Unsupported media type');
+    throw new UpstreamError('unsupported-type');
   }
 
-  const body = Buffer.from(await upstreamResponse.arrayBuffer());
+  const body = await upstreamResponse.arrayBuffer();
   if (body.byteLength === 0) {
-    return notFound('Media asset is empty');
+    throw new UpstreamError('empty');
   }
 
-  const response = new NextResponse(body, {
-    status: 200
-  });
+  return {
+    body,
+    contentType,
+    etag: upstreamResponse.headers.get('etag') ?? undefined,
+    lastModified: upstreamResponse.headers.get('last-modified') ?? undefined
+  };
+}
+
+function buildResponse(asset: CachedAsset, cacheStatus: 'HIT' | 'MISS'): NextResponse {
+  const response = new NextResponse(asset.body, { status: 200 });
 
   response.headers.set('Cache-Control', MEDIA_CACHE_CONTROL);
   response.headers.set('Netlify-Vary', 'query=url');
-  response.headers.set('Content-Type', contentType);
-  response.headers.set('Content-Length', String(body.byteLength));
+  response.headers.set('Content-Type', asset.contentType);
+  response.headers.set('Content-Length', String(asset.body.byteLength));
   response.headers.set('Content-Disposition', 'inline');
+  response.headers.set('X-Media-Cache', cacheStatus);
 
-  const etag = upstreamResponse.headers.get('etag');
-  if (etag) {
-    response.headers.set('ETag', etag);
+  if (asset.etag) {
+    response.headers.set('ETag', asset.etag);
   }
 
-  const lastModified = upstreamResponse.headers.get('last-modified');
-  if (lastModified) {
-    response.headers.set('Last-Modified', lastModified);
+  if (asset.lastModified) {
+    response.headers.set('Last-Modified', asset.lastModified);
   }
 
   return response;
+}
+
+export async function GET(request: NextRequest): Promise<NextResponse> {
+  const rawUrl = request.nextUrl.searchParams.get('url');
+  const sourceUrl = rawUrl ? resolveSourceAssetUrl(rawUrl) : null;
+
+  if (!sourceUrl) {
+    return badRequest('Unsupported media URL');
+  }
+
+  const key = sourceUrl.toString();
+
+  const cached = await readCachedAsset(key);
+  if (cached) {
+    return buildResponse(cached, 'HIT');
+  }
+
+  try {
+    // Bounded concurrency + single-flight: a page with 100+ images issues one
+    // upstream fetch per distinct asset, at most a handful at a time.
+    const asset = await withUpstreamSlot(key, async () => {
+      const revalidated = await readCachedAsset(key);
+      if (revalidated) {
+        return revalidated;
+      }
+
+      const fetched = await fetchUpstreamAsset(sourceUrl);
+      await writeCachedAsset(key, fetched);
+      return fetched;
+    });
+
+    if (!asset) {
+      return notFound('Media asset not reachable');
+    }
+
+    return buildResponse(asset, 'MISS');
+  } catch (error) {
+    if (error instanceof UpstreamError) {
+      switch (error.kind) {
+        case 'not-found':
+          return notFound('Media asset not found');
+        case 'empty':
+          return notFound('Media asset is empty');
+        case 'unsupported-type':
+          return badRequest('Unsupported media type');
+        case 'bad-gateway':
+          return NextResponse.json({ error: 'Failed to fetch media asset' }, { status: 502 });
+        default:
+          return notFound('Media asset not reachable');
+      }
+    }
+
+    return notFound('Media asset not reachable');
+  }
 }

@@ -36,6 +36,9 @@ type SyncTrigger = 'manual' | 'cron';
 interface WikiSyncPhaseResult {
   fetchedArticles: number;
   upsertedArticles: number;
+  newArticles: number;
+  updatedArticles: number;
+  unchangedArticles: number;
   deletedArticles: number;
   hasTagsTaxonomy: boolean;
 }
@@ -43,6 +46,9 @@ interface WikiSyncPhaseResult {
 interface PostsSyncPhaseResult {
   fetchedPosts: number;
   upsertedPosts: number;
+  newPosts: number;
+  updatedPosts: number;
+  unchangedPosts: number;
   deletedPosts: number;
 }
 
@@ -52,9 +58,15 @@ export interface SyncRunResult {
   runId: number | null;
   fetchedArticles: number;
   upsertedArticles: number;
+  newArticles: number;
+  updatedArticles: number;
+  unchangedArticles: number;
   deletedArticles: number;
   fetchedPosts: number;
   upsertedPosts: number;
+  newPosts: number;
+  updatedPosts: number;
+  unchangedPosts: number;
   deletedPosts: number;
   hasTagsTaxonomy: boolean;
   reason?: string;
@@ -302,7 +314,7 @@ async function syncWikiPhase(params: { runId: number; trigger: SyncTrigger }): P
     }
 
     const normalizedArticles = articles.map(normalizeWpArticle);
-    let articleRows: Array<{ id: number; wpId: number }> = [];
+    let articleRows: Array<{ id: number; wpId: number; inserted: boolean }> = [];
 
     if (normalizedArticles.length > 0) {
       articleRows = await tx
@@ -320,10 +332,30 @@ async function syncWikiPhase(params: { runId: number; trigger: SyncTrigger }): P
             modifiedAtGmt: sql`excluded.modified_at_gmt`,
             status: sql`excluded.status`,
             updatedAt: now
-          }
+          },
+          // Skip rows whose content is byte-identical upstream, so unchanged
+          // articles are not rewritten (and do not get a fresh updatedAt) on
+          // every run. `is distinct from` treats NULLs correctly. Rows filtered
+          // out here are simply not RETURNED — the wpId lookup below already
+          // falls back to a SELECT for them.
+          setWhere: sql`
+            ${wikiArticles.slug} is distinct from excluded.slug
+            or ${wikiArticles.title} is distinct from excluded.title
+            or ${wikiArticles.contentHtmlRaw} is distinct from excluded.content_html_raw
+            or ${wikiArticles.excerptHtmlRaw} is distinct from excluded.excerpt_html_raw
+            or ${wikiArticles.sourceLink} is distinct from excluded.source_link
+            or ${wikiArticles.publishedAtGmt} is distinct from excluded.published_at_gmt
+            or ${wikiArticles.modifiedAtGmt} is distinct from excluded.modified_at_gmt
+            or ${wikiArticles.status} is distinct from excluded.status
+          `
         })
-        .returning({ id: wikiArticles.id, wpId: wikiArticles.wpId });
+        // xmax = 0 marks a freshly inserted row; anything else was an update.
+        .returning({ id: wikiArticles.id, wpId: wikiArticles.wpId, inserted: sql<boolean>`(xmax = 0)` });
     }
+
+    const newArticles = articleRows.filter((row) => row.inserted).length;
+    const updatedArticles = articleRows.length - newArticles;
+    const unchangedArticles = normalizedArticles.length - articleRows.length;
 
     const wpToLocalArticleId = new Map<number, number>();
     for (const row of articleRows) {
@@ -392,7 +424,11 @@ async function syncWikiPhase(params: { runId: number; trigger: SyncTrigger }): P
 
     return {
       fetchedArticles: articles.length,
-      upsertedArticles: normalizedArticles.length,
+      // Rows actually written, not rows considered.
+      upsertedArticles: articleRows.length,
+      newArticles,
+      updatedArticles,
+      unchangedArticles,
       deletedArticles: deletedRows.length,
       hasTagsTaxonomy
     };
@@ -441,7 +477,7 @@ async function syncPostsPhase(params: { runId: number; trigger: SyncTrigger }): 
     }
 
     const normalizedPosts = posts.map(normalizeWpPost);
-    let postRows: Array<{ id: number; wpId: number }> = [];
+    let postRows: Array<{ id: number; wpId: number; inserted: boolean }> = [];
 
     if (normalizedPosts.length > 0) {
       postRows = await tx
@@ -459,10 +495,25 @@ async function syncPostsPhase(params: { runId: number; trigger: SyncTrigger }): 
             modifiedAtGmt: sql`excluded.modified_at_gmt`,
             status: sql`excluded.status`,
             updatedAt: now
-          }
+          },
+          // See the wiki phase: only rewrite rows whose content actually differs.
+          setWhere: sql`
+            ${blogPosts.slug} is distinct from excluded.slug
+            or ${blogPosts.title} is distinct from excluded.title
+            or ${blogPosts.contentHtmlRaw} is distinct from excluded.content_html_raw
+            or ${blogPosts.excerptHtmlRaw} is distinct from excluded.excerpt_html_raw
+            or ${blogPosts.sourceLink} is distinct from excluded.source_link
+            or ${blogPosts.publishedAtGmt} is distinct from excluded.published_at_gmt
+            or ${blogPosts.modifiedAtGmt} is distinct from excluded.modified_at_gmt
+            or ${blogPosts.status} is distinct from excluded.status
+          `
         })
-        .returning({ id: blogPosts.id, wpId: blogPosts.wpId });
+        .returning({ id: blogPosts.id, wpId: blogPosts.wpId, inserted: sql<boolean>`(xmax = 0)` });
     }
+
+    const newPosts = postRows.filter((row) => row.inserted).length;
+    const updatedPosts = postRows.length - newPosts;
+    const unchangedPosts = normalizedPosts.length - postRows.length;
 
     const wpToLocalPostId = new Map<number, number>();
     for (const row of postRows) {
@@ -529,7 +580,10 @@ async function syncPostsPhase(params: { runId: number; trigger: SyncTrigger }): 
 
     return {
       fetchedPosts: posts.length,
-      upsertedPosts: normalizedPosts.length,
+      upsertedPosts: postRows.length,
+      newPosts,
+      updatedPosts,
+      unchangedPosts,
       deletedPosts: deletedRows.length
     };
   });
@@ -601,9 +655,15 @@ export async function runFullSync(trigger: SyncTrigger): Promise<SyncRunResult> 
         trigger,
         fetched_articles: wikiPhase.fetchedArticles,
         upserted_articles: wikiPhase.upsertedArticles,
+        new_articles: wikiPhase.newArticles,
+        updated_articles: wikiPhase.updatedArticles,
+        unchanged_articles: wikiPhase.unchangedArticles,
         deleted_articles: wikiPhase.deletedArticles,
         fetched_posts: postsPhase.fetchedPosts,
         upserted_posts: postsPhase.upsertedPosts,
+        new_posts: postsPhase.newPosts,
+        updated_posts: postsPhase.updatedPosts,
+        unchanged_posts: postsPhase.unchangedPosts,
         deleted_posts: postsPhase.deletedPosts,
         has_tags_taxonomy: wikiPhase.hasTagsTaxonomy
       });
@@ -618,9 +678,15 @@ export async function runFullSync(trigger: SyncTrigger): Promise<SyncRunResult> 
         runId: activeRunId,
         fetchedArticles: wikiPhase.fetchedArticles,
         upsertedArticles: wikiPhase.upsertedArticles,
+        newArticles: wikiPhase.newArticles,
+        updatedArticles: wikiPhase.updatedArticles,
+        unchangedArticles: wikiPhase.unchangedArticles,
         deletedArticles: wikiPhase.deletedArticles,
         fetchedPosts: postsPhase.fetchedPosts,
         upsertedPosts: postsPhase.upsertedPosts,
+        newPosts: postsPhase.newPosts,
+        updatedPosts: postsPhase.updatedPosts,
+        unchangedPosts: postsPhase.unchangedPosts,
         deletedPosts: postsPhase.deletedPosts,
         hasTagsTaxonomy: wikiPhase.hasTagsTaxonomy
       };
@@ -633,9 +699,15 @@ export async function runFullSync(trigger: SyncTrigger): Promise<SyncRunResult> 
         runId: null,
         fetchedArticles: 0,
         upsertedArticles: 0,
+        newArticles: 0,
+        updatedArticles: 0,
+        unchangedArticles: 0,
         deletedArticles: 0,
         fetchedPosts: 0,
         upsertedPosts: 0,
+        newPosts: 0,
+        updatedPosts: 0,
+        unchangedPosts: 0,
         deletedPosts: 0,
         hasTagsTaxonomy: false,
         reason: 'sync_already_running'

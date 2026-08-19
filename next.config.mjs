@@ -2,10 +2,15 @@ import { withSentryConfig } from '@sentry/nextjs';
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Opt-in self-contained build for hosts without Docker (e.g. cPanel/Passenger).
+  // Set BUILD_STANDALONE=1 to emit .next/standalone; unset keeps the Vercel/Docker flow unchanged.
+  output: process.env.BUILD_STANDALONE ? 'standalone' : undefined,
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: '**' }
-    ]
+    ],
+    // sharp is not installed and image optimisation is expensive on shared hosting
+    unoptimized: process.env.BUILD_STANDALONE ? true : undefined
   }
 };
 

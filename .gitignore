@@ -11,3 +11,6 @@ coverage
 .env.sentry-build-plugin
 pnpm-lock.yaml
 build.zip
+deploy.zip
+.media-cache
+media-cache.tar.gz

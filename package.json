@@ -15,6 +15,7 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "sync:now": "node scripts/sync-now.mjs",
+    "mirror:media": "node scripts/mirror-media.mjs",
     "test": "vitest run",
     "test:watch": "vitest"
   },

@@ -1,0 +1,130 @@
+name: Build cPanel Bundle
+
+# Produces a self-contained, symlink-free Next.js standalone bundle for
+# cPanel / CloudLinux Passenger hosting. Runs on Linux x86_64 to match the
+# host, so native binaries (sharp) are correct.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # npm (not pnpm) on purpose: pnpm builds node_modules out of symlinks
+      # into a .pnpm store, and those links do not survive zip + extract on
+      # the host. npm's flat layout copies cleanly.
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Build standalone
+        env:
+          BUILD_STANDALONE: '1'
+          NEXT_TELEMETRY_DISABLED: '1'
+          # NEXT_PUBLIC_* is inlined at build time — setting it in the cPanel
+          # env table has no effect, it has to be present here.
+          NEXT_PUBLIC_FASTAPI_URL: ${{ vars.NEXT_PUBLIC_FASTAPI_URL }}
+          # Pages with `export const revalidate` are prerendered at build time
+          # and query the database directly, so the build needs a live URL.
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: npm run build
+
+      # standalone deliberately omits static assets; Next expects them copied in.
+      - name: Assemble bundle
+        run: |
+          mkdir -p .next/standalone/.next/static .next/standalone/public
+          # Trailing /. copies CONTENTS. Plain `cp -r public dest` would nest as
+          # public/public/ whenever Next has already traced files into
+          # standalone/public (it does — app/cs-study-plan reads JSON from there),
+          # which 404s every static asset.
+          cp -r .next/static/. .next/standalone/.next/static/
+          cp -r public/.       .next/standalone/public/
+
+          # Next emits a few externalised-package symlinks under
+          # .next/node_modules. They point inside the bundle, so they'd survive
+          # a zip either way — materialise them so extraction behaviour on the
+          # host cannot matter.
+          cd .next/standalone/.next/node_modules 2>/dev/null || exit 0
+          for l in *; do
+            if [ -L "$l" ]; then
+              t=$(readlink "$l"); rm "$l"; cp -RL "$t" "$l"
+            fi
+          done
+
+      # The one platform-specific file Next traces in is sharp's native binary.
+      # images.unoptimized is true on the standalone path, so sharp is never
+      # required at runtime — dropping it makes the bundle architecture-agnostic.
+      - name: Strip platform-specific binaries
+        run: rm -rf .next/standalone/node_modules/sharp .next/standalone/node_modules/@img
+
+      - name: Verify bundle is portable
+        run: |
+          links=$(find .next/standalone -type l)
+          if [ -n "$links" ]; then
+            echo "::error::Bundle contains symlinks; it will break on extract:"
+            echo "$links"
+            exit 1
+          fi
+          native=$(find .next/standalone -name '*.node')
+          if [ -n "$native" ]; then
+            echo "::error::Bundle contains architecture-specific binaries:"
+            echo "$native"
+            exit 1
+          fi
+          for pkg in next react react-dom styled-jsx; do
+            if [ ! -d ".next/standalone/node_modules/$pkg" ]; then
+              echo "::error::Missing top-level node_modules/$pkg"
+              exit 1
+            fi
+          done
+          test -f .next/standalone/server.js
+          test -d .next/standalone/.next/static
+          test -d .next/standalone/public
+          echo "OK — $(find .next/standalone -type f | wc -l) files, no symlinks"
+
+      # Boot the server exactly as Passenger will, to catch MODULE_NOT_FOUND
+      # before the bundle ever reaches the host.
+      - name: Smoke test
+        run: |
+          cd .next/standalone
+          node server.js &
+          pid=$!
+          for i in $(seq 1 30); do
+            # Any HTTP response proves the module graph loaded. Status code is
+            # not the point here — a 500 from a missing DB still means no
+            # MODULE_NOT_FOUND, which is what this gate exists to catch.
+            if curl -s -o /dev/null http://127.0.0.1:3000/; then
+              echo "Server booted"
+              kill $pid
+              exit 0
+            fi
+            if ! kill -0 $pid 2>/dev/null; then
+              echo "::error::Server exited during boot"
+              exit 1
+            fi
+            sleep 1
+          done
+          echo "::error::Server did not respond within 30s"
+          kill $pid 2>/dev/null || true
+          exit 1
+
+      - name: Upload bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: cpanel-bundle
+          path: .next/standalone
+          # Required: the bundle's own .next/ directory is hidden, and v4
+          # excludes hidden files by default — without this the artifact
+          # would ship with no build output at all.
+          include-hidden-files: true
+          retention-days: 14

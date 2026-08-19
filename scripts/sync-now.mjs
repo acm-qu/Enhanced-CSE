@@ -215,10 +215,26 @@ async function main() {
   const totalPosts = typeof postBody.total === 'number' ? postBody.total : null;
 
   console.log('[sync] Completed successfully.');
+
+  const n = (value) => (typeof value === 'number' ? value : 0);
+  const newContent = n(triggerBody.newArticles) + n(triggerBody.newPosts);
+  const changed = n(triggerBody.updatedArticles) + n(triggerBody.updatedPosts);
+  const unchanged = n(triggerBody.unchangedArticles) + n(triggerBody.unchangedPosts);
+  const removed = n(triggerBody.deletedArticles) + n(triggerBody.deletedPosts);
+
+  console.log('');
+  console.log(`[sync] ${newContent} new, ${changed} updated, ${unchanged} unchanged, ${removed} removed`);
+  console.log(
+    `[sync]   articles: ${n(triggerBody.newArticles)} new, ${n(triggerBody.updatedArticles)} updated, ` +
+      `${n(triggerBody.unchangedArticles)} unchanged, ${n(triggerBody.deletedArticles)} removed`
+  );
+  console.log(
+    `[sync]   posts:    ${n(triggerBody.newPosts)} new, ${n(triggerBody.updatedPosts)} updated, ` +
+      `${n(triggerBody.unchangedPosts)} unchanged, ${n(triggerBody.deletedPosts)} removed`
+  );
+  console.log('');
   console.log(`[sync] Total articles in API: ${String(totalArticles)}`);
   console.log(`[sync] Total posts in API: ${String(totalPosts)}`);
-  console.log(`[sync] Meta: ${formatJson(metaResp.body)}`);
-  console.log(`[sync] Health: ${formatJson(healthResp.body)}`);
 }
 
 main().catch((error) => {
