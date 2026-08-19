@@ -24,6 +24,8 @@ describe('media route', () => {
     previousCacheDir = process.env.MEDIA_CACHE_DIR;
     cacheDir = mkdtempSync(join(tmpdir(), 'media-cache-test-'));
     process.env.MEDIA_CACHE_DIR = cacheDir;
+    // Directory presence is memoised per process; clear it between tests.
+    delete (globalThis as { __mediaCacheDirState?: unknown }).__mediaCacheDirState;
   });
 
   afterEach(() => {
@@ -95,6 +97,26 @@ describe('media route', () => {
     // The whole point: the production host cannot reach upstream, so a cached
     // asset must never trigger a second fetch.
     expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('flags a missing cache directory even when the request fails', async () => {
+    // The exact production symptom: cache never shipped, upstream unreachable.
+    process.env.MEDIA_CACHE_DIR = join(cacheDir, 'does-not-exist');
+    delete (globalThis as { __mediaCacheDirState?: unknown }).__mediaCacheDirState;
+
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => {
+        throw new Error('ECONNRESET');
+      }) as unknown as typeof fetch
+    );
+
+    const response = await GET(
+      makeRequest('http://localhost/api/media?url=http%3A%2F%2Fblogs.qu.edu.qa%2Fcse%2Ffiles%2F2021%2F01%2Fx.png')
+    );
+
+    expect(response.status).toBe(404);
+    expect(response.headers.get('x-media-cache-dir')).toBe('missing');
   });
 
   it('reports upstream failure as not found rather than throwing', async () => {

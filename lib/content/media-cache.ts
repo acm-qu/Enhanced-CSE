@@ -1,6 +1,5 @@
 import { createHash } from 'crypto';
-import { mkdir, readFile, rename, writeFile } from 'fs/promises';
-import { tmpdir } from 'os';
+import { mkdir, readFile, rename, stat, writeFile } from 'fs/promises';
 import { join } from 'path';
 
 import { log } from '@/lib/internal/log';
@@ -32,6 +31,33 @@ interface AssetMetadata {
 
 function getCacheDir(): string {
   return process.env.MEDIA_CACHE_DIR ?? join(process.cwd(), '.media-cache');
+}
+
+declare global {
+  // eslint-disable-next-line no-var
+  var __mediaCacheDirState: 'ready' | 'missing' | undefined;
+}
+
+/**
+ * Whether the cache directory itself is present, as opposed to a particular
+ * asset being absent from it. Without this the two failures are
+ * indistinguishable from a response, and "cache never shipped to the server"
+ * looks identical to "this one image was never mirrored".
+ *
+ * Resolved once per process; the directory does not appear or vanish mid-run.
+ *
+ * Deliberately async: a synchronous fs call on a path Next cannot analyse
+ * statically makes its output tracer fall back to copying the entire project
+ * root into the standalone bundle.
+ */
+export async function getCacheDirState(): Promise<'ready' | 'missing'> {
+  if (!global.__mediaCacheDirState) {
+    global.__mediaCacheDirState = await stat(getCacheDir())
+      .then((entry) => (entry.isDirectory() ? ('ready' as const) : ('missing' as const)))
+      .catch(() => 'missing' as const);
+  }
+
+  return global.__mediaCacheDirState;
 }
 
 function cacheKey(sourceUrl: string): string {
@@ -91,6 +117,8 @@ export async function writeCachedAsset(sourceUrl: string, asset: CachedAsset): P
     await writeFile(metaTmp, JSON.stringify(meta));
     await rename(bodyTmp, join(dir, `${key}.bin`));
     await rename(metaTmp, join(dir, `${key}.json`));
+    // mkdir above may have just created it.
+    global.__mediaCacheDirState = 'ready';
   } catch (error) {
     // A read-only or full disk must not break image delivery — the asset is
     // still served, just not cached.

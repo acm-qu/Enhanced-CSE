@@ -1,6 +1,7 @@
 import sanitizeHtml from 'sanitize-html';
 
-import { rewriteImageSource, rewriteImageSrcSet } from '@/lib/content/asset-proxy';
+import { resolveSourceAssetUrl, rewriteImageSource, rewriteImageSrcSet } from '@/lib/content/asset-proxy';
+import { getLqipDataUri } from '@/lib/content/lqip';
 import { decodeFetchedHtml } from '../sync/entities';
 
 const SOURCE_HOST = 'blogs.qu.edu.qa';
@@ -278,10 +279,24 @@ export function sanitizeWikiHtml(html: string): string {
       'figure',
       'figcaption'
     ]),
+    // Only the placeholder properties we set ourselves survive; any style the
+    // upstream HTML carries is dropped rather than trusted.
+    allowedStyles: {
+      img: {
+        'background-image': [/^url\("data:image\/(?:webp|jpeg|png);base64,[A-Za-z0-9+/=]+"\)$/],
+        'background-size': [/^cover$/],
+        'background-position': [/^center$/],
+        'background-repeat': [/^no-repeat$/]
+      }
+    },
     allowedAttributes: {
       ...sanitizeHtml.defaults.allowedAttributes,
       a: ['href', 'name', 'target', 'rel'],
-      img: ['src', 'srcset', 'alt', 'title', 'width', 'height', 'loading'],
+      // `sizes` matters: WordPress emits it on 69% of images, and without it
+      // browsers assume 100vw and pick the largest srcset candidate — a 2048px
+      // file for a 700px slot. `style` carries the inlined placeholder and is
+      // constrained by allowedStyles below.
+      img: ['src', 'srcset', 'sizes', 'alt', 'title', 'width', 'height', 'loading', 'decoding', 'style'],
       iframe: [
         'src',
         'title',
@@ -321,14 +336,30 @@ export function sanitizeWikiHtml(html: string): string {
           ...attribs
         };
 
+        // Upstream styles are not carried over; the only style we emit is the
+        // placeholder below.
+        delete nextAttribs.style;
+
         if (attribs.src) {
           nextAttribs.src = rewriteImageSource(attribs.src);
+
+          // The placeholder is painted as a background behind the real image,
+          // rather than swapped into src by script. It is inline, so it shows
+          // with no extra request, and src stays the real image — so images
+          // still load with JavaScript disabled and for crawlers.
+          const source = resolveSourceAssetUrl(attribs.src);
+          const placeholder = source ? getLqipDataUri(source.toString()) : undefined;
+
+          if (placeholder) {
+            nextAttribs.style =
+              `background-image:url("${placeholder}");` +
+              'background-size:cover;background-position:center;background-repeat:no-repeat';
+          }
         }
 
         if (attribs.srcset) {
           nextAttribs.srcset = rewriteImageSrcSet(attribs.srcset);
         }
-
 
         return {
           tagName: 'img',

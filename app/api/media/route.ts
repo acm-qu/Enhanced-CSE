@@ -2,7 +2,13 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
 import { isImageContentType, resolveSourceAssetUrl } from '@/lib/content/asset-proxy';
-import { readCachedAsset, withUpstreamSlot, writeCachedAsset, type CachedAsset } from '@/lib/content/media-cache';
+import {
+  getCacheDirState,
+  readCachedAsset,
+  withUpstreamSlot,
+  writeCachedAsset,
+  type CachedAsset
+} from '@/lib/content/media-cache';
 import { badRequest, notFound } from '@/lib/internal/http';
 
 const MEDIA_CACHE_CONTROL = 'public, max-age=300, s-maxage=86400, stale-while-revalidate=604800';
@@ -84,6 +90,17 @@ async function fetchUpstreamAsset(sourceUrl: URL): Promise<CachedAsset> {
   };
 }
 
+/**
+ * Stamped on every response, success or failure. `X-Media-Cache-Dir: missing`
+ * means the cache directory was never found — i.e. it was not shipped to the
+ * server, or landed outside the app root — which is otherwise indistinguishable
+ * from a single un-mirrored image.
+ */
+async function withCacheDiagnostics<T extends NextResponse>(response: T): Promise<T> {
+  response.headers.set('X-Media-Cache-Dir', await getCacheDirState());
+  return response;
+}
+
 function buildResponse(asset: CachedAsset, cacheStatus: 'HIT' | 'MISS'): NextResponse {
   const response = new NextResponse(asset.body, { status: 200 });
 
@@ -117,7 +134,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
   const cached = await readCachedAsset(key);
   if (cached) {
-    return buildResponse(cached, 'HIT');
+    return await withCacheDiagnostics(buildResponse(cached, 'HIT'));
   }
 
   try {
@@ -135,26 +152,28 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     });
 
     if (!asset) {
-      return notFound('Media asset not reachable');
+      return await withCacheDiagnostics(notFound('Media asset not reachable'));
     }
 
-    return buildResponse(asset, 'MISS');
+    return await withCacheDiagnostics(buildResponse(asset, 'MISS'));
   } catch (error) {
     if (error instanceof UpstreamError) {
       switch (error.kind) {
         case 'not-found':
-          return notFound('Media asset not found');
+          return await withCacheDiagnostics(notFound('Media asset not found'));
         case 'empty':
-          return notFound('Media asset is empty');
+          return await withCacheDiagnostics(notFound('Media asset is empty'));
         case 'unsupported-type':
-          return badRequest('Unsupported media type');
+          return await withCacheDiagnostics(badRequest('Unsupported media type'));
         case 'bad-gateway':
-          return NextResponse.json({ error: 'Failed to fetch media asset' }, { status: 502 });
+          return await withCacheDiagnostics(
+            NextResponse.json({ error: 'Failed to fetch media asset' }, { status: 502 })
+          );
         default:
-          return notFound('Media asset not reachable');
+          return await withCacheDiagnostics(notFound('Media asset not reachable'));
       }
     }
 
-    return notFound('Media asset not reachable');
+    return await withCacheDiagnostics(notFound('Media asset not reachable'));
   }
 }

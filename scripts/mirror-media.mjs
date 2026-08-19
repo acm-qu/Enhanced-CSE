@@ -17,16 +17,27 @@
  */
 
 import { createHash } from 'crypto';
-import { mkdir, readdir, writeFile } from 'fs/promises';
+import { mkdir, readdir, readFile, writeFile } from 'fs/promises';
 import { join } from 'path';
 
 import postgres from 'postgres';
+import sharp from 'sharp';
 
 const SOURCE_HOST = 'blogs.qu.edu.qa';
 const CACHE_DIR = process.env.MEDIA_CACHE_DIR ?? join(process.cwd(), '.media-cache');
+const LQIP_MANIFEST = join(CACHE_DIR, 'lqip.json');
 const CONCURRENCY = 8;
 const TIMEOUT_MS = 30_000;
 const MAX_BYTES = 12 * 1024 * 1024;
+
+// WebP keeps transparency (75 of 90 cached PNGs have an alpha channel, so
+// JPEG is not an option for them) and still beats JPEG by roughly a third.
+const WEBP_QUALITY = 78;
+
+// Placeholder is inlined into the HTML as a data URI, so bytes matter far more
+// than fidelity — it is displayed blurred and scaled up behind the real image.
+const LQIP_WIDTH = 24;
+const LQIP_QUALITY = 35;
 
 const IMAGE_CONTENT_TYPES = {
   '.avif': 'image/avif',
@@ -212,6 +223,127 @@ async function main() {
   if (failed > 0) {
     console.log('Failures are images that no longer exist upstream; they will 404 as before.');
   }
+
+  await optimize(urls);
+}
+
+/**
+ * Transcodes cached bytes to WebP and builds the low-quality placeholder
+ * manifest. Runs over what is already on disk — nothing is re-downloaded.
+ *
+ * Both steps are idempotent: `optimized` in the metadata gates the transcode,
+ * and an existing manifest entry gates placeholder generation.
+ */
+async function optimize(urls) {
+  console.log('\noptimising cached images...');
+
+  let manifest = {};
+  try {
+    manifest = JSON.parse(await readFile(LQIP_MANIFEST, 'utf8'));
+  } catch {
+    // First run.
+  }
+
+  let converted = 0;
+  let keptOriginal = 0;
+  let placeholders = 0;
+  let skipped = 0;
+  let beforeBytes = 0;
+  let afterBytes = 0;
+  let cursor = 0;
+
+  async function worker() {
+    while (cursor < urls.length) {
+      const url = urls[cursor++];
+      const href = url.toString();
+      const key = createHash('sha256').update(href).digest('hex');
+      const binPath = join(CACHE_DIR, `${key}.bin`);
+      const metaPath = join(CACHE_DIR, `${key}.json`);
+
+      let meta;
+      let body;
+      try {
+        meta = JSON.parse(await readFile(metaPath, 'utf8'));
+        body = await readFile(binPath);
+      } catch {
+        continue; // never downloaded (upstream 404)
+      }
+
+      const needsTranscode = !meta.optimized;
+      const needsPlaceholder = !manifest[href];
+      if (!needsTranscode && !needsPlaceholder) {
+        skipped += 1;
+        continue;
+      }
+
+      if (needsPlaceholder) {
+        try {
+          const lqip = await sharp(body)
+            .resize({ width: LQIP_WIDTH, withoutEnlargement: true })
+            .webp({ quality: LQIP_QUALITY, alphaQuality: 50 })
+            .toBuffer();
+          manifest[href] = `data:image/webp;base64,${lqip.toString('base64')}`;
+          placeholders += 1;
+        } catch {
+          // Unreadable or an SVG sharp cannot rasterise — no placeholder, and
+          // the image still renders normally.
+        }
+      }
+
+      if (needsTranscode) {
+        beforeBytes += body.byteLength;
+        try {
+          // SVG is already tiny and vector; rasterising it would be a loss.
+          const isVector = meta.contentType === 'image/svg+xml';
+          const webp = isVector
+            ? null
+            : await sharp(body).webp({ quality: WEBP_QUALITY }).toBuffer();
+
+          if (webp && webp.byteLength < body.byteLength) {
+            await writeFile(binPath, webp);
+            await writeFile(
+              metaPath,
+              JSON.stringify({ ...meta, contentType: 'image/webp', optimized: true, sourceUrl: href })
+            );
+            afterBytes += webp.byteLength;
+            converted += 1;
+          } else {
+            // WebP came out bigger — keep the original bytes.
+            await writeFile(metaPath, JSON.stringify({ ...meta, optimized: true, sourceUrl: href }));
+            afterBytes += body.byteLength;
+            keptOriginal += 1;
+          }
+        } catch {
+          await writeFile(metaPath, JSON.stringify({ ...meta, optimized: true, sourceUrl: href }));
+          afterBytes += body.byteLength;
+          keptOriginal += 1;
+        }
+      }
+
+      const processed = converted + keptOriginal + skipped;
+      if (processed > 0 && processed % 100 === 0) {
+        console.log(`  ${processed}/${urls.length}`);
+      }
+    }
+  }
+
+  await Promise.all(Array.from({ length: CONCURRENCY }, worker));
+
+  await mkdir(CACHE_DIR, { recursive: true });
+  await writeFile(LQIP_MANIFEST, JSON.stringify(manifest));
+
+  const manifestBytes = Buffer.byteLength(JSON.stringify(manifest));
+  console.log(`\n  converted to webp: ${converted}`);
+  console.log(`  kept original:     ${keptOriginal}`);
+  console.log(`  already optimised: ${skipped}`);
+  if (beforeBytes > 0) {
+    const saved = beforeBytes - afterBytes;
+    console.log(
+      `  ${(beforeBytes / 1024 / 1024).toFixed(1)} MB -> ${(afterBytes / 1024 / 1024).toFixed(1)} MB ` +
+        `(saved ${(saved / 1024 / 1024).toFixed(1)} MB, ${((saved / beforeBytes) * 100).toFixed(0)}%)`
+    );
+  }
+  console.log(`  placeholders:      +${placeholders} (manifest ${(manifestBytes / 1024).toFixed(0)} KB)`);
 }
 
 await main();
