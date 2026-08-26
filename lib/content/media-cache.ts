@@ -52,7 +52,7 @@ declare global {
  */
 export async function getCacheDirState(): Promise<'ready' | 'missing'> {
   if (!global.__mediaCacheDirState) {
-    global.__mediaCacheDirState = await stat(getCacheDir())
+    global.__mediaCacheDirState = await stat(/*turbopackIgnore: true*/ getCacheDir())
       .then((entry) => (entry.isDirectory() ? ('ready' as const) : ('missing' as const)))
       .catch(() => 'missing' as const);
   }
@@ -70,8 +70,8 @@ export async function readCachedAsset(sourceUrl: string): Promise<CachedAsset | 
 
   try {
     const [body, rawMeta] = await Promise.all([
-      readFile(join(dir, `${key}.bin`)),
-      readFile(join(dir, `${key}.json`), 'utf-8')
+      readFile(/*turbopackIgnore: true*/ join(dir, `${key}.bin`)),
+      readFile(/*turbopackIgnore: true*/ join(dir, `${key}.json`), 'utf-8')
     ]);
 
     const meta = JSON.parse(rawMeta) as AssetMetadata;
@@ -99,7 +99,7 @@ export async function writeCachedAsset(sourceUrl: string, asset: CachedAsset): P
   const dir = getCacheDir();
 
   try {
-    await mkdir(dir, { recursive: true });
+    await mkdir(/*turbopackIgnore: true*/ dir, { recursive: true });
 
     const meta: AssetMetadata = {
       contentType: asset.contentType,
@@ -113,8 +113,8 @@ export async function writeCachedAsset(sourceUrl: string, asset: CachedAsset): P
     const bodyTmp = join(dir, `.${stamp}.bin.tmp`);
     const metaTmp = join(dir, `.${stamp}.json.tmp`);
 
-    await writeFile(bodyTmp, new Uint8Array(asset.body));
-    await writeFile(metaTmp, JSON.stringify(meta));
+    await writeFile(/*turbopackIgnore: true*/ bodyTmp, new Uint8Array(asset.body));
+    await writeFile(/*turbopackIgnore: true*/ metaTmp, JSON.stringify(meta));
     await rename(bodyTmp, join(dir, `${key}.bin`));
     await rename(metaTmp, join(dir, `${key}.json`));
     // mkdir above may have just created it.

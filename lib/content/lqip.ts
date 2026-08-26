@@ -23,7 +23,7 @@ function loadManifest(): Record<string, string> {
   const dir = process.env.MEDIA_CACHE_DIR ?? join(process.cwd(), '.media-cache');
 
   try {
-    const parsed: unknown = JSON.parse(readFileSync(join(dir, 'lqip.json'), 'utf-8'));
+    const parsed: unknown = JSON.parse(readFileSync(/*turbopackIgnore: true*/ join(dir, 'lqip.json'), 'utf-8'));
     manifest = parsed && typeof parsed === 'object' ? (parsed as Record<string, string>) : {};
   } catch {
     manifest = {};

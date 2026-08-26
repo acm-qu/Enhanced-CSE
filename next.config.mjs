@@ -5,6 +5,13 @@ const nextConfig = {
   // Opt-in self-contained build for hosts without Docker (e.g. cPanel/Passenger).
   // Set BUILD_STANDALONE=1 to emit .next/standalone; unset keeps the Vercel/Docker flow unchanged.
   output: process.env.BUILD_STANDALONE ? 'standalone' : undefined,
+  // NOTE: do not add outputFileTracingExcludes here. Its globs are not anchored
+  // to the project root, so a pattern like './lib/**' also matches
+  // 'node_modules/postcss/lib/**' and silently strips dependencies down to a
+  // bare package.json — the app then fails at runtime with "Failed to load
+  // external module". The source tree that /api/media drags in (its cache path
+  // uses process.cwd(), which the tracer cannot analyse) is pruned from the
+  // assembled bundle instead, where the removals are explicit and verifiable.
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: '**' }
