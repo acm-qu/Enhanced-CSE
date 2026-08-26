@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { createPortal } from 'react-dom';
 import { useEffect, useMemo, useRef, useState }from 'react';
 
-import type { Connection, CourseData, StudyPlanTerm } from '@/app/cs-study-plan/page';
+import type { Connection, CourseData, StudyPlanTerm } from '@/app/electives/page';
 import { CourseInfoDialog } from '@/components/course-info-dialog';
 import { isCourseInfoUrl } from '@/lib/utils/course-info-url';
 

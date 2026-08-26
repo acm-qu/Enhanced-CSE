@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 
-import type { Connection, CourseData, StudyPlanTerm } from '@/app/cs-study-plan/page';
+import type { Connection, CourseData, StudyPlanTerm } from '@/app/electives/page';
 import { StudyPlanBoard } from '@/components/study-plan-board';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 

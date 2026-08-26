@@ -31,7 +31,7 @@ export const metadata: Metadata = {
 
 const NAV_LINKS = [
   { href: '/', label: 'Home' },
-  { href: '/cs-study-plan', label: 'CS Study Plan' },
+  { href: '/electives', label: 'Electives' },
   { href: '/wiki', label: 'Wiki' },
   { href: '/posts', label: 'Blog' }
 ] as const;

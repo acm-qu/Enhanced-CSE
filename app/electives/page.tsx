@@ -9,7 +9,7 @@ import {
 import { StudyPlanElectivesOfferedTable } from '@/components/study-plan-electives-offered-table';
 import { SuggestedStudyPlans } from '../../components/suggested-study-plans';
 
-export const metadata: Metadata = { title: 'CS Study Plan' };
+export const metadata: Metadata = { title: 'Electives' };
 
 const STUDY_PLAN_HEADER_COPY = 'Custom Made Ordering the of QU 2024 Roadmap optimized for you';
 
@@ -187,11 +187,11 @@ export default function CsStudyPlanPage() {
         </p>
       </div>
 
-      <SuggestedStudyPlans terms={terms} courses={courses} connections={connections} />
-
       <StudyPlanElectivesOfferedTable />
 
       <StudyPlanElectives specializations={electiveSpecializations} />
+
+      <SuggestedStudyPlans terms={terms} courses={courses} connections={connections} />
     </main>
   );
 }

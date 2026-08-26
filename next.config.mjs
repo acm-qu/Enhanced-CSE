@@ -12,6 +12,11 @@ const nextConfig = {
   // external module". The source tree that /api/media drags in (its cache path
   // uses process.cwd(), which the tracer cannot analyse) is pruned from the
   // assembled bundle instead, where the removals are explicit and verifiable.
+  // /cs-study-plan was the route's name until the page was reframed around the
+  // electives list. Bookmarks and links in synced wiki content still point at it.
+  async redirects() {
+    return [{ source: '/cs-study-plan', destination: '/electives', permanent: true }];
+  },
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: '**' }
