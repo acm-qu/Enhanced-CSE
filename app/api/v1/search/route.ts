@@ -5,6 +5,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db/client';
 import { blogPostTerms, blogPosts, blogTerms, wikiArticleTerms, wikiArticles, wikiTerms } from '@/lib/db/schema';
 import { formatContentLabel } from '@/lib/utils/content';
+import { fixSeniorProjectYear } from '@/lib/utils/senior-projects';
 import {
   getCachedApiJsonResponse,
   markApiCacheMiss,
@@ -26,10 +27,12 @@ function finalizeResponse(response: Response): Response {
 }
 
 function sanitizeTitle(title: string): string {
-  return sanitizeHtml(title, {
-    allowedTags: [],
-    allowedAttributes: {}
-  }).trim();
+  return fixSeniorProjectYear(
+    sanitizeHtml(title, {
+      allowedTags: [],
+      allowedAttributes: {}
+    }).trim()
+  );
 }
 
 async function loadWikiCategoryNames(articleIds: number[]): Promise<Map<number, string>> {

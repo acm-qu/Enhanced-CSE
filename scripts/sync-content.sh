@@ -20,10 +20,14 @@
 # refresh on their own via revalidate.
 #
 # Usage:
+#   ./scripts/sync-content.sh                      # sync + mirror, no upload
 #   ./scripts/sync-content.sh --remote quhosting@your-server.com
 #   DEPLOY_REMOTE=quhosting@host ./scripts/sync-content.sh
 #   ./scripts/sync-content.sh --skip-sync          # skip the WordPress pull
 #   ./scripts/sync-content.sh --dry-run            # show what would upload
+#
+# Step 3 only runs when a remote is configured; without one the refreshed cache
+# is left on disk for package-bundle.sh to ship inside deploy.zip.
 
 set -euo pipefail
 
@@ -79,8 +83,15 @@ export DATABASE_URL
 BASE_URL="${SYNC_BASE_URL:-$(read_env SYNC_BASE_URL)}"
 BASE_URL="${BASE_URL:-http://localhost:3000}"
 
+# With no target configured the sync and mirror still run; only the upload is
+# skipped. Syncing locally is useful on its own — package-bundle.sh calls this
+# to refresh content before a build, and the resulting cache ships inside
+# deploy.zip rather than over rsync.
 if [ "$SKIP_UPLOAD" = "0" ] && [ -z "$REMOTE" ]; then
-  fail "no upload target. Pass --remote user@host, set DEPLOY_REMOTE, or use --skip-upload"
+  SKIP_UPLOAD=1
+  NO_REMOTE_CONFIGURED=1
+else
+  NO_REMOTE_CONFIGURED=0
 fi
 
 # ---------------------------------------------------------------- 1. sync
@@ -140,7 +151,12 @@ echo "    cached images: $BEFORE -> $AFTER (+$((AFTER - BEFORE)))"
 UPLOAD_NOTE=""
 
 if [ "$SKIP_UPLOAD" = "1" ]; then
-  step "Skipping upload (--skip-upload)"
+  if [ "${NO_REMOTE_CONFIGURED:-0}" = "1" ]; then
+    step "No upload target configured — cache left on disk"
+    echo "    Pass --remote user@host or set DEPLOY_REMOTE to rsync it to the server."
+  else
+    step "Skipping upload (--skip-upload)"
+  fi
   UPLOAD_NOTE="not uploaded, cache is at $CACHE_DIR"
 else
   RSYNC_FLAGS=(-av --human-readable)
@@ -170,6 +186,22 @@ else
   echo "    Content:  not synced (--skip-sync)"
 fi
 echo "    Images:   $AFTER cached, $((AFTER - BEFORE)) new this run — $UPLOAD_NOTE"
+
+# Machine-readable result for callers (package-bundle.sh) that need to report
+# whether anything actually changed. Parsing our own stdout would be brittle.
+if [ -n "${SYNC_RESULT_FILE:-}" ]; then
+  field() { echo "$SYNC_SUMMARY" | grep -oE "[0-9]+ $1" | grep -oE '^[0-9]+' || echo 0; }
+  {
+    echo "SYNC_RAN=$([ "$SKIP_SYNC" = "1" ] && echo 0 || echo 1)"
+    echo "CONTENT_SUMMARY='${SYNC_SUMMARY//\'/}'"
+    echo "CONTENT_NEW=$(field new)"
+    echo "CONTENT_UPDATED=$(field updated)"
+    echo "CONTENT_REMOVED=$(field removed)"
+    echo "IMAGES_BEFORE=$BEFORE"
+    echo "IMAGES_AFTER=$AFTER"
+    echo "IMAGES_NEW=$((AFTER - BEFORE))"
+  } > "$SYNC_RESULT_FILE"
+fi
 
 if [ "$DRY_RUN" = "1" ] || [ "$SKIP_UPLOAD" = "1" ]; then
   exit 0

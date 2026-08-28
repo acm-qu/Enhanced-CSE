@@ -177,16 +177,6 @@ export default function CsStudyPlanPage() {
 
   return (
     <main className="relative z-[1] pb-10">
-      <div className="px-4 pb-4 pt-8 sm:px-6">
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{program.name} Study Plan</h1>
-        <p className="mt-2 max-w-3xl text-sm font-medium leading-6 text-foreground/85 sm:text-base">
-          {STUDY_PLAN_HEADER_COPY}
-        </p>
-        <p className="mt-2 text-sm text-muted-foreground">
-          {program.institution} | {program.total_credit_hours_required} Credit Hours | 2024 Roadmap
-        </p>
-      </div>
-
       <StudyPlanElectivesOfferedTable />
 
       <StudyPlanElectives specializations={electiveSpecializations} />

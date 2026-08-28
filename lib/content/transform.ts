@@ -5,6 +5,7 @@ import type { ArticleDetailItem, ArticleListItem } from '@/lib/db/queries';
 import { sanitizeContentHtml, sanitizeWikiHtml } from '@/lib/content/html';
 import { extractContentMediaPreviews } from '@/lib/content/media-preview';
 import { buildContentSummary } from '@/lib/content/summary';
+import { fixSeniorProjectYear } from '@/lib/utils/senior-projects';
 import { decodeFetchedHtml } from '../sync/entities';
 
 function toIsoString(value: Date | string | null | undefined): string | null {
@@ -21,12 +22,13 @@ function sanitizeTitle(title: string): string {
 }
 
 export function toArticleListResponse(article: ArticleListItem) {
+  // The summary strips the source title off the content body, so it keeps the raw title.
   const title = sanitizeTitle(article.title);
 
   return {
     id: article.id,
     slug: article.slug,
-    title,
+    title: fixSeniorProjectYear(title),
     summary: buildContentSummary({
       title,
       contentHtml: decodeFetchedHtml(article.contentHtmlRaw),
@@ -43,7 +45,7 @@ export function toArticleListResponse(article: ArticleListItem) {
 }
 
 export function toArticleDetailResponse(article: ArticleDetailItem) {
-  const title = sanitizeTitle(article.title);
+  const title = fixSeniorProjectYear(sanitizeTitle(article.title));
 
   return {
     id: article.id,
@@ -60,12 +62,13 @@ export function toArticleDetailResponse(article: ArticleDetailItem) {
 }
 
 export function toPostListResponse(post: PostListItem) {
+  // The summary strips the source title off the content body, so it keeps the raw title.
   const title = sanitizeTitle(post.title);
 
   return {
     id: post.id,
     slug: post.slug,
-    title,
+    title: fixSeniorProjectYear(title),
     summary: buildContentSummary({
       title,
       contentHtml: decodeFetchedHtml(post.contentHtmlRaw),
@@ -81,7 +84,7 @@ export function toPostListResponse(post: PostListItem) {
 }
 
 export function toPostDetailResponse(post: PostDetailItem) {
-  const title = sanitizeTitle(post.title);
+  const title = fixSeniorProjectYear(sanitizeTitle(post.title));
 
   return {
     id: post.id,

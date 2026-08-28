@@ -7,7 +7,6 @@ import { MenuIcon } from 'lucide-react';
 
 import { NavigationProgress } from '@/components/navigation-progress';
 import { SearchCommand, SearchTrigger } from '@/components/search-command';
-import { SupportChatBubble } from '@/components/support-chat/SupportChatBubble';
 import { ThemeProvider } from '@/components/theme-provider';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Button } from '@/components/ui/button';
@@ -125,7 +124,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <Toaster richColors position="bottom-right" />
           <NavigationProgress />
           <SearchCommand />
-          <SupportChatBubble />
+          {/* SupportChatBubble is unmounted until the Suhail assistant is ready;
+              components/support-chat/ is left in place for when it returns. */}
         </ThemeProvider>
 
       </body>

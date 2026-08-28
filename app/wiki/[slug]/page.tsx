@@ -2,7 +2,6 @@ import { cache } from 'react';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { ChevronDownIcon } from 'lucide-react';
 
 import { ArticleBody } from '@/components/article-body';
 import { RelatedContentSection } from '@/components/related-content-section';
@@ -10,8 +9,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Separator } from '@/components/ui/separator';
+import { TocDropdown } from '@/components/toc-dropdown';
 import { TocNav } from '@/components/toc-nav';
 import { toArticleDetailResponse, toArticleListResponse } from '@/lib/content/transform';
 import { getArticleBySlug, listAllArticleSlugs, listArticles } from '@/lib/db/queries';
@@ -85,6 +84,15 @@ export default async function WikiDetailPage({ params }: DetailPageProps) {
     ? 'grid gap-4 xl:grid-cols-[220px_minmax(0,1fr)_220px]'
     : 'grid gap-4 xl:grid-cols-[220px_minmax(0,1fr)]';
 
+  // Every archive opens with an h1 repeating the article title; listing it as
+  // the first destination would be a link back to where the reader already is.
+  const jumpItems =
+    toc[0]?.level === 1 && toc[0].text.trim() === transformed.title.trim() ? toc.slice(1) : toc;
+
+  // The senior-project archives file under this category and run to 60+ entries,
+  // where every h2 is one project — worth naming as such rather than "sections".
+  const isProjectArchive = transformed.categories.includes('previous-senior-project');
+
   return (
     <main className="content-shell">
       <div className={layoutClass}>
@@ -150,6 +158,16 @@ export default async function WikiDetailPage({ params }: DetailPageProps) {
                   </Badge>
                 ))}
               </div>
+
+              {/* Stands in for the TOC sidebar, which is hidden below xl. */}
+              {jumpItems.length > 0 ? (
+                <TocDropdown
+                  items={jumpItems}
+                  eyebrow={isProjectArchive ? 'Jump to project' : 'On this page'}
+                  noun={isProjectArchive ? 'project' : 'section'}
+                  className="xl:hidden"
+                />
+              ) : null}
             </CardHeader>
 
             <CardContent>
@@ -169,27 +187,6 @@ export default async function WikiDetailPage({ params }: DetailPageProps) {
           </aside>
         ) : null}
       </div>
-
-      {hasToc ? (
-        <div className="mt-4 space-y-3 xl:hidden">
-          <Collapsible>
-            <CollapsibleTrigger asChild>
-              <Button variant="outline" size="sm" className="w-full justify-between">
-                On This Page <ChevronDownIcon className="h-4 w-4" />
-              </Button>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <nav className="mt-2 space-y-1 pl-2">
-                {toc.map((item) => (
-                  <a key={item.id} href={`#${item.id}`} className="block text-sm hover:underline">
-                    {item.text}
-                  </a>
-                ))}
-              </nav>
-            </CollapsibleContent>
-          </Collapsible>
-        </div>
-      ) : null}
 
       <RelatedContentSection
         eyebrow={primaryCategory ? `More in ${categoryNameBySlug.get(primaryCategory) ?? primaryCategory}` : 'Related articles'}

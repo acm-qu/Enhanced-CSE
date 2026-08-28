@@ -438,3 +438,38 @@ The app is designed for deployment on **Vercel**. It also runs on cPanel/CloudLi
 4. The workflow at `.github/workflows/sync-cron.yml` triggers sync every 8 hours UTC.
 
 For the production database, run `npm run db:migrate` once pointed at the production `DATABASE_URL` to set up the schema before the first deploy.
+
+### Deploying to cPanel
+
+`scripts/package-bundle.sh` produces a single `deploy.zip` — the standalone build plus `.media-cache/` — that the server only has to extract.
+
+```bash
+./scripts/package-bundle.sh
+```
+
+It syncs content, builds outside the repo (a build nested in the repo traces against pnpm symlinks that do not survive zip + extract), packages, verifies, and prepends the new version to `VERSIONS.md`. It prompts for a one-line description of the deployment; pass `--notes "..."` to skip the prompt, or `--version X.Y.Z` to override the automatic patch bump.
+
+| Flag | Effect |
+| --- | --- |
+| `--notes "..."` | Release description, 100 words max (aim for ~50) |
+| `--version X.Y.Z` | Set the version instead of bumping the patch |
+| `--no-version` | Package without touching `VERSIONS.md` |
+| `--skip-sync` | Build from the image cache as-is |
+| `--skip-build` | Repackage the last build |
+| `--skip-install` | Reuse the build's `node_modules` |
+| `--help` | Usage |
+
+Then on the server:
+
+```bash
+scp deploy.zip user@host:~/
+
+cd ~/csewiki
+rm -rf node_modules .next server.js public package.json   # by name
+: > stderr.log
+unzip -oq ~/deploy.zip -d ~/csewiki
+```
+
+Restart the app in cPanel afterwards.
+
+`-o` is required: `.media-cache/` is deliberately absent from the delete list, so the extract merges into the existing cache instead of replacing it — `sync-content.sh --remote` can add images to the server between deploys, and those must not be lost. Cache entries are content-hashed, so overwriting is always safe.
